@@ -517,10 +517,40 @@
         populateCarousel(); 
         window.addEventListener('resize', updateCarouselVisual);
 
+// --- D3.js Mind Map for LLM Concepts ---
         const mindMapContainer = getEl('llm-mind-map-container');
         if (mindMapContainer && typeof d3 !== 'undefined') {
+            
+            // Helper function to get computed CSS variable values
+            function getCssVariableValue(variableName) {
+                return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+            }
+
+            // Helper function to determine contrasting text color
+            function getTextColorForBackground(hexColor) {
+                try {
+                    const rgb = d3.rgb(hexColor);
+                    // Standard YIQ formula for perceived brightness
+                    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+                    return brightness > 135 ? getCssVariableValue('--text-dark') : getCssVariableValue('--bg-white'); // 128 is a common threshold, 135 for a bit more safety
+                } catch (e) {
+                    // Fallback if color parsing fails (e.g., invalid CSS var value initially)
+                    return getCssVariableValue('--text-dark'); 
+                }
+            }
+
             const width = mindMapContainer.clientWidth;
             const height = 450; 
+
+            // Fetch actual color values from CSS variables
+            const colorPalette = [
+                getCssVariableValue('--udg-blue'),       // For depth 0 (Root, if drawn, or first level if root is hidden)
+                getCssVariableValue('--udg-yellow'),     // For depth 1
+                getCssVariableValue('--accent-purple'),  // For depth 2
+                getCssVariableValue('--primary-light'),  // For depth 3 (lighter UdG blue shade)
+                getCssVariableValue('--secondary-light') // For depth 4 (lighter UdG yellow shade)
+            ];
+            const colorScale = d3.scaleOrdinal(colorPalette);
 
             const mindMapData = {
                 name: "Ecosistema LLM (UdG)",
@@ -551,40 +581,95 @@
                     ]}
                 ]
             };
-            const root = d3.hierarchy(mindMapData).sum(d => d.size || 1).sort((a, b) => b.value - a.value);
+            const rootNode = d3.hierarchy(mindMapData).sum(d => d.size || 1).sort((a, b) => b.value - a.value);
             const packLayout = d3.pack().size([width - 4, height - 4]).padding(8); 
-            const packedRoot = packLayout(root);
+            const packedRootNode = packLayout(rootNode);
+            
             const svg = d3.select(mindMapContainer).append("svg")
                 .attr("width", width)
                 .attr("height", height)
                 .attr("viewBox", `0 0 ${width} ${height}`)
-                .style("display", "block").style("margin", "0 auto").style("background", "var(--primary-lightest)").style("cursor", "grab");
-            const colorScale = d3.scaleOrdinal([`var(--primary-color)`, `var(--secondary-color)`, `var(--accent-purple)`, `var(--primary-light)`, `var(--secondary-light)`]);
-            const nodes = svg.selectAll("g.mind-map-node")
-                .data(packedRoot.descendants())
+                .style("display", "block").style("margin", "0 auto").style("background", getCssVariableValue('--primary-lightest')).style("cursor", "default"); // Changed cursor
+
+            const gNodes = svg.selectAll("g.mind-map-node")
+                .data(packedRootNode.descendants()) // Process all descendants
                 .join("g")
                   .attr("class", "mind-map-node")
                   .attr("transform", d => `translate(${d.x},${d.y})`);
-            nodes.append("circle")
+
+            gNodes.append("circle")
                 .attr("r", d => d.r)
-                .attr("fill", d => d.children ? colorScale(d.depth) : d3.rgb(colorScale(d.parent.depth)).brighter(0.5))
-                .attr("stroke", d => d3.rgb(colorScale(d.depth)).darker(0.5))
-                .on("mouseover", function(event, d) { d3.select(this).transition().duration(150).attr("r", d.r * 1.05).style("fill", d3.rgb(d3.select(this).style("fill")).brighter(0.2)); })
-                .on("mouseout", function(event, d) { d3.select(this).transition().duration(150).attr("r", d.r).style("fill", d.children ? colorScale(d.depth) : d3.rgb(colorScale(d.parent.depth)).brighter(0.5)); });
-            nodes.filter(d => !d.children && d.r > 10) 
+                .style("fill", d => {
+                    if (!d.depth) return "none"; // Hide root circle or make it transparent
+                    return d.children ? colorScale(d.depth) : d3.rgb(colorScale(d.parent.depth)).brighter(0.6);
+                })
+                .style("stroke", d => d.depth ? d3.rgb(colorScale(d.depth)).darker(0.7) : 'none')
+                .style("stroke-width", d => d.depth ? 1.5 : 0)
+                .on("mouseover", function(event, d) {
+                    if (!d.depth) return;
+                    const currentFill = d3.select(this).style("fill");
+                    d3.select(this).transition().duration(150)
+                        .attr("r", d.r * 1.05)
+                        .style("fill", d3.rgb(currentFill).brighter(0.3))
+                        .style("stroke", d3.rgb(colorScale(d.depth)).darker(1));
+                })
+                .on("mouseout", function(event, d) {
+                    if (!d.depth) return;
+                    d3.select(this).transition().duration(150)
+                        .attr("r", d.r)
+                        .style("fill", d.children ? colorScale(d.depth) : d3.rgb(colorScale(d.parent.depth)).brighter(0.6))
+                        .style("stroke", d3.rgb(colorScale(d.depth)).darker(0.7));
+                });
+
+            gNodes.filter(d => d.r > 10 && d.depth > 0) // Add text to nodes with sufficient radius, excluding root
                 .append("text")
-                .attr("clip-path", d => `circle(${d.r * 0.9})`)
+                .attr("clip-path", d => `url(#clip-${d.id || d.data.name.replace(/\s+/g, '-')})`) // Unique clip path ID
                 .selectAll("tspan")
-                .data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g).map(w => w.length > 10 && d.r < 30 ? w.substring(0,8)+"..." : w) )
+                .data(d_node => { // d_node is the datum for the current <g> element (node)
+                    const words = d_node.data.name.split(/(?=[A-Z][a-z])|\s+/g);
+                    let line = "";
+                    const lines = [];
+                    const maxCharsPerLine = Math.floor(d_node.r * 2 * 0.8 / 7); // Heuristic: 7px avg char width
+                    
+                    words.forEach(word => {
+                        // Abbreviate long words in small circles
+                        const processedWord = (word.length > 10 && d_node.r < 35) ? word.substring(0,7)+"..." : word;
+                        if ((line + processedWord).length > maxCharsPerLine && line.length > 0) {
+                            lines.push(line.trim());
+                            line = processedWord + " ";
+                        } else {
+                            line += processedWord + " ";
+                        }
+                    });
+                    lines.push(line.trim());
+                    return lines.filter(l => l.length > 0);
+                })
                 .join("tspan")
                     .attr("x", 0)
-                    .attr("y", (d, i, tspans) => `${i - tspans.length / 2 + 0.8}em`)
-                    .style("font-size", function(d_text) { 
-                        const parentNodeData = d3.select(this.parentNode).datum(); 
-                        return Math.max(6, Math.min(parentNodeData.r / 2.5, parentNodeData.r / (d_text.length * 0.6))) + "px";
+                    .attr("y", (d_line, i, tspans) => `${i - (tspans.length -1) / 2 + 0.1}em`) // Center vertically better
+                    .style("font-size", function(d_line_text) {
+                        const parentNodeData = d3.select(this.parentNode).datum(); // datum of the 'text' element's parent 'g'
+                        const numLines = d3.select(this.parentNode).selectAll("tspan").size();
+                        const baseSize = parentNodeData.r / (Math.max(numLines,1) * 1.5); // Adjust based on number of lines
+                        return Math.max(7, Math.min(baseSize, parentNodeData.r / (d_line_text.length * 0.45 + 1 ))) + "px";
                     })
-                    .text(d => d);
-            nodes.append("title").text(d => `${d.ancestors().map(da => da.data.name).reverse().slice(1).join(" > ")}\n(Valor conceptual: ${d.value})`);
+                    .style("fill", function() {
+                        const parentNodeData = d3.select(this.parentNode).datum(); // datum of <text> el
+                        const circleFillColor = parentNodeData.children ? colorScale(parentNodeData.depth) : d3.rgb(colorScale(parentNodeData.parent.depth)).brighter(0.6);
+                        return getTextColorForBackground(circleFillColor);
+                    })
+                    .text(d_line => d_line);
+            
+            // Define clipPaths for text elements (important for text not overflowing circles)
+            gNodes.filter(d => d.r > 10 && d.depth > 0)
+                  .append("defs")
+                  .append("clipPath")
+                  .attr("id", d => `clip-${d.id || d.data.name.replace(/\s+/g, '-')}`)
+                  .append("circle")
+                  .attr("r", d => d.r * 0.9); // Clip slightly inside the circle
+
+            gNodes.append("title")
+                .text(d => `${d.ancestors().map(da => da.data.name).reverse().slice(d.depth === 0 ? 0:1).join(" > ")}\n(Valor conceptual: ${d.value || 'N/A'})`);
         }
 
         const hallucinationOptionsContainer = getEl('hallucination-buster-options');
