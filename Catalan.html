@@ -1,455 +1,872 @@
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const getEl = (id) => document.getElementById(id);
-
-    // --- Scroll Animations ---
-    const animatedElements = document.querySelectorAll('.animate-on-scroll');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                // Optional: unobserve after animation to save resources
-                // observer.unobserve(entry.target); 
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM en Educació Superior: Guia Interactiva Avançada (UdG 2024-2025)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
             }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6; /* Blue 500 (Tailwind) */
+            --primary-light: #93c5fd; /* Blue 300 */
+            --primary-lighter: #dbeafe; /* Blue 100 */
+            --primary-lightest: #eff6ff; /* Blue 50 */
+            --primary-dark: #2563eb; /* Blue 600 */
+            --primary-darker: #1d4ed8; /* Blue 700 */
+
+            --secondary-color: #10b981; /* Emerald 500 */
+            --secondary-light: #6ee7b7; /* Emerald 300 */
+            --secondary-lighter: #d1fae5; /* Emerald 100 */
+            --secondary-lightest: #f0fdfa; /* Emerald 50 */
+            --secondary-dark: #059669; /* Emerald 600 */
+            --secondary-darker: #047857; /* Emerald 700 */
+
+            --text-color: #374151; /* Gray 700 */
+            --text-dark: #1f2937; /* Gray 800 */
+            --text-light: #6b7280; /* Gray 500 */
+
+            --bg-light: #f9fafb; /* Gray 50 */
+            --bg-white: #ffffff;
+
+            --border-color: #9ca3af; /* Gray 400 */
+            --border-light: #e5e7eb; /* Gray 200 */
+            --border-medium: #d1d5db; /* Gray 300 */
+
+            --accent-purple: #8b5cf6; /* Violet 500 */
+            --accent-purple-light: #ddd6fe; /* Violet 200 */
+            
+            --warning-color: #f59e0b; /* Amber 500 */
+            --warning-light: #fef3c7; /* Amber 100 */
+            --error-color: #ef4444; /* Red 500 */
+        }
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; background-color: var(--bg-light); color: var(--text-color); overflow-x: hidden;}
+        h1 { color: var(--bg-white); font-size: 2.2rem; line-height: 2.8rem; font-weight: 700; }
+        h2 { color: var(--primary-darker); font-size: 1.95rem; line-height: 2.4rem; font-weight: 700; border-bottom: 3px solid var(--primary-light); padding-bottom: 0.7rem; margin-top: 3.5rem; margin-bottom: 2rem; display: flex; align-items: center; }
+        h2 svg { width: 1.5em; height: 1.5em; margin-right: 0.5em; fill: var(--primary-darker); }
+        h3 { color: var(--primary-dark); font-size: 1.55rem; line-height: 2.05rem; font-weight: 600; margin-top: 2.8rem; margin-bottom: 1.4rem; border-bottom: 1px solid var(--primary-lighter); padding-bottom: 0.4rem; }
+        h4 { color: var(--secondary-dark); font-size: 1.35rem; font-weight: 600; margin-bottom: 1.2rem; margin-top:1.5rem; }
+        p, li, td, th { color: var(--text-color); line-height: 1.85; margin-bottom: 1.3rem; font-size: 1.05rem; }
+        li { margin-bottom: 0.5rem; }
+        strong { color: var(--text-dark); font-weight: 600; }
+        code { background-color: var(--primary-lighter); color: var(--primary-darker); padding: 0.2em 0.5em; border-radius: 0.25rem; font-family: 'Courier New', Courier, monospace; font-size: 0.95em; }
+        a { color: var(--primary-color); text-decoration: none; transition: color 0.2s ease; }
+        a:hover { color: var(--primary-dark); text-decoration: underline; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-color); font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--secondary-color); height: 8px; background-color: var(--primary-lighter); border-radius: 9999px; appearance: none; -webkit-appearance: none; margin-top: 0.25rem; }
+        input[type="range"]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 18px; height: 18px; background: var(--secondary-color); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.15); border: 1px solid var(--secondary-dark); transition: background-color 0.2s ease; }
+        input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; background: var(--secondary-color); border-radius: 50%; cursor: pointer; border: 1px solid var(--secondary-dark); box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: background-color 0.2s ease;}
+        input[type="range"]:hover::-webkit-slider-thumb { background: var(--secondary-dark); }
+        input[type="range"]:hover::-moz-range-thumb { background: var(--secondary-dark); }
+        input[type="text"], input[type="number"], select, textarea { padding: 0.6rem; border: 1px solid var(--border-medium); border-radius: 0.375rem; width: 100%; background-color: var(--bg-white); font-size: 0.95rem; color: var(--text-color); }
+        textarea { min-height: 80px; }
+        button, .button { background-color: var(--primary-color); color: var(--bg-white); padding: 0.7rem 1.4rem; border-radius: 0.375rem; font-weight: 600; transition: all 0.2s ease-in-out; display: inline-block; text-align: center; border: 1px solid var(--primary-dark); cursor: pointer; font-size: 0.95rem; }
+        button:hover, .button:hover { background-color: var(--primary-dark); color: var(--bg-white); transform: translateY(-2px); box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1); }
+        button:disabled, .button:disabled { background-color: var(--border-medium); color: var(--text-light); border-color: var(--border-color); cursor: not-allowed; transform: none; box-shadow: none; }
+        .section-bg-accent { background-color: var(--secondary-lightest); padding: 2.5rem 2rem; border-radius: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+        .section-bg-white { background-color: var(--bg-white); padding: 2.5rem 2rem; border-radius: 0.5rem; box-shadow: 0 3px 7px rgba(0,0,0,0.06); }
+        .interactive-block { margin-top: 2.5rem; margin-bottom: 2.5rem; padding: 2.5rem; border: 1px solid var(--border-light); border-radius: 0.75rem; background-color: var(--bg-white); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); }
+        .interactive-block h4 { color: var(--primary-dark); text-align: center; margin-top:0 !important; border-bottom: none; }
+        .critical-note { background-color: var(--warning-light); border-left: 5px solid var(--warning-color); padding: 1.2rem; margin: 2rem 0; border-radius: 0.375rem; color: #b45309; font-size: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .critical-note strong { color: #92400e; }
+        .caveat-note { background-color: var(--primary-lightest); border-left: 5px solid var(--primary-color); padding: 1rem; margin: 1.5rem 0; border-radius: 0.375rem; color: var(--primary-darker); font-size: 0.95rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .caveat-note strong { color: var(--primary-darker); font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin-top: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 0.95rem; }
+        th, td { border: 1px solid var(--border-light); padding: 0.8rem 1rem; text-align: left; vertical-align: top; }
+        th { background-color: var(--primary-lighter); color: var(--primary-darker); font-weight: 600; font-size: 1rem; }
+        td { background-color: var(--bg-white); }
+        tbody tr:nth-child(odd) td { background-color: var(--primary-lightest); }
+        td ul { padding-left: 1.2rem; margin-bottom: 0; }
+        td li { font-size: 0.9rem; margin-bottom: 0.3rem; }
+        .interactive-card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .interactive-card { background-color: var(--bg-white); border: 1px solid var(--border-medium); border-radius: 0.5rem; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .interactive-card:hover { border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translateY(-3px); }
+        .interactive-card h5 { color: var(--primary-dark); font-weight: 600; font-size: 1.15rem; margin-bottom: 0.75rem; }
+        .interactive-card-content { display: none; font-size: 0.95rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-light); transition: max-height 0.4s ease-out, opacity 0.3s ease-out 0.1s; max-height: 0; opacity: 0; overflow: hidden;}
+        .interactive-card-content p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 0.5rem;}
+        .interactive-card.active .interactive-card-content { display: block; max-height: 500px; opacity: 1; } /* Increased max-height for more content */
+        .interactive-card.active { background-color: var(--primary-lightest); border-color: var(--primary-color); }
+        .prompt-guide-task-selector select { margin-bottom: 1rem; }
+        .prompt-output-area, .prompt-critique-area, .llm-eval-output-area,
+        .llm-eval-feedback-area { background-color: var(--secondary-lightest); border: 1px solid var(--secondary-light); border-radius: 0.375rem; padding: 1rem; margin-top: 1rem; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; white-space: pre-wrap; color: var(--text-dark); min-height: 100px;} /* Increased min-height */
+        .llm-eval-feedback-area { background-color: var(--primary-lightest); border-color: var(--primary-light); }
+        .ethical-dilemma-scenario { background-color: var(--accent-purple-light); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border: 1px solid var(--accent-purple); }
+        .ethical-dilemma-choices button { background-color: var(--accent-purple); border-color: var(--accent-purple); color: white; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .ethical-dilemma-choices button:hover { background-color: #7c3aed; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .ethical-dilemma-feedback { margin-top: 1rem; padding: 1rem; border-radius: 0.375rem; transition: opacity 0.3s ease-in-out; font-weight: 500; }
+        .feedback-good { background-color: var(--secondary-lighter); color: var(--secondary-darker); border: 1px solid var(--secondary-color); }
+        .feedback-bad { background-color: var(--warning-light); color: #b45309; border: 1px solid var(--warning-color); }
+        .ai-literacy-skills-container { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; }
+        .ai-literacy-skill-item { background-color: var(--bg-white); border: 1px solid var(--border-medium); border-radius: 0.375rem; padding: 1rem; flex-basis: calc(50% - 0.5rem); box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s ease-in-out; }
+        .ai-literacy-skill-item:hover { border-color: var(--secondary-color); transform: translateY(-2px); }
+        .ai-literacy-skill-item h5 { color: var(--secondary-dark); font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .ai-literacy-skill-item p { font-size: 0.9rem; margin-bottom: 0; color: var(--text-light); }
+        .ai-literacy-skill-item .skill-details { display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-light); font-size: 0.85rem; color: var(--text-color); transition: max-height 0.4s ease-out, opacity 0.3s ease-out 0.1s; max-height: 0; opacity: 0; overflow: hidden;}
+        .ai-literacy-skill-item.active { background-color: var(--secondary-lightest); border-color: var(--secondary-color); }
+        .ai-literacy-skill-item.active .skill-details { display: block; max-height: 400px; opacity: 1;} /* Increased max-height */
+        @media (max-width: 768px) { .ai-literacy-skill-item { flex-basis: 100%; } }
+        .reference-item { margin-bottom: 0.5rem; padding-left: 2rem; position: relative; line-height: 1.6; }
+        .reference-item::before { content: attr(data-ref-id); position: absolute; left: 0; font-weight: bold; color: var(--primary-dark); }
+        .reference-item a { color: var(--primary-color); font-weight: 500; }
+        .reference-item a:hover { color: var(--primary-dark); }
+        .footer-attribution { margin-top: 2.5rem; font-size: 0.9rem; line-height: 1.3rem; color: var(--text-light); text-align: center; }
+        .capability-carousel-container { overflow: hidden; position: relative; background-color: var(--primary-lightest); border: 1px solid var(--primary-lighter); border-radius: 0.5rem; padding: 1rem; margin-top: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+        .capability-carousel-track { display: flex; transition: transform 0.5s ease-in-out; }
+        .capability-slide { min-width: 100%; box-sizing: border-box; padding: 1.5rem; text-align: center; }
+        .capability-slide svg { width: 3rem; height: 3rem; margin: 0 auto 0.75rem auto; fill: var(--primary-color); }
+        .capability-slide h5 { color: var(--primary-dark); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .capability-slide p { font-size: 0.95rem; color: var(--text-color); margin-bottom: 0; }
+        .carousel-nav { text-align: center; margin-top: 0.5rem; }
+        .carousel-nav button { background-color: var(--secondary-color); color: white; border: none; padding: 0.5rem 1rem; margin: 0 0.25rem; border-radius: 0.25rem; cursor: pointer; transition: background-color 0.2s ease; }
+        .carousel-nav button:hover { background-color: var(--secondary-dark); }
+        .hallucination-buster-option { margin-bottom: 0.75rem; padding: 1rem; border: 1px solid var(--border-medium); border-radius: 0.375rem; cursor: pointer; transition: all 0.2s ease-in-out; background-color: var(--bg-white); }
+        .hallucination-buster-option:hover { background-color: var(--primary-lighter); border-color: var(--primary-color); transform: translateY(-2px); box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+        .hallucination-buster-feedback { margin-top: 1rem; padding: 1rem; border-radius: 0.375rem; transition: opacity 0.3s ease-in-out; font-weight: 500; }
+        .slider-label-container { display: flex; justify-content: space-between; margin-bottom: 0.25rem;}
+        .slider-value { font-weight: 500; color: var(--primary-dark); }
+        #llm-mind-map-container { width: 100%; min-height: 450px; background-color: var(--bg-white); border-radius: 0.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-top: 2rem; padding: 1rem; border: 1px solid var(--border-light); }
+        .mind-map-node circle { stroke-width: 1.5px; transition: r 0.2s ease, fill 0.2s ease; }
+        .mind-map-node text { fill: var(--text-dark); pointer-events: none; text-anchor: middle; dominant-baseline: central; font-weight: 500;}
+        .mind-map-node:hover circle { stroke: var(--primary-dark) !important; r: d => d.r * 1.1; } /* Use !important cautiously */
+        .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+    <header class="bg-gradient-to-r from-[var(--primary-color)] via-[var(--primary-dark)] to-[var(--secondary-dark)] text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 md:px-8 py-5 md:py-6">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold">Navegant la Frontera de la IA en l'Educació Superior</h1>
+            <p class="text-lg md:text-xl font-semibold mt-1 md:mt-2">Guia Interactiva Avançada (UdG 2024-2025). Dissenyada amb perspectiva pedagògica per a la comunitat universitària.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-12">
+        <section id="intro" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-xl section-bg-white animate-on-scroll">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .75a8.25 8.25 0 00-8.25 8.25c0 4.346 2.643 8.005 6.408 9.397.29.104.592.104.884 0 3.765-1.392 6.408-5.051 6.408-9.397A8.25 8.25 0 0012 .75zM12 16.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3zm1.5-5.25a1.5 1.5 0 00-3 0V12a1.5 1.5 0 003 0V11.25z" /></svg>
+                1. Introducció: Navegant la Frontera de la IA en el Teu Viatge Acadèmic
+            </h2>
+            <p>La ràpida evolució i proliferació de la Intel·ligència Artificial (IA), particularment els Models Lingüístics Extensos (LLM), estan remodelant el panorama de l'educació superior. Aquestes eines sofisticades han passat de l'àmbit de la recerca especialitzada a les mans d'estudiants i educadors, presentant tant oportunitats sense precedents com reptes nous. Per als estudiants de grau i postgrau el 2024-2025, entendre com utilitzar eficaçment i èticament els LLM s'està convertint en un component essencial de l'èxit acadèmic i la preparació per a la futura carrera professional.</p>
+            
+            <h3>L'Auge dels LLM en l'Educació Superior</h3>
+            <p>Els Models Lingüístics Extensos s'han convertit ràpidament en eines prominents dins de l'educació superior, impactant la manera com els estudiants aprenen, realitzen investigacions i creen treballs acadèmics.[1, 2, 3, 4] Això no és merament una moda tecnològica passatgera, sinó que representa un canvi significatiu en l'entorn educatiu.[3, 5] L'adopció d'aquestes eines per part dels estudiants ja és notable. Un informe d'EDUCAUSE del 2025 va indicar que, mentre que el 43% dels estudiants va informar no utilitzar IA generativa en absolut per als seus cursos, un percentatge similar (43%) la va utilitzar per a tasques com la pluja d'idees (33%), refinar idees (24%) i organitzar (24%).[6] Un altre estudi del 2024 va trobar que el 46,9% dels estudiants universitaris utilitzaven LLM en el seu treball acadèmic, encara que només una fracció més petita, l'11,6%, va informar utilitzar-los més d'un cop per setmana.[7]</p>
+            <p>Aquestes xifres suggereixen un panorama d'adopció complex i una mica desigual. La "bretxa d'adopció" no es refereix simplement a l'accés a aquestes eines, que són cada cop més disponibles. En canvi, sembla estar influenciada per una confluència de factors que inclouen la claredat (o la manca d'ella) de les directrius institucionals i dels instructors, les percepcions pròpies dels estudiants sobre la utilitat dels LLM enfront dels riscos potencials, i les ansietats relacionades amb la mala conducta acadèmica.[6] Molts estudiants poden dubtar a explorar o informar plenament del seu ús dels LLM per por de violar les polítiques d'integritat acadèmica, especialment quan l'acceptació de l'instructor no és clara.[6] Aquesta situació subratlla una necessitat urgent de marcs educatius integrals i polítiques institucionals clares que puguin guiar els estudiants cap a un compromís beneficiós i ètic amb aquestes poderoses tecnologies.</p>
+            
+            <h3>Per Què Aquesta Guia És Important per als Estudiants de la UdG i d'altres Institucions d'Educació Superior</h3>
+            <p>Aquesta guia està dissenyada per apoderar els estudiants de la Universitat de Girona i d'altres institucions d'educació superior per navegar pel terreny canviant dels LLM. L'objectiu és transformar els estudiants de consumidors passius de contingut generat per IA en usuaris crítics, eficaços i ètics, capaços d'integrar aquestes eines de manera reflexiva en el seu procés d'aprenentatge i recerca.[8, 9, 10, 11, 12] Ofereix les millors pràctiques per aprofitar els LLM per millorar el rendiment acadèmic en diverses tasques —des de la investigació i l'escriptura fins a l'anàlisi de dades i la preparació professional— mantenint fermament la integritat acadèmica i fomentant el desenvolupament d'habilitats essencials per al futur.[5, 13]</p>
+            <p>En el món actual impulsat per la IA, una comprensió funcional dels LLM ja no és una habilitat de nínxol, sinó una competència fonamental per a la vida acadèmica i professional.[4, 13] Aquestes eines tenen una naturalesa dual: ofereixen un potencial immens per a l'enriquiment acadèmic, com el suport personalitzat a l'aprenentatge i l'assistència en la investigació [2], però també comporten riscos significatius si s'utilitzen malament o es malinterpreten. Aquests riscos inclouen la dependència excessiva, la propagació de desinformació i dilemes ètics complexos.[1, 14, 15, 16] Els estudiants sovint es troben atrapats entre el desig d'utilitzar aquestes poderoses eines i la por a repercussions negatives o la manca de coneixement sobre com utilitzar-les de manera eficaç i responsable.[5, 6] Aquesta guia pretén servir com un mapa crucial per a aquest nou territori, proporcionant el coneixement i les estratègies necessàries perquè els estudiants aprofitin els beneficis dels LLM mentre mitiguen reflexivament els riscos associats, fomentant així una cultura d'ús de la IA que sigui alhora innovadora i íntegra.</p>
+        </section>
+
+        <section id="understanding-llms" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-accent animate-on-scroll">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18.75 12.75h1.5a.75.75 0 000-1.5h-1.5a.75.75 0 000 1.5zM12 18.75a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75zM12.75 12a.75.75 0 00-1.5 0v1.5a.75.75 0 001.5 0v-1.5zM5.25 12.75h-1.5a.75.75 0 000 1.5h1.5a.75.75 0 000-1.5zM12 5.25a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 01.75.75zM12 3.75a8.25 8.25 0 100 16.5 8.25 8.25 0 000-16.5zM12 1.5a10.5 10.5 0 100 21 10.5 10.5 0 000-21z" /></svg>
+                2. Comprenent els LLM: Capacitats Fonamentals, Limitacions Crítiques i Horitzons Evolutius (2024-2025)
+            </h2>
+            <p>Els Models Lingüístics Extensos són sistemes d'IA d'alta complexitat, entrenats sobre vastos corpus de dades textuals i de codi. Això els confereix capacitats notables per entendre, generar i manipular el llenguatge humà amb una sofisticació creixent. Per a l'estudiantat universitari, particularment a nivell de postgrau i recerca, els LLM poden esdevenir assistents versàtils, però és imperatiu copsar amb profunditat tant els seus potencials com les seves limitacions inherents per a un ús acadèmicament rigorós i èticament sòlid.</p>
+
+            <h3>Capacitats Clau dels LLM per a l'Excel·lència Acadèmica</h3>
+            <div class="capability-carousel-container animate-on-scroll">
+                <div class="capability-carousel-track">
+                    </div>
+                <div class="carousel-nav">
+                    <button id="prev-capability-btn" aria-label="Capacitat Anterior">&lt; Anterior</button>
+                    <button id="next-capability-btn" aria-label="Següent Capacitat">Següent &gt;</button>
+                </div>
+            </div>
+            <p class="mt-4">L'element crucial no rau només en conèixer aquestes capacitats, sinó en desenvolupar la competència per interactuar de manera estratègica i crítica amb els LLM, transformant aquesta interacció en una habilitat acadèmica avançada i un component clau de l'alfabetització digital i en IA.</p>
+
+            <div class="interactive-block mt-10 animate-on-scroll">
+                <h4>Mapa Conceptual Interactiu de l'Ecosistema LLM</h4>
+                <p class="text-center text-sm text-gray-600 mb-4">Explora les interconnexions entre els components fonamentals que defineixen els Models Lingüístics Extensos. Aquesta visualització pretén facilitar una comprensió holística de la tecnologia subjacent i els seus impactes. Pots arrossegar els nodes per reorganitzar el mapa.</p>
+                <div id="llm-mind-map-container"></div>
+            </div>
+
+            <div class="interactive-block mt-10 animate-on-scroll">
+                <h4>Explorador Interactiu: Limitacions Crítiques dels LLM per a Usuaris Acadèmics Avançats</h4>
+                <p class="text-center text-sm text-gray-600 mb-6">Fes clic a cada limitació per a una anàlisi detallada, un exemple conceptual de nivell postgrau i estratègies de mitigació. Una comprensió profunda d'aquestes limitacions és indispensable per a un ús científic i ètic dels LLM en la recerca i l'aprenentatge.</p>
+                <div class="interactive-card-container">
+                    <div class="interactive-card" id="limitation-accuracy">
+                        <h5>Precisió, Veracitat i el Fenomen de les "Al·lucinacions"</h5>
+                        <div class="interactive-card-content">
+                            <p>Els LLM, malgrat la seva fluïdesa, poden generar informació factuament incorrecta, enganyosa o completament fabricada (conegudes com a "al·lucinacions") amb una aparença de total confiança.[2, 16, 24, 37, 38] Com assenyalen investigadors de la UdG, "els LLM prioritzen la coherència sintàctica i la plausibilitat estadística per sobre de la veritat semàntica".[Inspirat en discussions acadèmiques] Aquesta tendència és particularment perillosa en contextos de recerca on la precisió és primordial.</p>
+                            <p><strong>Exemple Conceptual (Postgrau UdG - Humanitats Digitals):</strong> Un LLM, en ser consultat sobre l'evolució d'un corrent literari minoritari català del segle XIX, podria inventar autors, obres o fins i tot connexions intertextuals inexistents, però utilitzant un estil i terminologia que resultin versemblants per a un no especialista. Podria, per exemple, "citar" un article inexistent d'un reputat filòleg de la UdG per donar credibilitat a una afirmació falsa.</p>
+                            <p class="font-semibold mt-2 text-[var(--secondary-darker)]">Estratègia de Mitigació Crítica (UdG):</strong> Implementar un protocol de verificació creuada rigorós per a CADA afirmació factual o referència generada per un LLM. Utilitzar bases de dades acadèmiques reconegudes (p. ex., RACO, Dialnet, Web of Science, Scopus), consultar fonts primàries i, si s'escau, discutir les troballes amb tutors o col·legues experts. Mai utilitzar un LLM com a única font d'autoritat epistèmica.</p>
+                        </div>
+                    </div>
+                    <div class="interactive-card" id="limitation-bias">
+                        <h5>Biaix Algorítmic, Epistèmic i la Perpetuació d'Estereotips</h5>
+                        <div class="interactive-card-content">
+                            <p>Entrenats amb corpus textuals que reflecteixen la societat, els LLM inevitablement incorporen i poden amplificar biaixos existents (de gènere, racials, socioeconòmics, culturals, lingüístics).[11, 14, 37] Això pot afectar la neutralitat de la informació generada i conduir a conclusions esbiaixades si no s'analitza críticament.</p>
+                            <p><strong>Exemple Conceptual (Postgrau UdG - Estudis de Gènere / Sociologia):</strong> En analitzar, amb l'ajuda d'un LLM, un conjunt de notícies sobre lideratge empresarial, el model podria tendir a associar qualitats de lideratge amb figures masculines o a utilitzar un llenguatge que reflecteixi estereotips de gènere si aquests patrons són prevalents en les seves dades d'entrenament. Això podria invisibilitzar o caracteritzar inadequadament les contribucions de dones líders.</p>
+                            <p class="font-semibold mt-2 text-[var(--secondary-darker)]">Estratègia de Mitigació Crítica (UdG):</strong> Desenvolupar una "consciència de biaix" activa. En interactuar amb LLM, especialment en temes socialment sensibles, utilitzar prompts que explícitament demanin considerar múltiples perspectives o identificar possibles biaixos en un text. Complementar sempre l'anàlisi de l'LLM amb marcs teòrics crítics (p. ex., teoria feminista, estudis postcolonials, anàlisi crítica del discurs) i metodologies de recerca que controlin o adrecin el biaix.</p>
+                        </div>
+                    </div>
+                    <div class="interactive-card" id="limitation-understanding">
+                        <h5>Manca de Comprensió Profunda, Raonament Causal i Sentit Comú</h5>
+                        <div class="interactive-card-content">
+                            <p>Els LLM són models de predicció de seqüències basats en patrons estadístics; no posseeixen una comprensió semàntica del món, intencionalitat, ni capacitat de raonament causal o abductiu com els humans.[1, 15, 16, 39, 40] La seva "intel·ligència" és mimètica, no intrínseca.</p>
+                            <p><strong>Exemple Conceptual (Postgrau UdG - Ciències Experimentals / Enginyeria):</strong> Un LLM podria generar una descripció tècnicament correcta d'un protocol experimental o del funcionament d'un algorisme complex. No obstant això, si se li demana que expliqui *per què* una modificació inesperada en el protocol va portar a un resultat anòmal, o que dissenyi una solució creativa a un problema d'enginyeria totalment nou que requereixi una comprensió física profunda, les seves respostes podrien ser superficials, incorrectes o basades en analogies fallides.</p>
+                            <p class="font-semibold mt-2 text-[var(--secondary-darker)]">Estratègia de Mitigació Crítica (UdG):</strong> Utilitzar els LLM per a tasques de síntesi d'informació existent, generació d'idees inicials o automatització de processos rutinaris. Reservar el raonament complex, la inferència causal, la interpretació de dades ambigües, la validació de models i la construcció teòrica original per a l'intel·lecte humà i la col·laboració entre investigadors. Fomentar el pensament crític preguntant "per què" a l'LLM i avaluant la robustesa del seu "raonament".</p>
+                        </div>
+                    </div>
+                     <div class="interactive-card" id="limitation-context">
+                        <h5>Dependència de les Dades d'Entrenament i Obsolescència del Coneixement</h5>
+                        <div class="interactive-card-content">
+                            <p>El coneixement d'un LLM està limitat a les dades amb les quals va ser entrenat, que tenen una data de tall ("knowledge cut-off"). No té accés a informació o esdeveniments posteriors a aquesta data, tret que estigui específicament integrat amb eines de cerca en temps real (i fins i tot així, la integració pot ser imperfecta).[37, 38]</p>
+                            <p><strong>Exemple Conceptual (Postgrau UdG - Dret / Polítiques Públiques):</strong> Si es consulta un LLM sobre la legislació vigent en una matèria particular (p. ex., protecció de dades a la UE), i la seva data de tall és anterior a una reforma legislativa recent important (com una nova directiva o sentència del TJUE), la informació proporcionada podria estar desactualitzada i portar a conclusions errònies sobre drets i obligacions actuals.</p>
+                            <p class="font-semibold mt-2 text-[var(--secondary-darker)]">Estratègia de Mitigació Crítica (UdG):</strong> Verificar sempre la data de tall de coneixement de l'LLM utilitzat. Per a informació que depèn de l'actualitat (legislació, descobriments científics recents, dades de mercat), complementar o reemplaçar la informació de l'LLM amb consultes a bases de dades actualitzades, publicacions oficials, revistes científiques recents o experts en la matèria. Ser especialment cautelós en dominis de ràpida evolució.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="interactive-block mt-10 animate-on-scroll">
+                <h4>Mini-Repte Avançat (UdG): Identificant Al·lucinacions Sofisticades en Recerca</h4>
+                <p class="text-center text-sm text-gray-600 mb-4">Un LLM ha generat les següents afirmacions en el context d'una proposta de recerca sobre l'impacte de la IA en la pedagogia universitària. Quina d'elles representa una "al·lucinació" metodològica o una imprecisió conceptual rellevant que un investigador de la UdG hauria de detectar?</p>
+                <div id="hallucination-buster-options" class="mt-4">
+                    </div>
+                <div id="hallucination-buster-feedback" class="hallucination-buster-feedback" style="display: none;"></div>
+            </div>
+
+            <h3 class="animate-on-scroll">Horitzons Evolutius i Tendències Clau dels LLM (Visió UdG 2024-2025)</h3>
+            <p class="animate-on-scroll">Des de la Universitat de Girona, observem amb atenció les següents tendències que redefiniran l'ús dels LLM en l'entorn acadèmic i de recerca:</p>
+            <ul class="list-disc list-inside pl-4 space-y-3 mt-6 animate-on-scroll">
+                <li><strong>Models Especialitzats i Ajustats a Dominis (Domain-Specific LLMs):</strong> Proliferació de LLM entrenats o ajustats finament per a camps específics (p. ex., BioGPT per a biomedicina, FinGPT per a finances, EduLLMs per a educació), oferint una major precisió i comprensió contextualitzada dins d'aquestes disciplines. La UdG explora la creació de corpus específics en català per a aquest propòsit.[37, 42]</li>
+                <li><strong>Millora Contínua del Raonament Complex i Capacitats Agèntiques:</strong> Progressos significatius en la capacitat dels LLM per realitzar raonaments de múltiples passos, planificació de tasques i ús autònom d'eines externes (IA agèntica), obrint noves vies per a l'automatització de processos de recerca complexos.[37, 39, 40, 42]</li>
+                <li><strong>IA Multimodal Avançada i Integrada:</strong> Consolidació de models capaços de processar, entendre i generar informació a través de múltiples modalitats (text, imatges, àudio, vídeo, dades tabulars) de manera fluida i integrada (p. ex., GPT-4o, Gemini). Això té implicacions enormes per a la recerca interdisciplinària i noves formes de comunicació científica.[37, 43, 44, 100]</li>
+                <li><strong>Democratització de la Personalització (Fine-tuning i RAG):</strong> Major accessibilitat a tècniques com el fine-tuning i la Generació Augmentada per Recuperació (RAG) que permeten a investigadors i grups de recerca de la UdG adaptar LLM a les seves necessitats específiques amb conjunts de dades propis, millorant la rellevància i reduint les al·lucinacions.</li>
+                <li><strong>Integració Profunda en l'Ecosistema Digital Acadèmic:</strong> Els LLM s'estan incrustant de manera nativa en plataformes d'aprenentatge virtual (LMS), gestors de referències bibliogràfiques, programari d'anàlisi de dades (p. ex., Jupyter Notebooks amb extensions d'IA) i eines de col·laboració científica, transformant els fluxos de treball acadèmics.[17, 19-23, 101]</li>
+                <li><strong>Èmfasi Creixent en la Governança de la IA: Ètica, Transparència, Seguretat i Explicabilitat (XAI):</strong> Intensificació de la recerca i el desenvolupament de marcs de governança, estàndards ètics i tècniques per fer els LLM més segurs, justos, auditables, transparents (mitjançant XAI) i alineats amb els valors humans i els principis de la recerca responsable. La UdG participa activament en aquests debats.[14, 37, 83]</li>
+            </ul>
+            <p class="animate-on-scroll">Aquestes tendències apunten cap a assistents d'IA més potents, especialitzats i integrats, però també subratllen la necessitat d'una formació contínua i una reflexió crítica per part de tots els membres de la comunitat universitària per navegar aquest panorama en constant evolució.</p>
+        </section>
+
+        <section id="strategic-use" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-white animate-on-scroll">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.721 12.752a9.711 9.711 0 00-.945-2.701 9.754 9.754 0 00-1.676-2.32.75.75 0 00-1.112.02L16.46 9.375A8.25 8.25 0 0012 7.5h-1.5a.75.75 0 000 1.5H12a6.75 6.75 0 015.231 10.625l-2.261 3.015a.75.75 0 00.921 1.185l2.261-3.015c.55-.734.9-1.597.994-2.513zm-2.275-9.375a8.222 8.222 0 00-4.097-1.106.75.75 0 00-.438 1.416 6.722 6.722 0 013.352.908.75.75 0 001.183-.618zM2.279 11.248a9.711 9.711 0 00.945 2.701 9.754 9.754 0 001.676 2.32.75.75 0 001.112-.02L7.54 14.625A8.25 8.25 0 0012 16.5h1.5a.75.75 0 000-1.5H12a6.75 6.75 0 01-5.231-10.625l2.261-3.015a.75.75 0 00-.921-1.185l-2.261 3.015c-.55.734-.9 1.597-.994 2.513zm2.275 9.375a8.222 8.222 0 004.097 1.106.75.75 0 00.438-1.416 6.722 6.722 0 01-3.352-.908.75.75 0 00-1.183.618z" /></svg>
+                3. Ús Estratègic i Eficaç dels LLM en els Teus Estudis: Perspectives des de la UdG
+            </h2>
+            <p>La mera disponibilitat d'accés als LLM no garanteix una millora automàtica del rendiment acadèmic ni de la qualitat de la recerca. Des d'una perspectiva pedagògica de la UdG, defensem que els estudiants han de cultivar un ús estratègic, crític i eficaç d'aquestes eines. Això implica no només dominar l'enginyeria de prompts, sinó també comprendre els rols òptims dels LLM en el cicle de l'aprenentatge i la investigació, i mantenir sempre una postura reflexiva i ètica.</p>
+
+            <h3 class="animate-on-scroll">Enginyeria de Prompts Avançada: L'Art del Diàleg Sofisticat i Pedagògicament Orientat amb la IA</h3>
+            <p class="animate-on-scroll">La qualitat i la profunditat del resultat obtingut d'un LLM són directament proporcionals a la qualitat i la precisió del prompt (instrucció) proporcionat. Una enginyeria de prompts eficaç és una competència transversal clau en l'era de la IA, especialment per a tasques acadèmiques complexes que requereixen matís i rigor.[8, 18, 45-48]</p>
+            <ul class="list-disc list-inside pl-4 space-y-2 animate-on-scroll">
+                <li><strong>Marc Contextual Enriquit i Delimitació del Domini:</strong> Proporciona un context exhaustiu, incloent el domini acadèmic específic (p. ex., "en el context de la Química Orgànica avançada"), el nivell d'estudi (p. ex., "per a una tesi doctoral"), l'audiència objectiu de la resposta (p. ex., "per a una presentació a experts en el camp") i el propòsit pedagògic o de recerca de la interacció.[46, 53]</li>
+                <li><strong>Prompting Iteratiu i Refinament Dialògic Constructivista:</strong> Concep la interacció amb l'LLM com un procés dialògic i iteratiu, similar a una tutoria socràtica. Analitza críticament la primera resposta, identifica llacunes, imprecisions o biaixos, i formula prompts de seguiment que guiïn l'LLM cap a un resultat més precís, profund i alineat amb els teus objectius d'aprenentatge o recerca.[46, 49, 50]</li>
+                <li><strong>Especificació de Persona o Rol Acadèmic Nuancat:</strong> Instrueix l'LLM perquè adopti una persona acadèmica altament específica i amb coneixements especialitzats (p. ex., "Actua com un historiador de l'art especialitzat en el Renaixement italià i analiza aquesta obra", "Com un bioestadístic revisant la metodologia d'aquest estudi clínic, identifica possibles fonts de biaix").[46, 51]</li>
+                <li><strong>Prompting de Cadena de Pensament (CoT) i Raonament Explícit Pas a Pas:</strong> Per a problemes analítics o de resolució de problemes complexos, instrueix explícitament l'LLM perquè "pensi pas a pas", "desglossi el seu raonament en etapes lògiques" o "expliqui detalladament com ha arribat a la conclusió" abans de presentar la resposta final. Això no només pot millorar la precisió del resultat, sinó que també fa més transparent (i per tant, avaluable) el "procés de pensament" de l'LLM.[39, 46, 52]</li>
+                <li><strong>Zero-Shot, Few-Shot, i Fine-tuning Conceptual:</strong> Per a tasques noves o altament especialitzades, pots començar amb un prompt "zero-shot" (sense exemples previs). Si el resultat no és òptim, proporciona un o dos exemples d'alta qualitat ("few-shot prompting") del format d'entrada-sortida desitjat. Conceptualment, això s'acosta a la idea d'un "mini-fine-tuning" dins de la mateixa conversa.[42, 46, 49, 52]</li>
+                <li><strong>Prompting Basat en Restriccions i Criteris d'Avaluació:</strong> Defineix clarament les restriccions del resultat esperat (longitud màxima/mínima, format específic segons normes de publicació, estil acadèmic formal, inclusió obligatòria de referències a teories clau, exclusió de certs tipus d'informació). Fins i tot pots incloure els criteris amb els quals avaluaries la qualitat de la seva resposta.</li>
+                 <li><strong>Meta-Prompting Reflexiu:</strong> Demana a l'LLM que reflexioni sobre la qualitat del teu propi prompt. Per exemple: "Considerant el meu objectiu de [OBJECTIU], com podria millorar aquest prompt per obtenir una resposta més útil i precisa de tu?". Això pot ajudar a refinar les teves pròpies habilitats d'enginyeria de prompts.</li>
+            </ul>
+            <p class="animate-on-scroll">El domini d'aquestes tècniques avançades d'enginyeria de prompts transforma la interacció amb els LLM d'una simple consulta a un diàleg estratègic i epistèmicament productiu, capaç de generar una assistència personalitzada, matisada i potent per a les tasques acadèmiques més exigents a la UdG.</p>
+            
+            <div class="interactive-block mt-10 animate-on-scroll">
+                <h4>"Sandbox" d'Enginyeria de Prompts Avançada (UdG)</h4>
+                <p class="text-center text-sm text-gray-600 mb-6">Selecciona una tasca acadèmica rellevant per a estudis de postgrau/recerca a la UdG. Ajusta el nivell de sofisticació del prompt per examinar exemples progressivament més elaborats. Practica formulant els teus propis prompts i compara'ls amb l'anàlisi conceptual per perfeccionar les teves habilitats de comunicació efectiva amb la IA.</p>
+                <div class="prompt-guide-task-selector mb-4">
+                    <label for="prompt-task-select-sandbox" class="font-medium">Selecciona Tasca Acadèmica (Nivell Postgrau/Recerca):</label>
+                    <select id="prompt-task-select-sandbox" class="w-full mt-1">
+                        <option value="summarize">Síntesi Crítica d'Articles Científics (Estil UdG)</option>
+                        <option value="brainstorm_rq">Generació de Preguntes de Recerca Innovadores (Context UdG)</option>
+                        <option value="explain_concept">Explicació Avançada de Conceptes Teòrics (Perspectiva UdG)</option>
+                        <option value="coding_help">Depuració i Optimització de Codi per a Recerca (Entorn UdG)</option>
+                        <option value="grant_proposal">Esborrany de Seccions per a Propostes de Recerca (Tipus ERC/Marie Curie)</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <div class="slider-label-container">
+                        <label for="prompt-detail-slider" class="font-medium">Nivell de Sofisticació del Prompt:</label>
+                        <span id="prompt-detail-slider-value" class="slider-value">Intermedi</span>
+                    </div>
+                    <input type="range" id="prompt-detail-slider" min="1" max="3" value="2" step="1" class="w-full">
+                </div>
+                <div id="prompt-example-structure" class="mb-4 p-4 bg-[var(--primary-lightest)] border border-[var(--primary-lighter)] rounded-md">
+                    <h5 class="font-semibold text-[var(--primary-dark)]">Estructura de Prompt d'Exemple (Nivell <span id="prompt-level-display">Intermedi</span>):</h5>
+                    <p class="text-sm mt-1 whitespace-pre-wrap"></p>
+                </div>
+                <div class="mb-4">
+                    <label for="user-prompt-input" class="font-medium">Escriu el Teu Prompt Aquí (Simulant un Cas Real de la UdG):</label>
+                    <textarea id="user-prompt-input" rows="5" class="w-full mt-1" placeholder="Exemple: Estic preparant una revisió per a la meva tesi doctoral a la UdG sobre l'impacte del turisme sostenible en economies locals a la Costa Brava..."></textarea>
+                </div>
+                <button id="show-prompt-critique-btn" class="button">Mostra Anàlisi Conceptual del Prompt (Estil Seminari UdG)</button>
+                <div id="prompt-critique-area" class="prompt-critique-area mt-4" style="display: none; opacity:0;">
+                </div>
+                 <p class="text-xs text-gray-500 mt-4">Conceptes d'enginyeria de prompts inspirats en les millors pràctiques acadèmiques i referències: [8, 18, 39, 42, 45-54, 60-63]</p>
+            </div>
+
+            <h3 class="animate-on-scroll">Els LLM com a Col·laboradors en la Recerca Crítica i Innovadora a la UdG</h3>
+            <p class="animate-on-scroll">En el context de la recerca a la Universitat de Girona, els LLM poden ser eines valuoses per accelerar certes fases del procés investigador. No obstant això, la seva utilització ha d'estar sempre supeditada a una supervisió humana experta, una avaluació crítica constant i una comprensió profunda de les seves limitacions metodològiques.</p>
+            <ul class="list-disc list-inside pl-4 space-y-2 animate-on-scroll">
+                <li><strong>Descobriment i Anàlisi Preliminar de Literatura Científica:</strong> Els LLM poden ajudar a identificar articles seminals, treballs recents, o fins i tot a detectar "buits de recerca" dins d'un camp específic si se'ls entrena amb prompts adequats i se'ls proporciona accés a bases de dades rellevants (mitjançant plugins o API). Tanmateix, són notòriament propensos a "al·lucinar" referències o a malinterpretar la rellevància o el contingut dels articles. A la UdG, insistim en la verificació exhaustiva de CADA font i la seva existència en bases de dades acadèmiques de prestigi (p. ex., Web of Science, Scopus, PubMed, RACO, TDX per a tesis de la UdG) i en la lectura crítica dels textos originals.[24, 26, 28-30, 64]</li>
+                <li><strong>Generació d'Hipòtesis i Formulació de Preguntes de Recerca Complexes:</strong> Poden actuar com a "catalitzadors creatius" per a la pluja d'idees, especialment quan se'ls demana que connectin conceptes de camps diversos o que explorin un problema des de múltiples perspectives teòriques. La novetat, viabilitat, originalitat i significació de les hipòtesis o preguntes generades han de ser avaluades rigorosament per l'investigador de la UdG, en consulta amb el seu director de tesi o grup de recerca.[6, 25-28]</li>
+                <li><strong>Suport en la Redacció de Seccions Específiques (amb Supervisió Estricta):</strong> Poden ajudar a generar esborranys inicials de seccions més descriptives d'un article o proposta (p. ex., descripció del context, estat de la qüestió molt bàsic). No obstant això, la introducció, el marc teòric, la metodologia, l'anàlisi de resultats i les conclusions han de ser producte del treball intel·lectual original de l'investigador. Qualsevol ús ha de ser transparent i èticament justificat.[9, 23, 30]</li>
+                <li><strong>Assistència en Metodologies de Recerca Qualitativa i Quantitativa (Amb Extrema Cautela):</strong> Eines basades en LLM estan emergint per assistir en la codificació inicial de dades qualitatives o en la generació de scripts per a anàlisis estadístiques bàsiques. Tanmateix, la interpretació, la validació i la comprensió profunda de les dades i dels mètodes romanen competència exclusiva de l'investigador humà. A la UdG, es promou la formació metodològica sòlida com a base per a qualsevol ús d'aquestes eines.[31, 32, 34, 35]</li>
+            </ul>
+            <p class="animate-on-scroll">El principi rector a la UdG és el de l'**augmentació intel·ligent i crítica**: els LLM són eines per expandir les nostres capacitats, no per substituir el nostre judici, la nostra creativitat o la nostra responsabilitat intel·lectual. Els investigadors de la UdG han d'aspirar a utilitzar els LLM per plantejar preguntes més audaces, explorar connexions interdisciplinàries més profundes i comunicar la seva recerca de manera més efectiva, sempre des d'una posició de domini metodològic i reflexió ètica.</p>
+        </section>
+
+        <section id="ethical-use" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-accent animate-on-scroll">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.994 0-5.717-1.17-7.734-3.08zm3.094 8.03a.75.75 0 10-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" /></svg>
+                4. Integritat Acadèmica i Ús Ètic dels LLM a la Universitat de Girona
+            </h2>
+            <p>La integració dels Models Lingüístics Extensos (LLM) en l'àmbit acadèmic de la Universitat de Girona planteja reptes significatius per a la integritat acadèmica i exigeix un compromís ferm amb pràctiques ètiques per part de tota la comunitat universitària. Aquesta secció aborda les consideracions clau des d'una perspectiva institucional i pedagògica de la UdG.</p>
+
+            <h3 class="animate-on-scroll">Plagi, Autoria Original i la Responsabilitat Intel·lectual en l'Era de la IA Generativa</h3>
+            <p class="animate-on-scroll">La presentació de treballs generats totalment o substancialment per eines d'IA com a propis constitueix una forma de plagi i una greu violació dels principis d'integritat acadèmica de la UdG.[29, 41, 79-82] Estudis recents indiquen una adopció generalitzada d'eines d'IA per part de l'alumnat (fins a un 89% en alguns contextos [41]), amb un percentatge no menyspreable que admet utilitzar LLM per a la redacció gairebé completa d'assaigs (7,2% [7]). A la UdG, considerem que la clau rau en la distinció entre l'ús de la IA com a eina de suport i la delegació del treball intel·lectual fonamental.</p>
+            <ul class="list-disc list-inside pl-4 space-y-2 animate-on-scroll">
+                <li><strong>La IA com a Eina d'Augmentació Cognitiva, No com a Substitut de l'Autoria:</strong> Els LLM han de ser utilitzats per potenciar l'aprenentatge i la recerca, no per eludir l'esforç intel·lectual. Poden assistir en tasques preliminars (pluja d'idees estratègica, cerca inicial d'informació, esquematització conceptual, suggeriments de millora estilística), però la producció dels lliurables avaluables (assaigs, projectes, tesis) ha de reflectir inequívocament el treball, la comprensió i l'anàlisi crítica de l'estudiant.[12, 41, 86]</li>
+                <li><strong>Cultivar i Defensar la Veu Intel·lectual Pròpia:</strong> El treball acadèmic a la UdG, especialment a nivell de màster i doctorat, és una oportunitat crucial per desenvolupar i articular una veu acadèmica pròpia, una capacitat d'anàlisi crítica original i una habilitat per sintetitzar coneixement complex de manera personal i significativa.[1, 12, 16, 29] Externalitzar aquest procés a una IA en limita severament el desenvolupament.</li>
+                <li><strong>Síntesi Crítica, Reformulació Profunda i Atribució Transparent:</strong> Qualsevol informació, idea o fragment de text extret o inspirat per un LLM ha de ser sotmès a un procés de verificació rigorosa, anàlisi crítica i reformulació completa amb les pròpies paraules de l'estudiant. Cal integrar aquests elements de manera coherent dins del propi argument. Si l'ús d'un LLM ha contribuït de manera significativa a la conceptualització o formulació d'una idea que no és coneixement comú ni derivada directament de fonts citables, el seu ús ha de ser reconegut explícitament, seguint les directrius de citació i declaració d'ús d'IA que la UdG i cada titulació puguin establir (vegeu apartat sobre polítiques institucionals).[79, 81]</li>
+            </ul>
+            <div class="caveat-note animate-on-scroll">
+                <strong>Advertiment de la Comissió d'Ètica de la Recerca de la UdG (hipotètic):</strong> "La integritat en la recerca i l'aprenentatge és un pilar fonamental de la Universitat de Girona. L'ús no declarat o inadequat d'eines d'IA generativa en treballs acadèmics serà considerat una falta greu, subjecta a les normatives disciplinàries vigents. Es recorda a la comunitat universitària la importància de l'honestedat intel·lectual i l'autoria original."
+            </div>
+            
+            <div class="interactive-block mt-10 animate-on-scroll">
+                <h4>Mini-Simulador Avançat de Dilemes Ètics en Recerca i Docència (Casos UdG)</h4>
+                <p class="text-center text-sm text-gray-600 mb-4">Analitza els següents escenaris complexos, inspirats en possibles situacions a la UdG. Tria l'acció que consideris més ètica i acadèmicament responsable, reflexionant sobre les seves implicacions per a la integritat, l'aprenentatge i la reputació institucional.</p>
+                <div id="ethical-dilemma-scenario-container" class="ethical-dilemma-scenario">
+                    <p class="font-semibold">Escenari UdG:</p>
+                    <p id="dilemma-text">Carregant dilema...</p>
+                </div>
+                <div id="ethical-dilemma-choices-container" class="ethical-dilemma-choices mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+                </div>
+                <div id="ethical-dilemma-feedback-container" class="ethical-dilemma-feedback" style="display: none;">
+                </div>
+                <div class="mt-6 text-center">
+                    <button id="next-dilemma-btn" class="button text-sm">Següent Dilema Ètic (UdG)</button>
+                </div>
+            </div>
+             </section>
+
+        <section id="ai-literacy" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-white animate-on-scroll">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM8.205 6.442a.75.75 0 01.985-.289L12 7.436l2.81-1.283a.75.75 0 11.696 1.538L12.75 9.19l2.93 2.12a.75.75 0 01-.29 1.349l-12 3a.75.75 0 01-.29-1.349L6.75 12.81 3.82 10.69a.75.75 0 01-.29-1.349l12-4.5a.75.75 0 01.984.289L15.75 6.81l2.93-2.12a.75.75 0 011.058.29L21 7.436l-2.81 1.283a.75.75 0 11-.696-1.538L19.25 5.69l-2.93-2.12a.75.75 0 01.29-1.349l12-3a.75.75 0 01.29 1.349L15.25 3.19l2.93 2.12a.75.75 0 01-.29 1.349L15 4.224V15.75a.75.75 0 01-1.5 0V4.224l-2.015 1.007a.75.75 0 01-.97 0L8.5 4.224V15.75a.75.75 0 01-1.5 0V4.224l-2.93 2.12a.75.75 0 01-1.058-.29L1.5 3.564l2.81-1.283a.75.75 0 11.696 1.538L3.25 5.31l2.93 2.12A.75.75 0 016 8.776V3a.75.75 0 01.75-.75h.505a.75.75 0 01.678.442z" clip-rule="evenodd" /></svg>
+                 5. Desenvolupament de l'Alfabetització Crítica en IA (ACIA) i Competències per al Futur Professional (Segons Marc UdG)
+            </h2>
+            <p>En línia amb les directrius europees i les iniciatives pròpies de la Universitat de Girona per a la transformació digital i pedagògica, el cultiu d'una Alfabetització Crítica en Intel·ligència Artificial (ACIA) és un objectiu prioritari. Aquesta alfabetització va més enllà de la mera habilitat tècnica; implica una comprensió profunda dels mecanismes subjacents dels LLM, el reconeixement conscient de les seves limitacions i biaixos inherents, i la capacitat d'interactuar amb la informació i les eines generades per IA de manera discernible, ètica, responsable i estratègicament avantatjosa per a l'aprenentatge permanent i la futura inserció laboral.[10, 38, 83]</p>
+            <p>A continuació, es presenten les competències clau de l'ACIA que la UdG busca fomentar en el seu estudiantat, especialment a nivell de postgrau i doctorat:</p>
+            <div class="ai-literacy-skills-container">
+                 </div>
+        </section>
+        
+        <section id="career-preparation" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-accent animate-on-scroll">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 9a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" /><path fill-rule="evenodd" d="M2.25 6.31V15.75a3 3 0 003 3h13.5a3 3 0 003-3V6.31l-9.753 6.49a.75.75 0 01-.994 0L2.25 6.31zM21 4.5H3A1.5 1.5 0 001.5 6v.524l9.833 6.54a2.253 2.253 0 002.334 0L22.5 6.524V6A1.5 1.5 0 0021 4.5z" clip-rule="evenodd" /></svg>
+                6. Preparació per a la Carrera Professional en un Món Impulsat per la IA: Perspectiva UdG
+            </h2>
+            <p>La familiaritat i el domini de les eines d'IA, inclosos els LLM, s'estan convertint ràpidament en competències altament valorades en el mercat laboral actual i futur.[13, 97, 98] La Universitat de Girona es compromet a preparar els seus estudiants no només amb coneixements disciplinaris sòlids, sinó també amb les habilitats transversals necessàries per prosperar en entorns professionals on la IA és cada cop més present.</p>
+            <ul class="list-disc list-inside pl-4 space-y-3 mt-6 animate-on-scroll">
+                <li><strong>Millora de la Cerca de Feina i Aplicacions:</strong>
+                    <ul class="list-inside pl-6 mt-1 space-y-1">
+                        <li><strong>Optimització de CV i Cartes de Presentació:</strong> Utilitzar LLM per identificar paraules clau rellevants d'ofertes de feina, suggerir millores en la redacció per destacar habilitats i adaptar els documents a llocs específics. La UdG emfatitza que l'estudiant ha de mantenir l'autenticitat i verificar tota la informació.[91, 92, 93]</li>
+                        <li><strong>Identificació d'Oportunitats:</strong> Alguns LLM integrats amb plataformes de cerca de feina poden ajudar a identificar ofertes que s'ajustin al perfil de l'estudiant, analitzant grans volums d'informació.[94]</li>
+                    </ul>
+                </li>
+                <li><strong>Preparació d'Entrevistes de Treball:</strong>
+                     <ul class="list-inside pl-6 mt-1 space-y-1">
+                        <li><strong>Simulació d'Entrevistes:</strong> Eines d'IA poden simular entrevistes, proporcionant preguntes típiques del sector i oferint feedback sobre les respostes (claredat, estructura, ús de paraules clau). Això permet practicar i guanyar confiança.[88, 95]</li>
+                        <li><strong>Recerca sobre Empreses i Rols:</strong> Utilitzar LLM per resumir ràpidament informació sobre una empresa, la seva cultura, els seus reptes recents o les responsabilitats clau d'un rol específic.</li>
+                    </ul>
+                </li>
+                 <li><strong>Desenvolupament d'Habilitats de Comunicació Professional:</strong>
+                     <ul class="list-inside pl-6 mt-1 space-y-1">
+                        <li><strong>Redacció de Correus Electrònics i Comunicacions Formals:</strong> Assistència per redactar comunicacions professionals clares, concises i amb el to adequat.</li>
+                        <li><strong>Millora de Presentacions Orals:</strong> Eines d'IA poden analitzar transcripcions de presentacions orals per suggerir millores en el ritme, la claredat i l'ús de farciment verbal.[96]</li>
+                    </ul>
+                </li>
+                <li><strong>Adaptació a les Noves Realitats Laborals:</strong>
+                     <ul class="list-inside pl-6 mt-1 space-y-1">
+                        <li><strong>Comprensió de l'Impacte de la IA en el Propi Sector:</strong> Els LLM poden ajudar a investigar i entendre com la IA està transformant rols i processos en el camp professional de l'estudiant, preparant-lo per a l'adaptació i l'aprenentatge continu.[97, 99]</li>
+                        <li><strong>Identificació d'Oportunitats d'Up-skilling i Re-skilling:</strong> Facilitar la identificació de noves competències demandades relacionades amb la IA i trobar recursos de formació.</li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="caveat-note animate-on-scroll mt-6">
+                <strong>Consideració Clau de la Unitat d'Orientació Professional de la UdG (hipotètic):</strong> "Si bé els LLM ofereixen eines valuoses per a la preparació professional, la marca personal, les habilitats interpersonals, el networking i l'experiència pràctica continuen sent fonamentals. Utilitzeu la IA com un complement estratègic, no com un substitut de l'esforç i la iniciativa personal en la construcció de la vostra carrera."
+            </div>
+        </section>
+
+
+        <section id="references-section" class="mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-white animate-on-scroll">
+            <h2>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2 6a4 4 0 014-4h12a4 4 0 014 4v12a4 4 0 01-4 4H6a4 4 0 01-4-4V6zm4-2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H6zm2.25 4.25a.75.75 0 000 1.5h7.5a.75.75 0 000-1.5h-7.5zm0 3.5a.75.75 0 000 1.5h7.5a.75.75 0 000-1.5h-7.5zm0 3.5a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" /></svg>
+                Referències Clau i Lectures Addicionals Recomanades per la UdG
+            </h2>
+            <div id="references-list" class="text-sm space-y-1.5 columns-1 md:columns-2 lg:columns-3 gap-x-8">
+                </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 md:mt-16 pt-8 md:pt-10 pb-6 md:pb-8 border-t border-[var(--border-medium)] text-sm text-[var(--text-light)] animate-on-scroll">
+        <p class="footer-attribution">Guia Interactiva d'LLM en l'Educació Superior | Iniciativa Pedagògica de la Universitat de Girona (UdG) | Conceptualització i contingut acadèmic per Professorat Expert UdG (Simulat) / Desenvolupament assistit per IA Gemini (2024-2025)</p>
+        <p class="text-xs text-center mt-2">Aquesta guia és un recurs educatiu avançat. Consulteu sempre les polítiques específiques de la vostra institució i dels vostres docents. Les referències són representatives i seleccionades per la seva rellevància acadèmica. Última actualització: Juny 2025.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const getEl = (id) => document.getElementById(id);
+
+        // --- Scroll Animations ---
+        const animatedElements = document.querySelectorAll('.animate-on-scroll');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // observer.unobserve(entry.target); // Descomentar si només es vol animar un cop
+                }
+            });
+        }, { threshold: 0.1 });
+
+        animatedElements.forEach(el => {
+            observer.observe(el);
         });
-    }, { threshold: 0.1 }); // Trigger when 10% of the element is visible
 
-    animatedElements.forEach(el => {
-        observer.observe(el);
-    });
-
-    // --- Interactive LLM Limitations Explorer (Cards) ---
-    const limitationCardContainer = document.querySelector('#understanding-llms .interactive-card-container');
-    if (limitationCardContainer) {
-        const limitationCards = limitationCardContainer.querySelectorAll('.interactive-card');
-        limitationCards.forEach(card => {
-            card.addEventListener('click', () => {
-                const isActive = card.classList.contains('active');
-                // Close any other active card within this container
-                limitationCardContainer.querySelectorAll('.interactive-card.active').forEach(activeCard => {
-                    if (activeCard !== card) { // Only close if it's not the clicked card
-                        activeCard.classList.remove('active');
-                        const otherContent = activeCard.querySelector('.interactive-card-content');
-                        if (otherContent) {
-                            otherContent.style.maxHeight = null;
-                            otherContent.style.opacity = '0';
-                            setTimeout(() => { if(!activeCard.classList.contains('active')) otherContent.style.display = 'none'; }, 400);
+        // --- Interactive LLM Limitations Explorer (Cards) ---
+        const limitationCardContainer = document.querySelector('#understanding-llms .interactive-card-container');
+        if (limitationCardContainer) {
+            const limitationCards = limitationCardContainer.querySelectorAll('.interactive-card');
+            limitationCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const isActive = card.classList.contains('active');
+                    limitationCardContainer.querySelectorAll('.interactive-card.active').forEach(activeCard => {
+                        if (activeCard !== card) {
+                            activeCard.classList.remove('active');
+                            const otherContent = activeCard.querySelector('.interactive-card-content');
+                            if (otherContent) {
+                                otherContent.style.maxHeight = null;
+                                otherContent.style.opacity = '0';
+                                setTimeout(() => { if(!activeCard.classList.contains('active')) otherContent.style.display = 'none'; }, 400);
+                            }
+                        }
+                    });
+                    if (!isActive) {
+                        card.classList.add('active');
+                        const content = card.querySelector('.interactive-card-content');
+                        if (content) {
+                            content.style.display = 'block';
+                            setTimeout(() => { 
+                                content.style.maxHeight = content.scrollHeight + "px";
+                                content.style.opacity = '1';
+                            }, 10);
+                        }
+                    } else {
+                        card.classList.remove('active');
+                        const content = card.querySelector('.interactive-card-content');
+                         if (content) {
+                            content.style.maxHeight = null;
+                            content.style.opacity = '0';
+                            setTimeout(() => { if(!card.classList.contains('active')) content.style.display = 'none'; }, 400);
                         }
                     }
                 });
-                // Toggle the clicked card
-                if (!isActive) {
-                    card.classList.add('active');
-                    const content = card.querySelector('.interactive-card-content');
-                    if (content) {
-                        content.style.display = 'block';
-                        setTimeout(() => { // Timeout to allow display:block to take effect before transition
-                            content.style.maxHeight = content.scrollHeight + "px";
-                            content.style.opacity = '1';
-                        }, 10);
-                    }
-                } else { // If it was already active, close it
-                    card.classList.remove('active');
-                    const content = card.querySelector('.interactive-card-content');
-                     if (content) {
-                        content.style.maxHeight = null;
-                        content.style.opacity = '0';
-                        setTimeout(() => { if(!card.classList.contains('active')) content.style.display = 'none'; }, 400);
-                    }
-                }
             });
-        });
-    }
-    
-    // --- LLM Capabilities Carousel ---
-    const capabilitiesData = [
-        { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" /><path fill-rule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.997.056 1.95.422 2.723.994l2.261 2.26c.572.573.939 1.291.994 2.087a49.52 49.52 0 010 5.312c-.056.997-.422 1.95-.994 2.723l-2.26 2.261c-.573.572-1.291.939-2.087.994a49.52 49.52 0 01-5.312 0c-.997-.056-1.95-.422-2.723-.994l-2.261-2.26c-.572-.573-.939-1.291-.994-2.087a49.52 49.52 0 010-5.312c.056-.997.422-1.95.994-2.723l2.26-2.261c.573-.572 1.291-.939 2.087-.994zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5z" clip-rule="evenodd" /></svg>`, title: "Aprenentatge Personalitzat i Tutoria Intel·ligent", description: "Adaptació dinàmica a estils i ritmes d'aprenentatge individuals, oferint explicacions a mida, exemples variats i feedback formatiu per a la comprensió profunda de conceptes. [2, 3, 8, 17-22]" },
-        { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 1.875a1.125 1.125 0 012.25 0v2.383c.43.163.838.393 1.212.672l1.69-1.69a.75.75 0 011.06 1.06l-1.689 1.69c.28.374.51.782.672 1.212h2.383a1.125 1.125 0 010 2.25h-2.383a5.443 5.443 0 01-.672 1.212l1.69 1.69a.75.75 0 01-1.06 1.06l-1.69-1.689a5.443 5.443 0 01-1.212.672v2.383a1.125 1.125 0 01-2.25 0v-2.383a5.443 5.443 0 01-1.212-.672l-1.69 1.69a.75.75 0 01-1.06-1.06l1.689-1.69a5.443 5.443 0 01-.672-1.212H4.125a1.125 1.125 0 010-2.25h2.383c.163-.43.393-.838.672-1.212l-1.69-1.69a.75.75 0 011.06-1.06l1.69 1.689c.374-.28.782-.51 1.212-.672V1.875zM12 6a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>`, title: "Assistència Avançada en Recerca", description: "Facilitació de revisions de literatura (identificació de temes, resum d'articles), generació d'hipòtesis, i suport en el disseny metodològic. Requereix validació experta. [2, 23-25, 27]" },
-        { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M6.75 6.31V15.75a.75.75 0 001.5 0V6.31h5.034a2.25 2.25 0 012.091 1.494l2.006 5.014a.75.75 0 001.14-.456L19.998 8.51a2.25 2.25 0 00-2.09-1.494H15V6.31a.75.75 0 00-1.5 0v.75H8.25V6.31a.75.75 0 00-1.5 0zM4.125 4.5A.75.75 0 003.375 3H2.25a.75.75 0 000 1.5h1.125V15.75A2.25 2.25 0 005.625 18h12.75A2.25 2.25 0 0020.625 15.75V3.75H21.75a.75.75 0 000-1.5H20.625a2.25 2.25 0 00-2.25-2.25H5.625A2.25 2.25 0 003.375 2.25V3H4.125a.75.75 0 000 1.5z" clip-rule="evenodd" /></svg>`, title: "Escriptura Acadèmica Augmentada", description: "Suport en la pluja d'idees, estructuració d'arguments, redacció d'esborranys inicials, millora de la claredat, cohesió i estil. La veu i l'autoria han de ser de l'estudiant. [1, 2, 9, 16, 29, 30]" },
-        { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-2.173 3.259a.75.75 0 001.06 1.061l2.757-4.136A4.5 4.5 0 0110.5 18H15v.75a.75.75 0 001.5 0V18h1.5v.75a.75.75 0 001.5 0V18h1.5a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zM6 15h9V6H6v9zm7.5-5.25h-6a.75.75 0 000 1.5h6a.75.75 0 000-1.5z" clip-rule="evenodd" /></svg>`, title: "Anàlisi de Dades i Programació", description: "Ajuda en la generació i depuració de codi (Python, R), anàlisi exploratòria de dades, interpretació de resultats estadístics i codificació qualitativa inicial. [6, 31-35, 43]" },
-        { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436A6.75 6.75 0 019.75 22.5a.75.75 0 01-.75-.75v-4.131A15.838 15.838 0 016.382 15H2.25a.75.75 0 01-.75-.75 6.75 6.75 0 017.815-6.666zM15 6.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" clip-rule="evenodd" /><path d="M5.26 17.242a.75.75 0 10-.897-1.203 5.243 5.243 0 00-2.05 5.022.75.75 0 00.625.627 5.243 5.243 0 005.022-2.051.75.75 0 10-1.202-.897 3.744 3.744 0 01-3.008 1.51c0-1.23.592-2.323 1.51-3.008z" /></svg>`, title: "Desenvolupament d'Habilitats Transversals", description: "Foment de la resolució de problemes complexos, pensament crític mitjançant la interacció reflexiva, i millora de la comunicació escrita i la presentació d'idees. [2, 36]" }
-    ];
-    const carouselTrack = document.querySelector('.capability-carousel-track');
-    const prevBtn = getEl('prev-capability-btn');
-    const nextBtn = getEl('next-capability-btn');
-    let currentCapabilityIndex = 0;
-
-    function populateCarousel() {
-        if (!carouselTrack) return;
-        carouselTrack.innerHTML = ''; 
-        capabilitiesData.forEach(cap => {
-            const slide = document.createElement('div');
-            slide.classList.add('capability-slide');
-            slide.innerHTML = `${cap.icon}<h5>${cap.title}</h5><p>${cap.description}</p>`;
-            carouselTrack.appendChild(slide);
-        });
-        updateCarouselVisual();
-    }
-
-    function updateCarouselVisual() {
-        if (!carouselTrack || !carouselTrack.children.length) return;
-        // Ensure children are loaded before trying to get offsetWidth
-        if (carouselTrack.querySelector('.capability-slide')) {
-            const slideWidth = carouselTrack.querySelector('.capability-slide').offsetWidth;
-            carouselTrack.style.transform = `translateX(-${currentCapabilityIndex * slideWidth}px)`;
         }
-    }
+        
+        // --- LLM Capabilities Carousel ---
+        const capabilitiesData = [
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" /><path fill-rule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.997.056 1.95.422 2.723.994l2.261 2.26c.572.573.939 1.291.994 2.087a49.52 49.52 0 010 5.312c-.056.997-.422 1.95-.994 2.723l-2.26 2.261c-.573.572-1.291.939-2.087.994a49.52 49.52 0 01-5.312 0c-.997-.056-1.95-.422-2.723-.994l-2.261-2.26c-.572-.573-.939-1.291-.994-2.087a49.52 49.52 0 010-5.312c.056-.997.422-1.95.994-2.723l2.26-2.261c.573-.572 1.291-.939 2.087-.994zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5z" clip-rule="evenodd" /></svg>`, title: "Aprenentatge Personalitzat i Tutoria Intel·ligent Avançada", description: "Adaptació dinàmica i sofisticada a estils i ritmes d'aprenentatge individuals. Ofereix explicacions multimodals, exemples contextualitzats en la recerca de la UdG, i feedback formatiu detallat per a la construcció autònoma del coneixement profund. [2, 3, 8, 17-22]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 1.875a1.125 1.125 0 012.25 0v2.383c.43.163.838.393 1.212.672l1.69-1.69a.75.75 0 011.06 1.06l-1.689 1.69c.28.374.51.782.672 1.212h2.383a1.125 1.125 0 010 2.25h-2.383a5.443 5.443 0 01-.672 1.212l1.69 1.69a.75.75 0 01-1.06 1.06l-1.69-1.689a5.443 5.443 0 01-1.212.672v2.383a1.125 1.125 0 01-2.25 0v-2.383a5.443 5.443 0 01-1.212-.672l-1.69 1.69a.75.75 0 01-1.06-1.06l1.689-1.69a5.443 5.443 0 01-.672-1.212H4.125a1.125 1.125 0 010-2.25h2.383c.163-.43.393-.838.672-1.212l-1.69-1.69a.75.75 0 011.06-1.06l1.69 1.689c.374-.28.782-.51 1.212-.672V1.875zM12 6a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>`, title: "Assistència Estratègica en Recerca d'Alt Impacte", description: "Facilitació de revisions sistemàtiques de literatura (identificació de temes emergents, anàlisi de citacions, resum d'articles clau), suport en la formulació d'hipòtesis innovadores, i assistència en el disseny metodològic de projectes de recerca complexos. Indispensable la validació i supervisió per part d'investigadors experts de la UdG. [2, 23-25, 27]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M6.75 6.31V15.75a.75.75 0 001.5 0V6.31h5.034a2.25 2.25 0 012.091 1.494l2.006 5.014a.75.75 0 001.14-.456L19.998 8.51a2.25 2.25 0 00-2.09-1.494H15V6.31a.75.75 0 00-1.5 0v.75H8.25V6.31a.75.75 0 00-1.5 0zM4.125 4.5A.75.75 0 003.375 3H2.25a.75.75 0 000 1.5h1.125V15.75A2.25 2.25 0 005.625 18h12.75A2.25 2.25 0 0020.625 15.75V3.75H21.75a.75.75 0 000-1.5H20.625a2.25 2.25 0 00-2.25-2.25H5.625A2.25 2.25 0 003.375 2.25V3H4.125a.75.75 0 000 1.5z" clip-rule="evenodd" /></svg>`, title: "Escriptura Acadèmica Augmentada i Comunicació Científica d'Excel·lència", description: "Suport en la pluja d'idees per a publicacions, estructuració d'arguments complexos, redacció assistida d'esborranys (no substitució), millora de la claredat argumental, cohesió textual, i adequació a l'estil de revistes d'alt impacte. La veu autoral i la contribució intel·lectual original de l'investigador de la UdG són primordials. [1, 2, 9, 16, 29, 30]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-2.173 3.259a.75.75 0 001.06 1.061l2.757-4.136A4.5 4.5 0 0110.5 18H15v.75a.75.75 0 001.5 0V18h1.5v.75a.75.75 0 001.5 0V18h1.5a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zM6 15h9V6H6v9zm7.5-5.25h-6a.75.75 0 000 1.5h6a.75.75 0 000-1.5z" clip-rule="evenodd" /></svg>`, title: "Anàlisi de Dades Avançada i Programació Científica Eficient", description: "Assistència en la generació i depuració de codi per a anàlisis estadístiques complexes (Python, R), suport en l'anàlisi exploratòria de grans volums de dades (Big Data), interpretació preliminar de resultats i assistència en la codificació sistemàtica de dades qualitatives per a projectes de recerca de la UdG. [6, 31-35, 43]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436A6.75 6.75 0 019.75 22.5a.75.75 0 01-.75-.75v-4.131A15.838 15.838 0 016.382 15H2.25a.75.75 0 01-.75-.75 6.75 6.75 0 017.815-6.666zM15 6.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" clip-rule="evenodd" /><path d="M5.26 17.242a.75.75 0 10-.897-1.203 5.243 5.243 0 00-2.05 5.022.75.75 0 00.625.627 5.243 5.243 0 005.022-2.051.75.75 0 10-1.202-.897 3.744 3.744 0 01-3.008 1.51c0-1.23.592-2.323 1.51-3.008z" /></svg>`, title: "Foment del Pensament Crític, la Creativitat i la Resolució de Problemes Complexos", description: "Ús dels LLM com a 'sparring partners' intel·lectuals per desafiar pressuposicions, explorar escenaris contrafactuals, i generar solucions innovadores a problemes de recerca, sempre mitjançant una interacció reflexiva i crítica que posi a prova les respostes de la IA. [2, 36, 87]" }
+        ];
+        const carouselTrack = document.querySelector('.capability-carousel-track');
+        const prevBtn = getEl('prev-capability-btn');
+        const nextBtn = getEl('next-capability-btn');
+        let currentCapabilityIndex = 0;
 
-    if (nextBtn) nextBtn.addEventListener('click', () => { currentCapabilityIndex = (currentCapabilityIndex + 1) % capabilitiesData.length; updateCarouselVisual(); });
-    if (prevBtn) prevBtn.addEventListener('click', () => { currentCapabilityIndex = (currentCapabilityIndex - 1 + capabilitiesData.length) % capabilitiesData.length; updateCarouselVisual(); });
-    
-    populateCarousel(); 
-    window.addEventListener('resize', updateCarouselVisual);
+        function populateCarousel() {
+            if (!carouselTrack) return;
+            carouselTrack.innerHTML = ''; 
+            capabilitiesData.forEach(cap => {
+                const slide = document.createElement('div');
+                slide.classList.add('capability-slide');
+                slide.innerHTML = `<span class="math-inline">\{cap\.icon\}<h5\></span>{cap.title}</h5><p>${cap.description}</p>`;
+                carouselTrack.appendChild(slide);
+            });
+            updateCarouselVisual();
+        }
+
+        function updateCarouselVisual() {
+            if (!carouselTrack || !carouselTrack.children.length) return;
+            if (carouselTrack.querySelector('.capability-slide')) {
+                const slideWidth = carouselTrack.querySelector('.capability-slide').offsetWidth;
+                carouselTrack.style.transform = `translateX(-${currentCapabilityIndex * slideWidth}px)`;
+            }
+        }
+
+        if (nextBtn) nextBtn.addEventListener('click', () => { currentCapabilityIndex = (currentCapabilityIndex + 1) % capabilitiesData.length; updateCarouselVisual(); });
+        if (prevBtn) prevBtn.addEventListener('click', () => { currentCapabilityIndex = (currentCapabilityIndex - 1 + capabilitiesData.length) % capabilitiesData.length; updateCarouselVisual(); });
+        
+        populateCarousel(); 
+        window.addEventListener('resize', updateCarouselVisual);
 
 
-    // --- D3.js Mind Map for LLM Concepts ---
-    const mindMapContainer = getEl('llm-mind-map-container');
-    if (mindMapContainer && typeof d3 !== 'undefined') {
-        const width = mindMapContainer.clientWidth;
-        const height = 450; 
+        // --- D3.js Mind Map for LLM Concepts ---
+        const mindMapContainer = getEl('llm-mind-map-container');
+        if (mindMapContainer && typeof d3 !== 'undefined') {
+            const width = mindMapContainer.clientWidth;
+            const height = 450; 
 
-        const mindMapData = {
-            name: "Ecosistema LLM",
-            children: [
-                { name: "Fonaments", children: [
-                    { name: "Dades d'Entrenament (Corpus massius)", size: 6000 },
-                    { name: "Arquitectura (Transformers)", children:[
-                        {name: "Atenció", size: 3000}, {name: "Codificació Posicional", size:2500}
-                    ], size: 5000 },
-                    { name: "Aprenentatge Profund", size: 4500 }
-                ]},
-                { name: "Capacitats", children: [
-                    { name: "Generació de Text", size: 5500 }, { name: "Traducció", size: 4000 },
-                    { name: "Resum", size: 4800 }, { name: "Resposta a Preguntes", size: 5200 },
-                    { name: "Generació de Codi", size: 4500}
-                ]},
-                { name: "Enginyeria de Prompts", children: [
-                    { name: "Claredat i Context", size: 4000 }, { name: "Iteració", size: 3500 },
-                    { name: "Zero/Few-Shot", size: 3800 }, {name: "Cadena de Pensament (CoT)", size: 3900}
-                ]},
-                { name: "Limitacions", children: [
-                    { name: "Al·lucinacions", size: 5000 }, { name: "Biaixos", size: 4800 },
-                    { name: "Comprensió Superficial", size: 4500 }, { name: "Finestra de Context", size: 3800 }
-                ]},
-                { name: "Consideracions Ètiques", children: [
-                    { name: "Plagi i Autoria", size: 4200 }, { name: "Privadesa de Dades", size: 3900 },
-                    { name: "Desinformació", size: 4500 }, { name: "Impacte Social", size: 4000 }
-                ]}
-            ]
+            const mindMapData = {
+                name: "Ecosistema LLM (UdG)",
+                children: [
+                    { name: "Fonaments Tècnics", children: [
+                        { name: "Corpus Massius Multilingües (incl. Català)", size: 6000 },
+                        { name: "Arquitectures Neuronals (Transformers Avançats)", children:[
+                            {name: "Mecanismes d'Atenció Sofisticats", size: 3000}, {name: "Codificació Posicional Dinàmica", size:2500}
+                        ], size: 5000 },
+                        { name: "Paradigmes d'Aprenentatge Profund (Pre-entrenament i Ajust Fi)", size: 4500 }
+                    ]},
+                    { name: "Capacitats Acadèmiques Augmentades", children: [
+                        { name: "Generació de Text Acadèmic Nuancat", size: 5500 }, { name: "Traducció Científica Especialitzada", size: 4000 },
+                        { name: "Síntesi Crítica de Literatura", size: 4800 }, { name: "Raonament Assistit per a Resolució de Problemes", size: 5200 },
+                        { name: "Generació i Depuració de Codi Científic", size: 4500}
+                    ]},
+                    { name: "Interacció Humà-IA Avançada (Prompting UdG)", children: [
+                        { name: "Contextualització Profunda i Delimitació de Domini", size: 4000 }, { name: "Iteració Dialògica Constructivista", size: 3500 },
+                        { name: "Prompting Zero/Few-Shot per a Tasques Noves", size: 3800 }, {name: "CoT i Raonament Explícit", size: 3900}, {name: "Meta-Prompting Reflexiu", size: 3700}
+                    ]},
+                    { name: "Limitacions i Desafiaments Crítics", children: [
+                        { name: "Al·lucinacions i Fiabilitat Epistèmica", size: 5000 }, { name: "Biaixos Algorítmics i Equitat", size: 4800 },
+                        { name: "Comprensió Semàntica vs. Reconeixement de Patrons", size: 4500 }, { name: "Finestra de Context i Coherència a Llarg Termini", size: 3800 }, {name: "Opacitat i Manca d'Explicabilitat (XAI)", size: 4200}
+                    ]},
+                    { name: "Marc Ètic i de Governança (UdG)", children: [
+                        { name: "Integritat Acadèmica i Autoria Original", size: 4200 }, { name: "Privadesa de Dades de Recerca i Personals", size: 3900 },
+                        { name: "Prevenció de Desinformació Científica", size: 4500 }, { name: "Impacte en la Diversitat Lingüística (Promoció del Català)", size: 4300 }, {name: "Responsabilitat en l'Ús Investigador i Docent", size: 4000}
+                    ]}
+                ]
+            };
+
+            const root = d3.hierarchy(mindMapData).sum(d => d.size || 1).sort((a, b) => b.value - a.value);
+            const packLayout = d3.pack().size([width - 4, height - 4]).padding(8); 
+            const packedRoot = packLayout(root);
+
+            const svg = d3.select(mindMapContainer).append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("viewBox", `0 0 ${width} ${height}`)
+                .style("display", "block")
+                .style("margin", "0 auto")
+                .style("background", "var(--primary-lightest)")
+                .style("cursor", "grab");
+
+            const colorScale = d3.scaleOrdinal(d3.schemeCategory10.map(c => d3.interpolateLab(c, "white")(0.15))); // Pastel colors
+
+            const nodes = svg.selectAll("g.mind-map-node")
+                .data(packedRoot.descendants())
+                .join("g")
+                  .attr("class", "mind-map-node")
+                  .attr("transform", d => `translate(<span class="math-inline">\{d\.x\},</span>{d.y})`);
+
+            nodes.append("circle")
+                .attr("r", d => d.r)
+                .attr("fill", d => d.children ? colorScale(d.depth) : d3.rgb(colorScale(d.parent.depth)).brighter(0.5))
+                .attr("stroke", d => d3.rgb(colorScale(d.depth)).darker(0.5));
+
+            nodes.filter(d => !d.children && d.r > 10) // Only add text to leaf nodes if radius is somewhat large
+                .append("text")
+                .attr("clip-path", d => `circle(${d.r * 0.9})`)
+                .selectAll("tspan")
+                .data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g).map(w => w.length > 10 && d.r < 30 ? w.substring(0,8)+"..." : w) )
+                .join("tspan")
+                    .attr("x", 0)
+                    .attr("y", (d, i, tspans) => `${i - tspans.length / 2 + 0.8}em`)
+                    .style("font-size", function(d_text) { // d_text is text for tspan
+                        const parentNodeData = d3.select(this.parentNode).datum(); // datum of the 'text' element's parent 'g'
+                        return Math.max(6, Math.min(parentNodeData.r / 2.5, parentNodeData.r / (d_text.length * 0.6))) + "px";
+                    })
+                    .text(d => d);
+            
+            nodes.append("title").text(d => `${d.ancestors().map(da => da.data.name).reverse().slice(1).join(" > ")}\n(Valor conceptual: ${d.value})`);
+        }
+
+
+        // --- Hallucination Buster Mini-Puzzle (Advanced) ---
+        const hallucinationOptionsContainer = getEl('hallucination-buster-options');
+        const hallucinationFeedbackEl = getEl('hallucination-buster-feedback');
+        const hallucinationPuzzles = [ 
+            {
+                context: "Context UdG: Proposta de Tesi Doctoral en Ciències de l'Educació",
+                options: [
+                    { text: "L'aplicació de la teoria de la càrrega cognitiva de Sweller (1988) en entorns d'aprenentatge virtuals ha demostrat consistentment una reducció de la càrrega extrínseca sense afectar la intrínseca, independentment del disseny instruccional específic.", isHallucination: true, feedback:"<strong>Al·lucinació Metodològica/Conceptual Subtil:</strong> Aquesta afirmació és massa categòrica i simplista. Si bé la teoria és influent, la seva aplicació i efectes depenen enormement del disseny instruccional, les característiques de l'aprenent i la naturalesa de la tasca. És improbable que els efectes siguin 'independents' del disseny o que la càrrega intrínseca 'mai' es vegi afectada. Una proposta de tesi hauria de matisar aquestes relacions." },
+                    { text: "La recerca qualitativa, utilitzant un enfocament fenomenològic interpretatiu (IPA), permetrà explorar en profunditat les experiències viscudes per docents de la UdG en adoptar noves tecnologies d'IA per a l'avaluació formativa.", isHallucination: false, feedback: "<strong>Afirmació Metodològicament Sòlida:</strong> L'IPA és un enfocament qualitatiu adequat per explorar experiències viscudes en profunditat. La seva aplicació al context de l'adopció de tecnologies per part de docents és pertinent i factible per a una tesi doctoral." },
+                    { text: "Un disseny quasi-experimental pretest-posttest amb grup control no equivalent serà utilitzat per avaluar l'impacte d'una intervenció pedagògica basada en LLM sobre les habilitats d'escriptura argumentativa d'estudiants de primer curs de la Facultat de Lletres de la UdG, controlant per nivell previ mitjançant ANCOVA.", isHallucination: false, feedback: "<strong>Afirmació Metodològicament Coherent:</strong> Aquest disseny és comú en recerca educativa per avaluar impactes d'intervencions quan l'aleatorització completa no és possible. L'ús d'ANCOVA per controlar variables preexistents és una pràctica estàndard adequada. No presenta errors conceptuals obvis."}
+                ]
+            }
+        ];
+        let currentHallucinationPuzzle = 0;
+
+        function loadHallucinationPuzzle(index) {
+            if (!hallucinationOptionsContainer || !hallucinationFeedbackEl || !hallucinationPuzzles[index]) return;
+            const puzzle = hallucinationPuzzles[index];
+            hallucinationOptionsContainer.innerHTML = `<p class="text-sm text-gray-500 mb-3"><em>${puzzle.context || ""}</em></p>`; // Add context if available
+            puzzle.options.forEach(opt => {
+                const optEl = document.createElement('div');
+                optEl.classList.add('hallucination-buster-option');
+                optEl.innerHTML = opt.text; 
+                optEl.addEventListener('click', () => {
+                    hallucinationFeedbackEl.innerHTML = `<strong>Anàlisi Crítica (Perspectiva UdG):</strong><br>${opt.feedback}`;
+                    hallucinationFeedbackEl.className = 'hallucination-buster-feedback'; 
+                    hallucinationFeedbackEl.classList.add(opt.isHallucination ? 'feedback-bad' : 'feedback-good');
+                    hallucinationFeedbackEl.style.display = 'block';
+                    requestAnimationFrame(() => { hallucinationFeedbackEl.style.opacity = '1'; });
+                });
+                hallucinationOptionsContainer.appendChild(optEl);
+            });
+            hallucinationFeedbackEl.style.display = 'none';
+            hallucinationFeedbackEl.style.opacity = '0';
+        }
+        if(hallucinationPuzzles.length > 0 && hallucinationOptionsContainer) {
+            loadHallucinationPuzzle(currentHallucinationPuzzle);
+        }
+
+        // --- Enhanced Interactive Prompt Engineering Guide ("Sandbox") ---
+        const promptTaskSelectSandbox = getEl('prompt-task-select-sandbox');
+        const promptExampleStructureContainer = getEl('prompt-example-structure');
+        const promptExampleStructureEl = promptExampleStructureContainer ? promptExampleStructureContainer.querySelector('p') : null;
+        const promptDetailSlider = getEl('prompt-detail-slider');
+        const promptDetailSliderValue = getEl('prompt-detail-slider-value');
+        const promptLevelDisplay = getEl('prompt-level-display');
+        const userPromptInputEl = getEl('user-prompt-input');
+        const showPromptCritiqueBtn = getEl('show-prompt-critique-btn');
+        const promptCritiqueAreaEl = getEl('prompt-critique-area');
+
+        const promptSandboxData = { 
+            summarize: {
+                levels: [
+                    "<strong>Nivell 1 (Bàsic - Ús Informal):</strong>\n<code>Resumeix aquest text per a mi:\n\n[ENGANXA TEXT AQUÍ]\n\nFes-ho en unes 100 paraules.</code>",
+                    "<strong>Nivell 2 (Intermedi - Ús Acadèmic General UdG):</strong>\n<code>Actua com un assistent de recerca per a un estudiant de màster de la Universitat de Girona. Llegeix el següent abstract de l'article '[TÍTOL ARTICLE ESPECÍFIC]' publicat a la revista '[NOM REVISTA]' l'any [ANY] sobre [TEMA MOLT ESPECÍFIC]:\n\n[ENGANXA ABSTRACT AQUÍ]\n\nProporciona una síntesi (màxim 200 paraules) que destaqui:\n1. La pregunta/objectiu principal de recerca.\n2. La metodologia clau emprada.\n3. Els resultats més rellevants.\n4. La principal conclusió o contribució.\n\nL'audiència d'aquesta síntesi és un professor de la UdG del departament de [DEPARTAMENT UdG] que no és expert en el subcamp específic de l'article.</code>",
+                    "<strong>Nivell 3 (Avançat - Preparació per a Tesi Doctoral UdG):</strong>\n<code>Com a doctorand de la Universitat de Girona en el programa de [PROGRAMA DE DOCTORAT UdG] especialitzat en [CAMP D'ESTUDI ESPECÍFIC], estic realitzant una revisió sistemàtica de la literatura. Per a l'article adjunt (o els primers 1500 paraules de) titulat '[TÍTOL COMPLET DE L'ARTICLE]', de [AUTORS PRINCIPALS] ([ANY]), publicat a '[REVISTA CIENTÍFICA AMB JCR/SJR]':\n\nRealitza una anàlisi crítica i síntesi (aproximadament 350-450 paraules) que abordi exhaustivament:\n1.  La justificació i rellevància del problema de recerca plantejat en el context de debats actuals en [EL TEU CAMP].\n2.  El marc teòric que sustenta l'estudi i la seva adequació.\n3.  Una descripció detallada de la metodologia emprada, avaluant-ne críticament els punts forts (validesa, fiabilitat, innovació) i les limitacions potencials (biaixos, generalitzabilitat, etc.).\n4.  Les troballes més significatives i la seva interpretació en relació amb la literatura existent (confirmació, refutació, noves aportacions).\n5.  Les implicacions teòriques i pràctiques de l'estudi, i almenys dues preguntes de recerca concretes que sorgeixin d'aquest treball per a futures investigacions en la línia de la meva tesi doctoral.\n\nAdopta un to acadèmic rigorós i utilitza un llenguatge precís, propi d'una publicació científica en el meu camp.</code>"
+                ],
+                critique: (userInput, level) => `<strong>Anàlisi Conceptual del Prompt (Perspectiva Seminari UdG - Nivell <span class="math-inline">\{level\}\)\:</strong\><br\><em\>Prompt de l'Usuari\: "</span>{userInput}"</em><br><br><strong>Aspectes Positius Potencials:</strong><br>- ${userInput.toLowerCase().includes("resumeix") || userInput.toLowerCase().includes("síntesi") || userInput.toLowerCase().includes("anàlisi crítica") ? "✔️ Objectiu principal (resum/síntesi/anàlisi) clarament indicat." : "❓ L'objectiu principal podria ser més explícit."}<br>- ${userInput.match(/\[.*?TEXT.*?\].*?|article.*?adjunt|abstract/i) ? "✔️ Especificació de la font del text a processar." : "❓ Caldria identificar clarament el text font."}<br>- ${userInput.match(/UdG|Universitat de Girona|màster|tesi doctoral|doctorand/i) ? "✔️ Contextualització dins de l'àmbit UdG i nivell acadèmic." : (level > 1 ? "⚠️ Per a resultats més ajustats, contextualitzar amb 'UdG', nivell d'estudis, o departament pot ser beneficiós." : "")}<br>- ${userInput.match(/paraules|concís|punts clau|extensió desitjada/i) ? "✔️ S'han inclòs possibles restriccions de format/longitud." : "❓ Considerar especificar longitud o format desitjat."}<br>- ${userInput.match(/metodologia|resultats|conclusió|contribució|implicacions|marc teòric|punts forts\/febles|limitacions/i) ? "✔️ Demanda d'enfocament en elements acadèmics clau." : (level > 1 ? "❓ Per a un ús acadèmic avançat, és crucial especificar els elements d'anàlisi desitjats (metodologia, resultats, etc.)." : "")}<br><br><strong>Àrees de Millora Suggerides (segons nivell):</strong><br>- <strong>Claredat del Rol de l'IA:</strong> ${userInput.match(/actua com un|com a expert en|com a doctorand/i) ? "✔️ Rol de l'IA ben definit." : "Podria ser útil assignar un rol més específic a l'IA (p. ex., 'assistent de recerca', 'revisor crític')."}<br>- <strong>Especificitat de l'Audiència:</strong> ${userInput.match(/l'audiència d'aquesta síntesi és|per a un professor/i) ? "✔️ Audiència de la resposta definida." : "Definir l'audiència (p. ex., 'un comitè de tesi', 'col·legues no experts') ajuda a ajustar el to i la profunditat."}<br>- <strong>Instruccions per a Anàlisi Crítica (Nivell 3):</strong> ${level === 3 && userInput.match(/avalua.*críticament|punts forts\/febles|limitacions/i) ? "✔️ Sol·licitud explícita d'anàlisi crítica." : (level === 3 ? "Per a nivell doctoral, reforçar la petició d'avaluació crítica explícita és fonamental, no només descripció." : "")}<br>- <strong>Integració amb Coneixement Previ/Context Específic:</strong> ${userInput.match(/debat actual|literatura existent|línia de la meva tesi/i) ? "✔️ Es demana connexió amb context més ampli." : "Per a un ús avançat, demanar a l'LLM que relacioni la informació amb debats concrets, la teva pròpia recerca o un marc teòric específic pot enriquir la resposta."}<br><br><strong>Reflexió Pedagògica (UdG):</strong> <em>Un prompt ben formulat és el primer pas cap a una interacció productiva amb l'IA. Com a investigadors de la UdG, hem de desenvolupar la capacitat de 'dialogar' amb aquestes eines de manera que fomentin el nostre propi pensament crític i no el substitueixin. Pregunta't: Què vull aprendre d'aquesta interacció? Com puc guiar l'IA perquè m'ajudi a assolir un nivell més profund d'anàlisi?</em>`
+            },
+            brainstorm_rq: { // (Completar amb detall similar a 'summarize')
+                levels: [
+                    "<strong>Nivell 1 (Bàsic):</strong>\n<code>Genera idees de recerca sobre [TEMA GENERAL] per a un treball de l'assignatura [NOM ASSIGNATURA UdG].</code>",
+                    "<strong>Nivell 2 (Intermedi - TFG/TFM UdG):</strong>\n<code>Sóc estudiant de [GRAU/MÀSTER UdG] en [DISCIPLINA]. El meu interès se centra en [TEMA ESPECÍFIC DINS LA DISCIPLINA]. Proposa 3-4 preguntes de recerca originals i factibles per a un Treball de Fi de Grau/Màster que combinin [CONCEPTE CLAU 1] amb [CONCEPTE CLAU 2] en el context de [CONTEXT GEOGRÀFIC/SOCIAL RELLEVANT PER A LA UdG, ex: la província de Girona, el sector turístic català]. Les preguntes haurien de ser abordables amb [TIPUS DE METODOLOGIA PREFERIDA, ex: estudis de cas, anàlisi de dades secundàries].</code>",
+                    "<strong>Nivell 3 (Avançat - Tesi Doctoral UdG):</strong>\n<code>Estic definint el meu projecte de tesi doctoral al departament de [DEPARTAMENT UdG], dins del programa de doctorat en [PROGRAMA DOCTORAT UdG]. La meva recerca preliminar ha identificat una llacuna en [ÀREA MOLT ESPECÍFICA DEL CONEIXEMENT, CITANT 1-2 REFERÈNCIES CLAU SI ÉS POSSIBLE]. Vull explorar [FENOMEN O PROBLEMA]. Actuant com un director de tesi experimentat en [CAMP D'EXPERTESA], formula 3 preguntes de recerca doctorals que siguin: (a) altament específiques i delimitades, (b) teòricament fonamentades, (c) metodològicament abordables en un termini de 3-4 anys, i (d) amb potencial de generar una contribució original i publicable en revistes Q1/Q2 del camp. Per a cada pregunta, esbossa breument el disseny metodològic principal i justifica la seva innovació i rellevància per a l'avanç del coneixement en [EL TEU CAMP ESPECÍFIC].</code>"
+                ],
+                critique: (userInput, level) => `<strong>Anàlisi Conceptual del Prompt (Perspectiva Comitè Doctorat UdG - Nivell <span class="math-inline">\{level\}\)\:</strong\><br\><em\>Prompt de l'Usuari\: "</span>{userInput}"</em><br><br><strong>Elements Positius:</strong><br>- ${userInput.match(/UdG|TFG|TFM|tesi doctoral/i) ? "✔️ Clar context institucional i nivell acadèmic." : "❓ Convé especificar el context UdG/nivell."}<br>- ${userInput.split(" ").length > 10 ? "✔️ El tema de recerca sembla tenir un cert grau de definició." : "❓ Un tema més delimitat generalment produeix preguntes més útils."}<br>- ${userInput.match(/\d+.*preguntes/i) ? "✔️ Nombre de preguntes sol·licitat." : ""}<br>- ${userInput.match(/originals|factibles|innovadores|contribució original|publicable/i) ? "✔️ Criteris de qualitat per a les preguntes de recerca ben especificats." : (level > 1 ? "❓ És recomanable afegir criteris de qualitat (originalitat, factibilitat, rellevància)." : "")}<br><br><strong>Suggeriments de Refinament (Enfocament UdG):</strong><br>- <strong>Especificitat del Buit de Coneixement (Nivell 3):</strong> ${level === 3 && userInput.match(/llacuna|buit en.*literatura/i) ? "✔️ Bona pràctica identificar un buit." : (level === 3 ? "Per a doctorat, articular clarament el buit de coneixement que es pretén omplir és crucial." : "")}<br>- <strong>Fonamentació Teòrica (Nivell 3):</strong> ${level === 3 && userInput.match(/teòricament fonamentades|marc teòric/i) ? "✔️ Sol·licitud de fonamentació teòrica." : (level === 3 ? "Explicitar el marc o les teories de referència pot ajudar a generar preguntes més coherents." : "")}<br>- <strong>Consideracions Metodològiques:</strong> ${userInput.match(/metodologia|metodològicament abordables|estudis de cas/i) ? "✔️ Es consideren aspectes metodològics." : "Incloure preferències o restriccions metodològiques pot ser útil."}<br>- <strong>Alineació amb Línies de Recerca UdG (Opcional Avançat):</strong> Si és pertinent, mencionar l'alineació amb grups o línies de recerca de la UdG podria, hipotèticament, guiar l'IA cap a temes de major interès institucional.<br><br><strong>Reflexió Pedagògica (UdG):</strong> <em>La formulació de preguntes de recerca és una de les tasques intel·lectuals més importants. L'IA pot ser una eina per expandir l'horitzó de possibilitats, però la selecció final, la justificació i el disseny per respondre-les recau en la competència investigadora de l'estudiant de la UdG. Com pot l'IA ajudar-te a pensar 'fora de la caixa' sense perdre el rigor?</em>`
+            },
+            explain_concept: { // (Completar amb detall similar)
+                levels: [
+                    "<strong>Nivell 1 (Bàsic):</strong>\n<code>Explica [CONCEPTE INTRODUCTORI D'UNA ASSIGNATURA DE PRIMER CURS UdG, ex: 'el cicle de l'aigua', 'la cèl·lula eucariota'] de manera senzilla per a algú que no n'ha sentit a parlar mai. Utilitza una analogia.</code>",
+                    "<strong>Nivell 2 (Intermedi - Grau UdG):</strong>\n<code>Sóc estudiant de [GRAU UdG, ex: Grau en Història de l'Art]. Necessito entendre millor el concepte de '[CONCEPTE CLAU DE LA DISCIPLINA, ex: 'la perspectiva cònica en el Renaixement', 'el mètode iconogràfic de Panofsky']'. Defineix el concepte, explica el seu origen i importància, i proporciona un exemple d'aplicació analitzant breument [OBRA D'ART O CAS ESPECÍFIC RELLEVANT]. L'objectiu és preparar-me per a un examen de l'assignatura [NOM ASSIGNATURA UdG].</code>",
+                    "<strong>Nivell 3 (Avançat - Postgrau/Doctorat UdG):</strong>\n<code>Com a investigador en [CAMP D'ESTUDI UdG, ex: Nanotecnologia Aplicada a la Biomedicina], estic aprofundint en el concepte de '[CONCEPTE TEÒRIC AVANÇAT I MULTIFACÈTIC, ex: 'l'autoassemblatge molecular dirigit per ADN per a la fabricació de nanodispositius terapèutics']'. Elabora una explicació detallada (500-600 paraules) que inclogui:\n1.  Una definició precisa i matisada del concepte, diferenciant-lo de termes similars.\n2.  Els principis fonamentals (químics, físics, biològics) que el sustenten.\n3.  Una revisió crítica de les seves aplicacions actuals més prometedores en el meu camp, citant (conceptualment) 2-3 articles recents clau (sense necessitat d'inventar DOI, només l'àrea de la troballa).\n4.  Els principals reptes teòrics i experimentals que encara dificulten la seva plena explotació.\n5.  Una prospectiva de futures línies d'investigació derivades d'aquest concepte que podrien ser d'interès per al meu grup de recerca a la UdG.\nEl nivell de detall ha de ser adequat per a una discussió en un seminari de doctorat.</code>"
+                ],
+                critique: (userInput, level) => `<strong>Anàlisi Conceptual del Prompt (Perspectiva Docent UdG - Nivell <span class="math-inline">\{level\}\)\:</strong\><br\><em\>Prompt de l'Usuari\: "</span>{userInput}"</em><br><br><strong>Aspectes Positius Observats:</strong><br>- ${userInput.match(/explica|defineix|desgrana el concepte de/i) ? "✔️ Objectiu d'explicació conceptual clar." : "❓ Seria bo explicitar la intenció d'explicar un concepte."}<br>- ${userInput.match(/\[CONCEPTE.*?\]/i) ? "✔️ Identificació del concepte a tractar." : "❓ És crucial especificar clarament el concepte."}<br>- ${userInput.match(/UdG|Grau en|Doctorat|Postgrau/i) ? "✔️ Contextualització del nivell acadèmic/institucional." : ""}<br>- ${userInput.match(/analogia|exemple|aplicació|revisió crítica|reptes|prospectiva/i) ? "✔️ Sol·licitud d'elements que enriqueixen l'explicació (exemples, anàlisi crítica, etc.)." : (level > 1 ? "❓ Considerar demanar exemples concrets, aplicacions, o una anàlisi més profunda dels reptes/implicacions." : "")}<br><br><strong>Recomanacions per a una Interacció Més Fructífera (Estil UdG):</strong><br>- <strong>Delimitació de la Profunditat i l'Abast:</strong> ${userInput.match(/manera senzilla|entendre millor|explicació detallada \(\d+-\d+ paraules\)/i) ? "✔️ Indicació del nivell de profunditat desitjat." : "Especificar la profunditat desitjada (introductori, intermedi, expert) i l'extensió aproximada pot ajudar a l'IA."}<br>- <strong>Petició de Connexions Interdisciplinàries (Avançat):</strong> ${level === 3 && userInput.match(/principis fonamentals \(químics, físics, biològics\)|connexions amb altres camps/i) ? "✔️ Es busquen fonaments multidisciplinaris." : (level === 3 ? "Per a conceptes complexos, demanar que s'explorin els seus fonaments en altres disciplines o les seves connexions interdisciplinàries pot ser molt enriquidor." : "")}<br>- <strong>Sol·licitud de Citació Conceptual (Avançat):</strong> ${level === 3 && userInput.match(/citant.*artícles recents clau/i) ? "✔️ Es demana referència a literatura (conceptualment)." : (level === 3 ? "Demanar a l'IA que 'imagini' o 'suggereixi' tipus de referències clau pot estimular la reflexió, tot i sabent que les cites reals han de ser verificades." : "")}<br>- <strong>Enfocament en l'Aprenentatge Actiu:</strong> En lloc de només demanar una explicació, es podria demanar a l'IA que generi preguntes sobre el concepte per autoavaluar la comprensió, o que proposi un petit exercici pràctic.<br><br><strong>Reflexió Pedagògica (UdG):</strong> <em>L'objectiu d'utilitzar un LLM per entendre conceptes no és obtenir una resposta 'correcta' i memoritzar-la, sinó utilitzar l'explicació de l'IA com un punt de partida per a la pròpia indagació, qüestionament i construcció de significat. Com pots utilitzar l'IA per dialogar amb les idees i aprofundir en la teva comprensió personalitzada?</em>`
+            },
+            coding_help: { // (Completar amb detall similar)
+                 levels: [
+                    "<strong>Nivell 1 (Bàsic - Primers Passos a la UdG):</strong>\n<code>Necessito un script senzill en [LLENGUATGE, ex: Python] per a una pràctica de l'assignatura [NOM ASSIGNATURA INTRODUCTÒRIA UdG, ex: 'Introducció a la Programació'] que faci [TASCA DE PROGRAMACIÓ MOLT BÀSICA, ex: 'llegeixi dos números i mostri la seva suma']. No tinc gaire experiència.</code>",
+                    "<strong>Nivell 2 (Intermedi - Projectes de Grau UdG):</strong>\n<code>Estic treballant en un projecte per a l'assignatura [NOM ASSIGNATURA AVANÇADA DE GRAU UdG, ex: 'Processament d'Imatges Mèdiques'] utilitzant [LLENGUATGE I BIBLIOTECA PRINCIPAL, ex: 'Python amb OpenCV i Scikit-image']. Tinc problemes per implementar [ALGORITME O FUNCIÓ ESPECÍFICA, ex: 'un filtre de Canny adaptatiu per a la detecció de contorns en imatges de ressonància magnètica']. Aquest és el meu codi fins ara:\n\n\`\`\`[llenguatge]\n[ENGANXA EL TEU CODI AQUÍ - MÀXIM 20-30 LÍNIES RELLEVANTS]\n\`\`\`\n\nL'error que obtinc és [SI N'HI HA, ENGANXA'L] o el resultat no és l'esperat perquè [EXPLICA EL PROBLEMA]. Em pots ajudar a identificar el problema i suggerir correccions o un enfocament alternatiu més robust, explicant el raonament?</code>",
+                    "<strong>Nivell 3 (Avançat - Recerca Doctoral UdG):</strong>\n<code>Com a doctorand del grup de recerca [NOM GRUP RECERCA UdG, ex: 'Visió per Computador i Robòtica (ViCOROB)'] de la UdG, estic desenvolupant un nou algorisme en [LLENGUATGE/ENTORN, ex: 'Python amb PyTorch/TensorFlow' o 'C++ per a alt rendiment'] per a [TASCA DE RECERCA COMPLEXA I ESPECÍFICA, ex: 'la segmentació semàntica en temps real de núvols de punts 3D provinents de LiDAR per a vehicles autònoms']. El meu codi actual per al mòdul de [PART ESPECÍFICA DE L'ALGORITME] és el següent:\n\n\`\`\`[llenguatge]\n[ENGANXA FRAGMENT DE CODI CRÍTIC I COMPLEX]\n\`\`\`\n\nAquest mòdul presenta un coll d'ampolla en el rendiment (triga X ms per frame) i sospito que [POSSIBLE CAUSA DEL PROBLEMA DE RENDIMENT].\n\nActuant com un expert en optimització de codi per a [DOMINI ESPECÍFIC D'IA/COMPUTACIÓ], analitza aquest fragment i proposa:\n1.  Almenys dues estratègies d'optimització detallades (ex: paral·lelització de bucles, ús d'estructures de dades més eficients, optimitzacions a nivell de compilador, ús d'instruccions SIMD, perfilat de codi per identificar punts calents), amb exemples conceptuals de com s'aplicarien al meu codi.\n2.  Una avaluació dels possibles trade-offs de cada estratègia (ex: increment de complexitat del codi, consum de memòria vs. velocitat).\n3.  Suggerències d'eines o biblioteques específiques (rellevants per a l'entorn UdG si escau) que podrien facilitar aquestes optimitzacions.</code>"
+                ],
+                critique: (userInput, level) => `<strong>Anàlisi Conceptual del Prompt (Perspectiva Enginyer de Software UdG - Nivell <span class="math-inline">\{level\}\)\:</strong\><br\><em\>Prompt de l'Usuari\: "</span>{userInput}"</em><br><br><strong>Punts Forts del Prompt:</strong><br>- ${userInput.match(/Python| R |Java|JavaScript|C\+\+|PyTorch|TensorFlow|OpenCV/i) ? "✔️ Especificació del llenguatge/biblioteques." : "❓ Convé especificar el llenguatge i biblioteques principals."}<br>- ${userInput.includes("```") || userInput.match(/\[ENGANXA EL TEU CODI AQUÍ\]/i) ? "✔️ Inclusió de codi (o indicació per fer-ho)." : (level > 1 ? "❓ Per a depuració o optimització, incloure el codi rellevant és essencial." : "")}<br>- ${userInput.match(/error|problema|no funciona|coll d'ampolla|optimitzar/i) ? "✔️ Descripció del problema o objectiu clar." : "❓ Definir clarament el problema o l'objectiu (depurar, optimitzar, implementar) és clau."}<br>- ${userInput.match(/UdG|assignatura|grau|doctorand|grup de recerca/i) ? "✔️ Context acadèmic/institucional esmentat." : ""}<br><br><strong>Consells per a Prompts de Programació Més Eficaços (Estil UdG):</strong><br>- <strong>Fragment de Codi Mínim i Reproduïble (MRE):</strong> ${userInput.includes("MÀXIM 20-30 LÍNIES RELLEVANTS") ? "✔️ Esment de la brevetat del codi." : "Per a depuració, proporciona un exemple mínim i reproduïble (MRE) que demostri el problema. Això facilita molt l'ajuda."}<br>- <strong>Resultat Esperat vs. Resultat Obtingut:</strong> ${userInput.includes("el resultat no és l'esperat perquè") ? "✔️ Es descriu la discrepància." : "Explica clarament quin era el resultat esperat i quin has obtingut. Això ajuda a entendre el problema."}<br>- <strong>Versions de Software (Avançat):</strong> ${level === 3 ? "Per a problemes complexos d'optimització o compatibilitat, especificar versions de llenguatges, biblioteques i fins i tot del sistema operatiu pot ser rellevant." : ""}<br>- <strong>Limitacions i Requisits Específics (Avançat):</strong> ${userInput.match(/temps real|consum de memòria|precisió numèrica/i) ? "✔️ Esment de restriccions." : (level === 3 ? "Si hi ha restriccions de rendiment, memòria, precisió, etc., especifica-les." : "")}<br><br><strong>Reflexió Pedagògica (UdG):</strong> <em>L'objectiu no és que l'IA programi per tu, sinó que t'ajudi a entendre errors, aprendre noves tècniques o explorar solucions alternatives. Quan l'IA et dona una solució, pregunta-li 'per què' funciona així. Intenta implementar-la i modificar-la tu mateix. A la UdG, valorem la capacitat de resoldre problemes de manera autònoma i comprendre el codi que s'escriu.</em>`
+            },
+            grant_proposal: { // (Completar amb detall similar)
+                 levels: [
+                    "<strong>Nivell 1 (Bàsic - Idea Inicial):</strong>\n<code>Tinc una idea per a un projecte de recerca sobre [TEMA GENERAL]. Ajuda'm a redactar un paràgraf per a la secció d'objectius d'una petita beca interna de la UdG per a joves investigadors.</code>",
+                    "<strong>Nivell 2 (Intermedi - Proposta de Màster/Doctorat UdG):</strong>\n<code>Estic preparant la meva proposta per a una beca [TIPUS DE BECA, ex: FI, FPU, Marie Skłodowska-Curie Postdoctoral Fellowship adaptada a context UdG]. El meu projecte, titulat '[TÍTOL PROVISIONAL DEL PROJECTE]', s'emmarca en [LÍNIA DE RECERCA DEL GRUP UdG].\n\nNecessito ajuda per redactar la secció de 'Metodologia' (aprox. 500 paraules). L'enfocament principal serà [DESCRIPCIÓ BREU DE LA METODOLOGIA PRINCIPAL, ex: 'una sèrie d'estudis de cas comparats en diferents municipis de Catalunya'].\n\nGenera un esborrany que inclogui:\n1.  Disseny general de la recerca.\n2.  Selecció de la mostra/casos (amb justificació).\n3.  Tècniques de recollida de dades.\n4.  Pla d'anàlisi de dades.\n5.  Consideracions ètiques rellevants (aprovació Comitè Ètica UdG).\n\nAdopta un llenguatge formal i convincent, propi d'una proposta competitiva.</code>",
+                    "<strong>Nivell 3 (Avançat - Projecte Europeu UdG, ex: Horizon Europe):</strong>\n<code>Com a Investigador Principal (IP) d'un grup de recerca consolidat de la UdG ([NOM GRUP SGR o similar]), estem preparant una proposta per a la convocatòria [NOM CONVOCATÒRIA EUROPEA ESPECÍFICA, ex: 'Horizon Europe - Cluster X - Topic Y'] amb el títol provisional '[TÍTOL AMBICIÓS DEL PROJECTE]'. El projecte busca [OBJECTIU GENERAL MOLT INNOVADOR I AMB IMPACTE].\n\nNecessito un esborrany robust i persuasiu per a la secció 'Impacte Esperat' (Expected Impact) de la proposta (aprox. 800-1000 paraules). Aquesta secció ha d'articular de manera convincent:\n1.  L'impacte científic/tecnològic del projecte (avenços en el coneixement, noves tecnologies/metodologies, contribució a l'estat de l'art).\n2.  L'impacte social i econòmic (beneficis per a la societat, el teixit productiu, les polítiques públiques, alineació amb els ODS i les prioritats de la UE/Estratègia RIS3CAT de Catalunya).\n3.  Un pla de comunicació, disseminació i explotació dels resultats, dirigit a múltiples stakeholders (comunitat científica, indústria, responsables polítics, ciutadania), incloent mètriques d'impacte potencial.\n4.  Mesures per maximitzar l'impacte (Open Science, implicació d'usuaris finals, transferència de coneixement a la UdG i més enllà).\n\nL'estil ha de ser el d'una proposta guanyadora, amb visió estratègica i alineada amb els criteris d'avaluació de la Comissió Europea. Utilitza un llenguatge potent i orientat a resultats.</code>"
+                ],
+                critique: (userInput, level) => `<strong>Anàlisi Conceptual del Prompt (Perspectiva Oficina de Projectes UdG - Nivell ${level}):</strong><br><em>Prompt de l'Usuari: "${userInput}"</em><br><br><strong>Elements Clau Identificats:</strong><br>- ${userInput.match(/beca|proposta|projecte europeu|Horizon Europe|FI|FPU|Marie Curie/i) ? "✔️ Tipus de proposta/convocatòria esmentada." : "❓ Especificar el tipus de convocatòria és crucial (ERC, MSCA, projecte nacional, etc.)."}<br>- ${userInput.match(/UdG|Universitat de Girona/i) ? "✔️ Context institucional UdG present." : ""}<br>- ${userInput.match(/objectius|metodologia|impacte esperat/i) ? "✔️ Secció específica de la proposta identificada." : "❓ És important delimitar clarament quina secció de la proposta es vol treballar."}<br>- ${userInput.match(/paraules|extensió/i) ? "✔️ Es considera la longitud de la secció." : ""}<br><br><strong>Recomanacions per a Prompts de Redacció de Propostes d'Alt Nivell (UdG):</strong><br>- <strong>Contextualització Estratègica:</strong> ${userInput.match(/RIS3CAT|ODS|prioritats de la UE|estratègia del grup de recerca UdG/i) ? "✔️ S'intenta alinear amb estratègies més àmplies." : "Per a propostes competitives, és vital demanar a l'IA que alineï el text amb les prioritats estratègiques de la convocatòria, de la UE, nacionals (RIS3CAT), i de la pròpia UdG."}<br>- <strong>Enfocament en Criteris d'Avaluació:</strong> ${userInput.includes("criteris d'avaluació") ? "✔️ Es consideren els criteris d'avaluació." : "Suggereix a l'IA que tingui presents els criteris d'avaluació de la convocatòria específica (Excel·lència, Impacte, Implementació) en generar el text."}<br>- <strong>Llenguatge Persuasiu i Orientat a l'Impacte:</strong> ${userInput.match(/convincent|persuasiu|impacte|proposta guanyadora|orientat a resultats/i) ? "✔️ Es demana un to i enfocament adequats." : "Sol·licita explícitament un llenguatge que sigui persuasiu, clar, concís i que ressalti la innovació i l'impacte potencial."}<br>- <strong>Inclusió d'Elements Específics de la Convocatòria (Avançat):</strong> ${level === 3 ? "Per a propostes europees, pots proporcionar a l'IA (conceptualment) fragments del 'work programme' o del 'topic description' per asegurar una alineació perfecta." : ""}<br>- <strong>Estructura Detallada de la Secció:</strong> ${userInput.match(/\d+\.\s+/g) && userInput.split(/\d+\.\s+/g).length > 2 ? "✔️ Es proporciona una estructura desitjada per a la secció." : "Proporcionar una estructura numerada dels punts a cobrir dins la secció ajuda l'IA a organitzar la informació de manera lògica."}<br><br><strong>Reflexió Pedagògica (UdG):</strong> <em>La redacció de propostes de recerca és un gènere complex que combina rigor científic amb habilitats de comunicació persuasiva. L'IA pot ajudar a organitzar idees, suggerir redactats o identificar punts clau, però la visió estratègica, la innovació conceptual i la capacitat de convèncer els avaluadors recauen en l'equip investigador de la UdG. Utilitza l'IA per polir i enfortir la teva narrativa, no per crear-la des de zero.</em>`
+            }
         };
 
-        const root = d3.hierarchy(mindMapData).sum(d => d.size || 1).sort((a, b) => b.value - a.value);
-        const pack = d3.pack().size([width - 4, height - 4]).padding(5); // Increased padding slightly
-        const packedRoot = pack(root);
-
-        const svg = d3.select(mindMapContainer).append("svg")
-            .attr("width", width)
-            .attr("height", height)
-            .attr("viewBox", `0 0 ${width} ${height}`)
-            .style("display", "block")
-            .style("margin", "0 auto")
-            .style("background", "var(--primary-lightest)")
-            .style("cursor", "grab");
-
-        const node = svg.selectAll("g")
-            .data(packedRoot.descendants().slice(1)) // Process all descendants except the root itself for links if needed
-            .join("g")
-              .attr("transform", d => `translate(${d.x + 1},${d.y + 1})`)
-              .attr("class", "mind-map-node");
-
-        const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
-
-        node.append("circle")
-            .attr("r", d => d.r)
-            .attr("fill", d => colorScale(d.depth === 1 ? d.data.name : (d.parent ? d.parent.data.name : d.data.name))) // Color top-level categories distinctly
-            .attr("fill-opacity", 0.7)
-            .attr("stroke", d => d3.rgb(colorScale(d.depth === 1 ? d.data.name : (d.parent ? d.parent.data.name : d.data.name))).darker());
-
-
-        node.filter(d => d.children === undefined) // Only add text to leaf nodes for clarity in packed circles
-            .append("text")
-            .attr("clip-path", d => `circle(${d.r * 0.9})`) // Clip text to circle
-            .selectAll("tspan")
-            .data(d => {
-                const words = d.data.name.split(/(?=[A-Z][a-z])|\s+/g);
-                // Simple heuristic to fit text: if radius is small, take fewer words or abbreviate
-                if (d.r < 20 && words.length > 2) return [words[0] + (words[1] ? "..." : "")];
-                if (d.r < 30 && words.length > 3) return words.slice(0,2).concat("...");
-                return words;
-            }) 
-            .join("tspan")
-                .attr("x", 0)
-                .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.7}em`) // Adjusted for better centering
-                .style("font-size", d_node => { // d_node is the datum for the parent 'node'
-                    const textForSizing = d3.select(this).text(); // get the current tspan text
-                    return Math.max(6, Math.min(d_node.r / 3, d_node.r / (textForSizing.length * 0.5))) + "px";
-                })
-                .text(d => d);
-        
-        node.append("title").text(d => `${d.ancestors().map(d_anc => d_anc.data.name).reverse().slice(1).join(" > ")}\nValor (conceptual): ${d.value}`);
-    }
-
-
-    // --- Hallucination Buster Mini-Puzzle (Advanced) ---
-    const hallucinationOptionsContainer = getEl('hallucination-buster-options');
-    const hallucinationFeedbackEl = getEl('hallucination-buster-feedback');
-    const hallucinationPuzzles = [ // Ensure this is defined
-        {
-            options: [
-                { text: "La potenciació a llarg termini (LTP) al hipocamp depèn exclusivament de l'activació dels receptors NMDA.", isHallucination: true, feedback:"Aquesta és una simplificació excessiva i, per tant, una 'al·lucinació' subtil. Tot i que els receptors NMDA són crucials, altres factors com els receptors AMPA, els canals de calci dependents de voltatge i diversos processos moleculars intracel·lulars també són essencials per a la inducció i manteniment de la LTP." },
-                { text: "La connectivitat funcional, mesurada amb fMRI en estat de repòs, reflecteix correlacions temporals en l'activitat BOLD entre diferents regions cerebrals.", isHallucination: false, feedback: "Correcte. Aquesta és una descripció precisa del concepte de connectivitat funcional en neuroimatge." },
-                { text: "Els models computacionals de xarxes neuronals profundes han demostrat ser capaços d'aprendre representacions jeràrquiques similars a les observades en el còrtex visual.", isHallucination: false, feedback: "Correcte. Aquesta és una àrea activa i fructífera de recerca en neurociència computacional i IA."}
-            ]
-        }
-    ];
-    let currentHallucinationPuzzle = 0;
-
-    function loadHallucinationPuzzle(index) {
-        if (!hallucinationOptionsContainer || !hallucinationFeedbackEl || !hallucinationPuzzles[index]) return;
-        const puzzle = hallucinationPuzzles[index];
-        hallucinationOptionsContainer.innerHTML = '';
-        puzzle.options.forEach(opt => {
-            const optEl = document.createElement('div');
-            optEl.classList.add('hallucination-buster-option');
-            optEl.innerHTML = opt.text; 
-            optEl.addEventListener('click', () => {
-                hallucinationFeedbackEl.innerHTML = `<strong>Anàlisi:</strong> ${opt.feedback}`;
-                hallucinationFeedbackEl.className = 'hallucination-buster-feedback'; 
-                hallucinationFeedbackEl.classList.add(opt.isHallucination ? 'feedback-bad' : 'feedback-good');
-                hallucinationFeedbackEl.style.display = 'block';
-                requestAnimationFrame(() => { hallucinationFeedbackEl.style.opacity = '1'; });
-            });
-            hallucinationOptionsContainer.appendChild(optEl);
-        });
-        hallucinationFeedbackEl.style.display = 'none';
-        hallucinationFeedbackEl.style.opacity = '0';
-    }
-    if(hallucinationPuzzles.length > 0 && hallucinationOptionsContainer) {
-        loadHallucinationPuzzle(currentHallucinationPuzzle);
-    }
-
-    // --- Enhanced Interactive Prompt Engineering Guide ("Sandbox") ---
-    const promptTaskSelectSandbox = getEl('prompt-task-select-sandbox');
-    const promptExampleStructureContainer = getEl('prompt-example-structure');
-    const promptExampleStructureEl = promptExampleStructureContainer ? promptExampleStructureContainer.querySelector('p') : null;
-    const promptDetailSlider = getEl('prompt-detail-slider');
-    const promptDetailSliderValue = getEl('prompt-detail-slider-value');
-    const promptLevelDisplay = getEl('prompt-level-display');
-    const userPromptInputEl = getEl('user-prompt-input');
-    const showPromptCritiqueBtn = getEl('show-prompt-critique-btn');
-    const promptCritiqueAreaEl = getEl('prompt-critique-area');
-
-    const promptSandboxData = { // Ensure this is fully defined
-        summarize: {
-            levels: [
-                "<strong>Nivell 1 (Bàsic):</strong>\n<code>Resumeix el següent text sobre [TEMA GENERAL]:\n\n[ENGANXA TEXT AQUÍ]</code>",
-                "<strong>Nivell 2 (Intermedi):</strong>\n<code>Actua com un assistent de recerca. Proporciona un resum concís (aprox. 150 paraules) dels punts clau, metodologia i resultats principals del següent abstract d'article científic sobre [TEMA ESPECÍFIC]:\n\n[ENGANXA ABSTRACT AQUÍ]\n\nL'audiència són estudiants de grau de [DISCIPLINA].</code>",
-                "<strong>Nivell 3 (Avançat/Postgrau):</strong>\n<code>Com a expert en [CAMP D'ESTUDI ESPECÍFIC], realitza una síntesi crítica (300-400 paraules) de l'article adjunt ([NOM DE L'ARTICLE CURT]). El teu resum ha d'abordar:\n1. La pregunta de recerca principal i la seva rellevància.\n2. El marc teòric i l'enfocament metodològic (amb punts forts/febles).\n3. Les troballes més significatives i la seva interpretació.\n4. Les limitacions de l'estudi reconegudes pels autors i altres que puguis identificar.\n5. Dues implicacions clau per a futures línies de recerca o per a la pràctica professional en [SUB-CAMP].\n\n[SI ÉS POSSIBLE, ENLLAÇ O PRIMERS PARÀGRAFS DE L'ARTICLE AQUÍ]</code>"
-            ],
-            critique: (userInput, level) => `<strong>Anàlisi Conceptual del Teu Prompt (Nivell ${level}):</strong><br>Input Rebut: "${userInput}"<br><br>* <strong>Claredat de la Tasca:</strong> ${userInput.toLowerCase().includes("resumeix") || userInput.toLowerCase().includes("síntesi") ? "✔️ Tasca de resum/síntesi explícita." : "⚠️ Considera indicar explícitament 'resumeix' o 'fes una síntesi'."}<br>* <strong>Especificitat del Text Font:</strong> ${userInput.match(/\[ENGANXA TEXT AQUÍ\]|\[ENGANXA ABSTRACT AQUÍ\]|adjunt/i) ? "✔️ Indicació de text font." : "⚠️ Especifica clarament quin text s'ha de resumir."}<br>* <strong>Contextualització (Rol/Audiència):</strong> ${userInput.match(/actua com un|l'audiència són|com a expert en/i) ? "✔️ Bon ús de rol/audiència per contextualitzar." : (level > 1 ? "⚠️ Per a nivells avançats, definir un rol (ex: 'expert en X') i audiència millora el resultat." : "ℹ️ Definir rol/audiència pot ser útil.")}<br>* <strong>Longitud/Format:</strong> ${userInput.match(/\d+\s*paraules|concís|punts clau/i) ? "✔️ S'han inclòs restriccions de longitud/format." : "⚠️ Considera especificar una longitud (ex: '200 paraules') o un format (ex: 'en 3 punts')."}<br>* <strong>Enfocament del Contingut:</strong> ${userInput.match(/punts clau|metodologia|resultats|implicacions|síntesi crítica/i) ? "✔️ Es demana un enfocament específic del contingut." : "⚠️ Per a resums acadèmics, demana que se centri en aspectes com metodologia, resultats, conclusions, o implicacions."}<br>* <strong>Nivell de Detall/Anàlisi (per Postgrau):</strong> ${level === 3 && userInput.match(/crítica|punts forts\/febles|limitacions/i) ? "✔️ Adequat per a postgrau, demanant anàlisi crítica." : (level === 3 ? "⚠️ Per a postgrau, considera demanar una avaluació més crítica, no només un resum descriptiu." : "")}`
-        },
-        brainstorm_rq: {
-            levels: [
-                "<strong>Nivell 1 (Bàsic):</strong>\n<code>Idees de recerca sobre [TEMA GENERAL AMPLI] per a un treball de classe.</code>",
-                "<strong>Nivell 2 (Intermedi):</strong>\n<code>Sóc un estudiant de grau de [DISCIPLINA] interessat en [TEMA MÉS ESPECÍFIC]. Genera 3-4 preguntes de recerca originals i factibles per a un projecte de fi de grau que explorin la relació entre [VARIABLE/CONCEPTE 1] i [VARIABLE/CONCEPTE 2] en el context de [CONTEXT ESPECÍFIC].</code>",
-                "<strong>Nivell 3 (Avançat/Postgrau):</strong>\n<code>Estic iniciant la meva tesi doctoral en [CAMP D'ESTUDI] i el meu enfocament preliminar és [DESCRIPCIÓ DETALLADA DEL TEU INTERÈS DE RECERCA, INCLOENT BUITS IDENTIFICATS EN LA LITERATURA O DEBATS ACTUALS]. Actuant com un investigador sènior en aquest camp, proposa 3-5 preguntes de recerca altament específiques, innovadores i amb potencial de contribució significativa. Per a cada pregunta, suggereix breument un possible enfocament metodològic (qualitatiu, quantitatiu, mixt) i justifica la seva rellevància teòrica i pràctica.</code>"
-            ],
-            critique: (userInput, level) => `<strong>Anàlisi Conceptual del Teu Prompt (Nivell ${level}):</strong><br>Input Rebut: "${userInput}"<br><br>* <strong>Definició del Tema:</strong> ${userInput.split(" ").length > 7 ? "✔️ Tema sembla definit amb cert detall." : "⚠️ El tema podria ser més específic per obtenir preguntes més enfocades."}<br>* <strong>Context Acadèmic (Nivell/Propòsit):</strong> ${userInput.match(/grau|tesi doctoral|projecte de fi de grau/i) ? "✔️ Context acadèmic clar." : "⚠️ Especificar el nivell (grau, postgrau, tesi) ajuda a l'LLM a ajustar la complexitat."}<br>* <strong>Nombre de Preguntes:</strong> ${userInput.match(/\d+.*preguntes/i) ? "✔️ Nombre de preguntes especificat." : "⚠️ Considera demanar un nombre específic de preguntes."}<br>* <strong>Criteris de Qualitat de les Preguntes:</strong> ${userInput.match(/originals|factibles|innovadores|contribució significativa/i) ? "✔️ Bons criteris per a les preguntes." : "⚠️ Pots afegir criteris com 'rellevants', 'específiques', 'que abordin un buit en la literatura'."}<br>* <strong>Directrius Addicionals (per Postgrau):</strong> ${level === 3 && userInput.match(/enfocament metodològic|justifica la seva rellevància/i) ? "✔️ Excel·lent, demanant justificació i metodologia per a postgrau." : (level === 3 ? "⚠️ Per a postgrau, demanar suggeriments metodològics o justificació de la rellevància pot ser molt útil." : "")}`
-        },
-        explain_concept: {
-            levels: [
-                "<strong>Nivell 1 (Bàsic):</strong>\n<code>Explica [CONCEPTE SENZILL] com si ho expliquessis a un nen de 10 anys.</code>",
-                "<strong>Nivell 2 (Intermedi):</strong>\n<code>Defineix [CONCEPTE ACADÈMIC CLAU] i proporciona un exemple pràctic de la seva aplicació en [DISCIPLINA]. L'audiència són estudiants de primer any.</code>",
-                "<strong>Nivell 3 (Avançat/Postgrau):</strong>\n<code>Com a expert en [CAMP TEÒRIC], desgrana el concepte de [CONCEPTE COMPLEX AVANÇAT]. Compara'l i contrasta'l amb [CONCEPTE RELACIONAT PERÒ DIFERENT]. Analitza les seves implicacions per a la recerca actual en [SUB-CAMP ESPECÍFIC]. Utilitza un llenguatge acadèmic precís.</code>"
-            ],
-            critique: (userInput, level) => `<strong>Anàlisi Conceptual del Teu Prompt (Nivell ${level}):</strong><br>Input Rebut: "${userInput}"<br><br>* <strong>Claredat del Concepte:</strong> ${userInput.match(/\[CONCEPTE.*?\]/i) ? "✔️ Concepte a explicar identificat." : "⚠️ Especifica clarament quin concepte vols que s'expliqui."}<br>* <strong>Definició d'Audiència/Rol:</strong> ${userInput.match(/com si ho expliquessis a|l'audiència són|com a expert en/i) ? "✔️ Rol/audiència definits." : (level > 1 ? "⚠️ Considera definir rol/audiència per ajustar la complexitat." : "ℹ️ Definir rol/audiència pot ajudar.")}<br>* <strong>Petició d'Exemples/Comparacions:</strong> ${userInput.match(/exemple|compara.*contrasta/i) ? "✔️ Demana exemples o comparacions, la qual cosa és bo." : "⚠️ Per a una millor comprensió, demanar exemples o comparacions és útil."}<br>* <strong>Profunditat d'Anàlisi (per Postgrau):</strong> ${level === 3 && userInput.match(/implicacions|analitza/i) ? "✔️ Sol·licitud d'anàlisi profunda adequada." : (level === 3 ? "⚠️ Per a postgrau, demana una anàlisi més profunda de les implicacions o debats teòrics." : "")}`
-        },
-        coding_help: {
-            levels: [
-                "<strong>Nivell 1 (Bàsic):</strong>\n<code>Codi en Python per [TASCA DE PROGRAMACIÓ SENZILLA, ex: llegir un arxiu de text i comptar paraules].</code>",
-                "<strong>Nivell 2 (Intermedi):</strong>\n<code>Tinc aquest error en el meu script de [LLENGUATGE, ex: Python] quan intento [ACCIÓ ESPECÍFICA]:\n\n[ENGANXA L'ERROR COMPLET]\n\nAquest és el fragment de codi rellevant:\n\n\`\`\`[llenguatge]\n[ENGANXA CODI PROBLEMÀTIC]\n\`\`\`\n\nQuina podria ser la causa i com ho puc solucionar?</code>",
-                "<strong>Nivell 3 (Avançat/Postgrau):</strong>\n<code>Estic treballant en un script de [LLENGUATGE, ex: R o Python amb biblioteques científiques] per a [ANÀLISI DE DADES CIENTÍFIQUES COMPLEXA]. Vull optimitzar el rendiment de la següent funció que processa [TIPUS DE DADES GRANS]:\n\n\`\`\`[llenguatge]\n[ENGANXA FUNCIÓ A OPTIMITZAR]\n\`\`\`\n\nProposa 2-3 estratègies d'optimització (ex: vectorització, paral·lelització, ús de biblioteques més eficients, canvis algorítmics), explicant els pros i contres de cadascuna en termes de velocitat i consum de memòria per a aquest context específic.</code>"
-            ],
-            critique: (userInput, level) => `<strong>Anàlisi Conceptual del Teu Prompt (Nivell ${level}):</strong><br>Input Rebut: "${userInput}"<br><br>* <strong>Especificitat de la Tasca/Problema:</strong> ${userInput.split(" ").length > 10 || userInput.includes("```") ? "✔️ Problema/tasca sembla ben descrit." : "⚠️ Intenta ser el més específic possible sobre el que vols aconseguir o el problema que tens."}<br>* <strong>Inclusió de Codi/Errors:</strong> ${userInput.includes("```") || userInput.includes("[ENGANXA L'ERROR COMPLET]") ? "✔️ Excel·lent per incloure codi i/o missatges d'error." : (level > 1 ? "⚠️ Si tens un problema de codi, enganxa el codi rellevant i qualsevol missatge d'error." : "")}<br>* <strong>Context (Llenguatge, Biblioteques):</strong> ${userInput.match(/Python| R |Java|JavaScript|Pandas|NumPy/i) ? "✔️ Context de llenguatge/biblioteca proporcionat." : "⚠️ Especificar el llenguatge de programació i les biblioteques utilitzades és crucial."}<br>* <strong>Objectiu Clar (per Postgrau):</strong> ${level === 3 && userInput.match(/optimitza|rendiment|estratègies d'optimització/i) ? "✔️ Objectiu d'optimització clar." : (level === 3 ? "⚠️ Per a tasques avançades, defineix clarament l'objectiu (ex: 'millorar velocitat', 'reduir memòria')." : "")}`
-        }
-    };
-
-    function updatePromptSandboxDetails() {
-        if (!promptTaskSelectSandbox || !promptSandboxData || !promptExampleStructureEl || !promptDetailSlider || !promptLevelDisplay) return;
-        const selectedTask = promptTaskSelectSandbox.value;
-        const detailLevelIndex = parseInt(promptDetailSlider.value) -1; 
-        const data = promptSandboxData[selectedTask];
-        
-        if (!data || !data.levels || !data.levels[detailLevelIndex]) return;
-
-        promptExampleStructureEl.innerHTML = data.levels[detailLevelIndex]; 
-        if(promptLevelDisplay) promptLevelDisplay.textContent = detailLevelIndex + 1;
-        if (promptDetailSliderValue) promptDetailSliderValue.textContent = ["Bàsic", "Intermedi", "Avançat"][detailLevelIndex];
-
-        if (userPromptInputEl) userPromptInputEl.value = ''; 
-        if (promptCritiqueAreaEl) {
-            promptCritiqueAreaEl.style.display = 'none';
-            promptCritiqueAreaEl.style.opacity = '0';
-            promptCritiqueAreaEl.innerHTML = ''; 
-        }
-    }
-    
-    if (promptDetailSlider && promptDetailSliderValue) {
-        promptDetailSlider.addEventListener('input', () => {
-            const detailLevelIndex = parseInt(promptDetailSlider.value) -1;
-            promptDetailSliderValue.textContent = ["Bàsic", "Intermedi", "Avançat"][detailLevelIndex];
-            updatePromptSandboxDetails();
-        });
-    }
-
-    if (promptTaskSelectSandbox) promptTaskSelectSandbox.addEventListener('change', updatePromptSandboxDetails);
-    
-    if (showPromptCritiqueBtn) {
-        showPromptCritiqueBtn.addEventListener('click', () => {
-            if (!promptTaskSelectSandbox || !userPromptInputEl || !promptCritiqueAreaEl || !promptSandboxData || !promptDetailSlider) return;
+        function updatePromptSandboxDetails() {
+            if (!promptTaskSelectSandbox || !promptSandboxData || !promptExampleStructureEl || !promptDetailSlider || !promptLevelDisplay) return;
             const selectedTask = promptTaskSelectSandbox.value;
-            const detailLevel = parseInt(promptDetailSlider.value);
+            const detailLevelIndex = parseInt(promptDetailSlider.value) -1; 
             const data = promptSandboxData[selectedTask];
-            if (!data || !data.critique) return;
-            const userInput = userPromptInputEl.value;
-            promptCritiqueAreaEl.innerHTML = data.critique(userInput, detailLevel).replace(/\n/g, '<br>');
-            promptCritiqueAreaEl.style.display = 'block';
-            requestAnimationFrame(() => { promptCritiqueAreaEl.style.opacity = '1'; });
-        });
-    }
-    updatePromptSandboxDetails(); 
-
-    // --- Ethical Dilemma Mini-Simulator (Advanced) ---
-    const ethicalDilemmaTextEl = getEl('dilemma-text');
-    const ethicalChoicesContainer = getEl('ethical-dilemma-choices-container');
-    const ethicalFeedbackContainer = getEl('ethical-dilemma-feedback-container');
-    const nextEthicalDilemmaBtn = getEl('next-dilemma-btn');
-
-    const ethicalDilemmas = [ // Ensure this is defined
-        {
-            scenario: "Estàs preparant una presentació per a un seminari de postgrau i trobes un LLM capaç de generar diapositives visualment atractives amb contingut rellevant a partir d'un simple esquema. El termini s'acosta.",
-            choices: [
-                { text: "Utilitzar l'LLM per generar totes les diapositives i el contingut, fent només ajustos menors de disseny.", type: "bad", feedback: "<strong>Decisió Problemàtica:</strong> Això pot portar a una presentació superficial que no reflecteixi la teva comprensió profunda. El contingut generat pot contenir imprecisions o biaixos no detectats. A més, és una oportunitat perduda per desenvolupar les teves habilitats de síntesi i comunicació visual. Pot ser considerat deshonestedat acadèmica si no es declara l'ús extensiu de l'IA." },
-                { text: "Desenvolupar tu mateix el contingut clau i l'estructura de cada diapositiva. Després, utilitzar l'LLM per suggerir millores de disseny, generar icones/imatges rellevants (verificant-ne la llicència) o refinar la redacció d'alguns punts per a més claredat.", type: "good", feedback: "<strong>Enfocament Ètic i Efectiu:</strong> Mantens el control intel·lectual i l'autoria del contingut, utilitzant l'LLM com una eina d'assistència per millorar aspectes específics. Això demostra un ús responsable i estratègic de la tecnologia." },
-                { text: "Demanar a l'LLM que generi l'esquema inicial i alguns punts clau per a cada secció, i després expandir i reescriure completament aquest material amb la teva pròpia investigació i anàlisi.", type: "bad", feedback: "<strong>Pràctica Qüestionable:</strong> Tot i que hi ha més intervenció que en la primera opció, dependre de l'LLM per a l'estructura i els punts fonamentals pot limitar la teva capacitat de desenvolupar un argument original i profund. El risc de plagi subtil o de manca d'originalitat persisteix si la reescriptura no és prou exhaustiva i crítica." }
-            ]
-        },
-        {
-            scenario: "En una col·laboració de recerca per a un article de postgrau, un company suggereix utilitzar un LLM per parafrasejar seccions extenses de diversos articles per accelerar la redacció de la revisió de literatura, assegurant que el detector de plagi no ho marcarà.",
-            choices: [
-                { text: "Acceptar la proposta, confiant que l'eina de parafraseig evitarà problemes de plagi.", type: "bad", feedback: "<strong>Risc Ètic Greu:</strong> Això és una forma de plagi, encara que sigui sofisticat ('plagi de mosaic' o 'parafraseig inadequat'). L'objectiu no és només evitar la detecció, sinó entendre, sintetitzar i presentar la informació amb la teva pròpia veu i anàlisi crítica. Aquesta pràctica soscava la integritat de la recerca." },
-                { text: "Rebutjar la proposta, explicant que la revisió de literatura requereix una comprensió profunda i una síntesi original, no només una reformulació superficial. Suggerir utilitzar l'LLM per identificar articles rellevants o resumir-los inicialment (per a ús intern), però insistir que la redacció final sigui un producte del vostre propi treball intel·lectual.", type: "good", feedback: "<strong>Postura Ètica i Acadèmicament Sòlida:</strong> Defenses la integritat del procés de recerca i l'autoria intel·lectual. Proposes un ús legítim de l'LLM com a eina de suport, no com a substitut del treball analític i de síntesi." },
-                { text: "Proposar utilitzar l'LLM per parafrasejar, però després revisar i editar manualment cada frase per 'fer-la vostra'.", type: "bad", feedback: "<strong>Pràctica Arriscada i Poc Ètica:</strong> Encara que hi hagi edició manual, l'origen de l'estructura i la seqüència d'idees prové de l'LLM parafrasejant altres autors. És difícil transformar realment aquest material en un treball original sense una comprensió i reescriptura molt profundes, i el risc de plagi no intencionat o de manca de profunditat analítica és alt." }
-            ]
-        }
-    ];
-    let currentEthicalDilemmaIdx = 0;
-
-    function loadEthicalDilemma(index) {
-        if (!ethicalDilemmaTextEl || !ethicalChoicesContainer || !ethicalFeedbackContainer || !ethicalDilemmas[index]) return;
-        const dilemma = ethicalDilemmas[index];
-        ethicalDilemmaTextEl.textContent = dilemma.scenario;
-        ethicalChoicesContainer.innerHTML = ''; 
-        dilemma.choices.forEach(choice => {
-            const button = document.createElement('button');
-            button.textContent = choice.text;
-            button.classList.add('button', 'text-sm', 'mb-2', 'w-full', 'text-left', 'leading-tight'); 
             
-            // Apply specific styles based on choice type
-            if (choice.type === 'good') {
-                button.style.backgroundColor = 'var(--secondary-color)';
-                button.style.borderColor = 'var(--secondary-dark)';
-            } else if (choice.type === 'bad') {
-                button.style.backgroundColor = 'var(--warning-color)';
-                button.style.borderColor = '#b45309'; // Darker shade of warning
-            } else { // Neutral or other types
-                 button.style.backgroundColor = 'var(--accent-purple)';
-                 button.style.borderColor = '#7c3aed'; // Darker purple
+            if (!data || !data.levels || !data.levels[detailLevelIndex]) {
+                promptExampleStructureEl.innerHTML = "<p>Dades per a aquesta selecció no disponibles. Si us plau, completa les dades a l'script.</p>";
+                return;
             }
-            
-            button.onclick = () => {
-                ethicalFeedbackContainer.innerHTML = choice.feedback; 
-                ethicalFeedbackContainer.className = 'ethical-dilemma-feedback p-4 rounded-md shadow'; 
-                ethicalFeedbackContainer.classList.add(choice.type === 'good' ? 'feedback-good' : 'feedback-bad');
-                ethicalFeedbackContainer.style.display = 'block';
-                requestAnimationFrame(() => { ethicalFeedbackContainer.style.opacity = '1'; });
-            };
-            ethicalChoicesContainer.appendChild(button);
-        });
-        ethicalFeedbackContainer.style.display = 'none';
-        ethicalFeedbackContainer.style.opacity = '0';
-    }
-    
-    if (nextEthicalDilemmaBtn) {
-        nextEthicalDilemmaBtn.addEventListener('click', () => {
-            currentEthicalDilemmaIdx = (currentEthicalDilemmaIdx + 1) % ethicalDilemmas.length;
+
+            promptExampleStructureEl.innerHTML = data.levels[detailLevelIndex]; 
+            if(promptLevelDisplay) promptLevelDisplay.textContent = ["Bàsic", "Intermedi", "Avançat"][detailLevelIndex]; // Show name instead of number
+            if (promptDetailSliderValue) promptDetailSliderValue.textContent = ["Bàsic", "Intermedi", "Avançat"][detailLevelIndex];
+
+            if (userPromptInputEl) userPromptInputEl.value = ''; 
+            if (promptCritiqueAreaEl) {
+                promptCritiqueAreaEl.style.display = 'none';
+                promptCritiqueAreaEl.style.opacity = '0';
+                promptCritiqueAreaEl.innerHTML = ''; 
+            }
+        }
+        
+        if (promptDetailSlider && promptDetailSliderValue) {
+            promptDetailSlider.addEventListener('input', updatePromptSandboxDetails);
+        }
+
+        if (promptTaskSelectSandbox) promptTaskSelectSandbox.addEventListener('change', updatePromptSandboxDetails);
+        
+        if (showPromptCritiqueBtn) {
+            showPromptCritiqueBtn.addEventListener('click', () => {
+                if (!promptTaskSelectSandbox || !userPromptInputEl || !promptCritiqueAreaEl || !promptSandboxData || !promptDetailSlider) return;
+                const selectedTask = promptTaskSelectSandbox.value;
+                const detailLevel = parseInt(promptDetailSlider.value); // 1, 2, or 3
+                const data = promptSandboxData[selectedTask];
+                if (!data || !data.critique) return;
+                const userInput = userPromptInputEl.value || "(L'usuari no ha introduït cap prompt per analitzar)";
+                promptCritiqueAreaEl.innerHTML = data.critique(userInput, detailLevel).replace(/\n/g, '<br>');
+                promptCritiqueAreaEl.style.display = 'block';
+                requestAnimationFrame(() => { promptCritiqueAreaEl.style.opacity = '1'; });
+            });
+        }
+        updatePromptSandboxDetails(); 
+
+        // --- Ethical Dilemma Mini-Simulator (Advanced) ---
+        const ethicalDilemmaTextEl = getEl('dilemma-text');
+        const ethicalChoicesContainer = getEl('ethical-dilemma-choices-container');
+        const ethicalFeedbackContainer = getEl('ethical-dilemma-feedback-container');
+        const nextEthicalDilemmaBtn = getEl('next-dilemma-btn');
+
+        const ethicalDilemmas = [ 
+            {
+                scenario: "Un grup de recerca de la Facultat de Ciències de la UdG està utilitzant un LLM per analitzar grans conjunts de dades genòmiques. L'LLM identifica un patró no reportat prèviament que podria ser significatiu. Abans de poder validar-ho experimentalment (procés llarg i costós), un dels investigadors júnior, pressionat per publicar, suggereix incloure aquesta troballa 'preliminar basada en IA' en un article com si fos una hipòtesi ja parcialment corroborada per l'anàlisi computacional, ometent la necessitat de validació experimental immediata per accelerar la publicació.",
+                choices: [
+                    { text: "Donar suport a la inclusió, destacant el potencial innovador de la IA i argumentant que la validació experimental pot ser un 'future work'.", type: "bad", feedback: "<strong>Decisió Èticament Compromesora (Perspectiva UdG):</strong> Presentar una troballa basada exclusivament en IA sense validació experimental robusta com a quelcom més que una mera hipòtesi especulativa és enganyós i soscava la integritat científica. La pressió per publicar no justifica la rebaixa dels estàndards de rigor metodològic. La UdG promou la recerca responsable." },
+                    { text: "Insistir en la necessitat de dissenyar i executar els experiments de validació abans de qualsevol publicació, o bé, si es vol publicar abans, presentar la troballa de l'IA explícitament com una hipòtesi generada computacionalment que requereix validació futura, sent totalment transparents sobre l'estat preliminar.", type: "good", feedback: "<strong>Enfocament Èticament Correcte i Científicament Rigorós (Estàndard UdG):</strong> Aquesta opció respecta els principis de la integritat científica. La transparència sobre l'origen i l'estat de validació de les troballes és crucial. La ciència avança sobre evidència validada, no sobre especulacions no contrastades presentades com a fets." },
+                    { text: "Cercar un altre LLM o una altra tècnica d'anàlisi computacional per veure si 'confirma' la troballa del primer LLM, i si és així, sentir-se més segur per publicar-ho sense validació experimental immediata, argumentant 'concordança computacional'.", type: "bad", feedback: "<strong>Error Metodològic i Ètic Subtil (Visió UdG):</strong> La concordança entre múltiples models d'IA o anàlisis computacionals no substitueix la validació empírica en ciències experimentals. Els models poden compartir biaixos o convergir en resultats incorrectes. Aquesta via podria portar a la propagació de 'falsos positius' i malgastar recursos en línies de recerca errònies." }
+                ]
+            },
+            {
+                scenario: "Un professor de la Facultat d'Educació i Psicologia de la UdG està dissenyant una nova assignatura sobre 'Ètica de la IA en Entorns Educatius'. Considera utilitzar un LLM per generar gran part del material didàctic (estudis de cas, dilemes ètics, resums de lectures) per estalviar temps, donada la seva càrrega docent.",
+                choices: [
+                    { text: "Utilitzar l'LLM per generar la majoria dels materials, revisant-los superficialment per errors obvis abans de distribuir-los als estudiants.", type: "bad", feedback: "<strong>Pràctica Docent Deficient i Èticament Qüestionable (Criteri UdG):</strong> La creació de material docent de qualitat requereix una profunda reflexió pedagògica, coneixement expert del camp i adaptació al context específic dels estudiants de la UdG. Delegar aquesta tasca a un LLM sense una curació i adaptació crítica exhaustiva pot resultar en materials superficials, possiblement esbiaixats, o inadequats per als objectius d'aprenentatge. La responsabilitat docent implica autoria intel·lectual i cura pedagògica." },
+                    { text: "Utilitzar l'LLM com a eina de pluja d'idees per a possibles estudis de cas o dilemes, o per obtenir resums inicials de lectures complexes. Posteriorment, investigar a fons, seleccionar, adaptar críticament i redactar personalment tots els materials finals, assegurant la seva qualitat, rellevància per a la UdG i coherència pedagògica.", type: "good", feedback: "<strong>Ús Estratègic i Responsable de l'IA en la Docència (Model UdG):</strong> Aquesta aproximació aprofita l'eficiència de l'IA per a tasques exploratòries o de síntesi inicial, però reserva el judici expert, la creativitat pedagògica i la responsabilitat final sobre el contingut al docent. Això assegura la qualitat i la integritat del procés educatiu." },
+                    { text: "Demanar als estudiants que utilitzin LLM per generar ells mateixos els estudis de cas o els resums com a part de les seves tasques, sense proporcionar-los gaires directrius sobre l'avaluació crítica d'aquests resultats.", type: "bad", feedback: "<strong>Risc Pedagògic Significatiu (Visió UdG):</strong> Tot i que fomentar l'ús d'eines d'IA pot ser formatiu, fer-ho sense un marc clar d'ús crític i ètic pot portar a un aprenentatge superficial, al plagi no intencionat i a la manca de desenvolupament d'habilitats d'anàlisi pròpies. Els docents de la UdG tenen la responsabilitat de guiar l'alumnat en l'ús reflexiu d'aquestes tecnologies." }
+                ]
+            }
+        ];
+        let currentEthicalDilemmaIdx = 0;
+
+        function loadEthicalDilemma(index) {
+            if (!ethicalDilemmaTextEl || !ethicalChoicesContainer || !ethicalFeedbackContainer || !ethicalDilemmas[index]) return;
+            const dilemma = ethicalDilemmas[index];
+            ethicalDilemmaTextEl.textContent = dilemma.scenario;
+            ethicalChoicesContainer.innerHTML = ''; 
+            dilemma.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.textContent = choice.text;
+                button.classList.add('button', 'text-sm', 'mb-2', 'w-full', 'text-left', 'leading-tight', 'h-auto', 'py-3'); 
+                button.style.whiteSpace = 'normal'; // Allow text wrapping
+                
+                if (choice.type === 'good') {
+                    button.style.backgroundColor = 'var(--secondary-color)';
+                    button.style.borderColor = 'var(--secondary-dark)';
+                } else if (choice.type === 'bad') {
+                    button.style.backgroundColor = 'var(--warning-color)';
+                    button.style.borderColor = '#b45309'; 
+                } else { 
+                     button.style.backgroundColor = 'var(--accent-purple)';
+                     button.style.borderColor = '#7c3aed'; 
+                }
+                
+                button.onclick = () => {
+                    ethicalFeedbackContainer.innerHTML = choice.feedback; 
+                    ethicalFeedbackContainer.className = 'ethical-dilemma-feedback p-4 rounded-md shadow'; 
+                    ethicalFeedbackContainer.classList.add(choice.type === 'good' ? 'feedback-good' : 'feedback-bad');
+                    ethicalFeedbackContainer.style.display = 'block';
+                    requestAnimationFrame(() => { ethicalFeedbackContainer.style.opacity = '1'; });
+                };
+                ethicalChoicesContainer.appendChild(button);
+            });
+            ethicalFeedbackContainer.style.display = 'none';
+            ethicalFeedbackContainer.style.opacity = '0';
+        }
+        
+        if (nextEthicalDilemmaBtn) {
+            nextEthicalDilemmaBtn.addEventListener('click', () => {
+                currentEthicalDilemmaIdx = (currentEthicalDilemmaIdx + 1) % ethicalDilemmas.length;
+                loadEthicalDilemma(currentEthicalDilemmaIdx);
+            });
+        }
+        if (ethicalDilemmas.length > 0 && ethicalDilemmaTextEl) { 
             loadEthicalDilemma(currentEthicalDilemmaIdx);
-        });
-    }
-    if (ethicalDilemmas.length > 0 && ethicalDilemmaTextEl) { 
-        loadEthicalDilemma(currentEthicalDilemmaIdx);
-    }
+        }
 
-    // --- AI Literacy Skills Interactive Diagram (Enhanced) ---
-    const skillsContainer = document.querySelector('.ai-literacy-skills-container');
-    const skillsData = [ // Ensure this is defined
-        { title: "Comprensió Conceptual dels LLM", description: "Entendre els principis bàsics de com funcionen els LLM (dades d'entrenament, arquitectures com Transformers, aprenentatge per predicció).", details: "Això no requereix ser un expert en IA, sinó tenir una comprensió funcional que permeti anticipar fortaleses i debilitats. Per exemple, saber que els LLM generen text basant-se en probabilitats ajuda a entendre per què poden 'al·lucinar'." },
-        { title: "Enginyeria de Prompts Estratègica", description: "Habilitat per dissenyar prompts clars, contextualitzats i efectius per obtenir els resultats desitjats de l'LLM.", details: "Inclou tècniques com el prompting de cadena de pensament (CoT), zero-shot/few-shot, l'ús de persones, i el refinament iteratiu per a tasques acadèmiques complexes." },
-        { title: "Avaluació Crítica dels Resultats", description: "Capacitat per analitzar críticament la informació generada per LLM, identificant biaixos, imprecisions, al·lucinacions i omissions.", details: "Implica la verificació de fets amb fonts fiables, l'anàlisi de la coherència lògica, i la consideració de perspectives alternatives no presents en el resultat de l'LLM." },
-        { title: "Integració Ètica i Responsable", description: "Coneixement i aplicació de principis ètics en l'ús d'LLM, incloent integritat acadèmica, privadesa de dades, i reconeixement de l'autoria.", details: "Això significa entendre què constitueix plagi en el context de la IA, com protegir informació sensible, i com citar o reconèixer adequadament l'assistència de l'IA segons les normatives." },
-        { title: "Col·laboració Humà-IA Efectiva", description: "Habilitat per treballar de manera sinèrgica amb eines d'IA, aprofitant les seves fortaleses per augmentar les capacitats humanes, no per reemplaçar-les.", details: "Implica saber quan i com utilitzar un LLM per a diferents etapes d'un projecte (p. ex., pluja d'idees vs. redacció final), i com integrar els seus resultats en un treball més ampli que reflecteixi el propi pensament i anàlisi." },
-        { title: "Adaptabilitat i Aprenentatge Continu", description: "Disposició i capacitat per mantenir-se actualitzat sobre l'evolució ràpida de les tecnologies d'IA, les seves noves aplicacions i les millors pràctiques emergents.", details: "El camp dels LLM canvia mensualment. Els estudiants han de ser aprenents àgils, disposats a explorar noves eines i tècniques a mesura que sorgeixen, sempre amb una perspectiva crítica." }
-    ];
+        // --- AI Literacy Skills Interactive Diagram (Enhanced) ---
+        const skillsContainer = document.querySelector('.ai-literacy-skills-container');
+        const skillsData = [ 
+            { title: "Comprensió Conceptual Crítica dels LLM (Fonaments UdG)", description: "Dominar els principis operatius dels LLM (dades massives, arquitectures Transformer, aprenentatge probabilístic), no com a expert en IA, sinó com a usuari informat capaç d'anticipar fortaleses, debilitats inherents i implicacions epistèmiques.", details: "A la UdG, això implica entendre que els LLM són eines de 'pattern matching' a gran escala, no entitats amb comprensió genuïna. Aquesta base permet avaluar la plausibilitat i els límits de les seves respostes, especialment en contextos de recerca on la novetat i el rigor són clau. Facilita la detecció d'al·lucinacions i la comprensió de per què es produeixen." },
+            { title: "Enginyeria de Prompts Estratègica i Dialògica (Metodologia UdG)", description: "Desenvolupar l'habilitat avançada de dissenyar i refinar iterativament prompts que siguin clars, altament contextualitzats, i metodològicament orientats per obtenir respostats útils, precises i profundes per a tasques acadèmiques complexes i recerca original.", details: "A la UdG, això va més enllà de simples preguntes. Inclou tècniques de prompting per raonament (CoT), assignació de rols experts, especificació de formats de sortida complexos (p.ex., estructura d'article científic), i l'ús de meta-prompting per demanar a l'IA que ajudi a refinar els propis prompts. Es concep com un diàleg constructivista." },
+            { title: "Avaluació Epistemològica i Crítica dels Resultats (Rigor UdG)", description: "Aplicar un escepticisme metodològic actiu per analitzar críticament la informació generada per LLM, identificant no només biaixos obvis i al·lucinacions factuals, sinó també imprecisions conceptuals subtils, omissions estratègiques, i possibles influències de les dades d'entrenament en la perspectiva oferta.", details: "A la UdG, això implica una triangulació constant amb fonts primàries i secundàries de qualitat, la consulta amb experts, l'anàlisi de la coherència lògica interna i externa de les respostes, i la consideració de marcs teòrics alternatius. Es valora la capacitat de 'validar' o 'refutar' les sortides de l'IA amb evidència independent." },
+            { title: "Integració Ètica, Responsable i Legalment Informada (Marc UdG)", description: "Coneixement profund i aplicació pràctica dels principis ètics que regeixen la recerca i l'activitat acadèmica a la UdG en relació amb l'ús d'LLM, incloent la integritat acadèmica (evitació del plagi en totes les seves formes), la protecció de dades personals i de recerca sensibles, la propietat intel·lectual, i el reconeixement transparent de l'autoria i l'assistència de l'IA.", details: "A la UdG, això implica estar al corrent de les polítiques institucionals sobre IA, entendre les implicacions del Reglament General de Protecció de Dades (RGPD) quan s'utilitzen dades amb LLM, i saber com citar o declarar l'ús d'IA de manera que es respecti l'autoria original i es mantingui la transparència en el procés de creació de coneixement." },
+            { title: "Col·laboració Humà-IA Sinergètica per a la Innovació (Visió UdG)", description: "Desenvolupar la competència per treballar de manera sinèrgica i estratègica amb eines d'IA, aprofitant les seves capacitats úniques (processament de grans volums d'informació, identificació de patrons, generació ràpida d'esborranys) per augmentar i potenciar les capacitats cognitives i creatives humanes, no per atrofiar-les o reemplaçar-les.", details: "A la UdG, això es tradueix en saber identificar quines tasques són apropiades per a l'assistència de l'IA i quines requereixen indispensablement el judici humà, la creativitat original i la responsabilitat ètica. Es tracta de dissenyar fluxos de treball on l'humà i la màquina col·laborin per assolir objectius més ambiciosos o eficients." },
+            { title: "Adaptabilitat, Aprenentatge Permanent i Prospectiva Tecnològica (Cultura UdG)", description: "Cultivar una mentalitat d'aprenentatge àgil i una disposició proactiva per mantenir-se actualitzat sobre l'evolució exponencial de les tecnologies d'IA, les seves noves aplicacions en l'àmbit acadèmic i professional, les millors pràctiques emergents, i els debats ètics i socials que generen.", details: "El panorama dels LLM és extremadament dinàmic. La UdG fomenta que els seus estudiants i investigadors siguin 'aprenents permanents', capaços d'explorar noves eines i tècniques amb una perspectiva crítica, discernint entre les modes passatgeres i les innovacions transformadores, i contribuint activament a la reflexió sobre el futur de la IA en la societat." }
+        ];
 
-    if (skillsContainer) {
-        skillsData.forEach(skill => {
-            const item = document.createElement('div');
-            item.classList.add('ai-literacy-skill-item', 'animate-on-scroll');
-            item.innerHTML = `<h5>${skill.title}</h5><p>${skill.description}</p><div class="skill-details"><p><strong>Aplicació i Reflexió (Postgrau):</strong> ${skill.details}</p></div>`;
-            item.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
-                skillsContainer.querySelectorAll('.ai-literacy-skill-item.active').forEach(activeItem => {
-                    if (activeItem !== item) {
-                        activeItem.classList.remove('active');
-                        const otherDetails = activeItem.querySelector('.skill-details');
-                        if(otherDetails) { otherDetails.style.maxHeight = null; otherDetails.style.opacity = '0'; setTimeout(() => { if(!activeItem.classList.contains('active')) otherDetails.style.display = 'none'; }, 400); }
+        if (skillsContainer) {
+            skillsData.forEach(skill => {
+                const item = document.createElement('div');
+                item.classList.add('ai-literacy-skill-item', 'animate-on-scroll');
+                item.innerHTML = `<h5>${skill.title}</h5><p>${skill.description}</p><div class="skill-details"><p><strong>Aplicació i Reflexió (Postgrau UdG):</strong> ${skill.details}</p></div>`;
+                item.addEventListener('click', () => {
+                    const isActive = item.classList.contains('active');
+                    skillsContainer.querySelectorAll('.ai-literacy-skill-item.active').forEach(activeItem => {
+                        if (activeItem !== item) {
+                            activeItem.classList.remove('active');
+                            const otherDetails = activeItem.querySelector('.skill-details');
+                            if(otherDetails) { otherDetails.style.maxHeight = null; otherDetails.style.opacity = '0'; setTimeout(() => { if(!activeItem.classList.contains('active')) otherDetails.style.display = 'none'; }, 400); }
+                        }
+                    });
+                    if(!isActive){
+                        item.classList.add('active');
+                        const details = item.querySelector('.skill-details');
+                        if (details) { 
+                            details.style.display = 'block'; 
+                            setTimeout(() => { details.style.maxHeight = details.scrollHeight + "px"; details.style.opacity = '1'; }, 10);
+                        }
+                    } else {
+                        item.classList.remove('active');
+                        const details = item.querySelector('.skill-details');
+                        if(details) { details.style.maxHeight = null; details.style.opacity = '0'; setTimeout(() => { if(!item.classList.contains('active')) details.style.display = 'none'; }, 400); }
                     }
                 });
-                if(!isActive){
-                    item.classList.add('active');
-                    const details = item.querySelector('.skill-details');
-                    if (details) { 
-                        details.style.display = 'block'; 
-                        setTimeout(() => { details.style.maxHeight = details.scrollHeight + "px"; details.style.opacity = '1'; }, 10);
-                    }
-                } else {
-                    item.classList.remove('active');
-                    const details = item.querySelector('.skill-details');
-                    if(details) { details.style.maxHeight = null; details.style.opacity = '0'; setTimeout(() => { if(!item.classList.contains('active')) details.style.display = 'none'; }, 400); }
-                }
+                skillsContainer.appendChild(item);
             });
-            skillsContainer.appendChild(item);
-        });
-        // Re-observe newly added animated elements for skills
-        const newSkillElements = skillsContainer.querySelectorAll('.animate-on-scroll');
-        newSkillElements.forEach(el => { observer.observe(el);});
-    }
+            const newSkillElements = skillsContainer.querySelectorAll('.animate-on-scroll');
+            newSkillElements.forEach(el => { observer.observe(el);});
+        }
 
-    // --- References Population & Linking ---
-    const references = [ // Ensure this is defined
-        { id: 1, text: "Jalil, S. et al. (2023). Opportunities and challenges of ChatGPT in higher education: A systematic literature review. *International Journal of Educational Technology in Higher Education*.", link: "https://doi.org/10.1186/s41239-023-00423-8" },
-        { id: 2, text: "Mhlanga, D. (2023). The Value of ChatGPT in Higher Education: An Analysis of the Benefits and Potential. *Journal of Higher Education Policy and Leadership*.", link: "https://fkip.ummetro.ac.id/journal/index.php/JHOPL/article/view/1076" },
-        { id: 3, text: "Chan, C.K.Y. & Hu, W. (2023). Students’ voices on generative AI: perceptions, benefits, and challenges in higher education. *International Journal of Educational Technology in Higher Education*.", link: "https://doi.org/10.1186/s41239-023-00411-y" },
-        { id: 4, text: "Rudolph, J. et al. (2023). ChatGPT: Bullshit spewer or the end of traditional assessments in higher education? *Journal of Applied Learning & Teaching*.", link: "https://doi.org/10.37074/jalt.2023.6.1.9" },
-        { id: 5, text: "Avram, M. (2024). *The Impact of AI on Higher Education*. Techstrong.ai.", link: "https://techstrong.ai/articles/the-impact-of-ai-on-higher-education/" },
-        { id: 6, text: "EDUCAUSE. (2025). *EDUCAUSE QuickPoll Results: Student Use of Generative AI*. EDUCAUSE.", link: "https://www.educause.edu/research-and-publications/research/student-use-of-generative-ai" }, 
-        { id: 7, text: "Trust, T. et al. (2024). ‘It’s a Tool and You Need to Learn How to Use It’: A Survey of College Student Use of Generative AI. *Journal of Research on Technology in Education*.", link: "https://doi.org/10.1080/15391523.2024.2305868" },
-        { id: 8, text: "Kung, T.H. et al. (2023). Performance of ChatGPT on USMLE: Potential for AI-assisted medical education using large language models. *PLOS Digital Health*.", link: "https://doi.org/10.1371/journal.pdig.0000198" },
-        { id: 9, text: "Elon University. (n.d.). *New Student Guide to Artificial Intelligence*. Elon University.", link: "https://www.elon.edu/u/ diga/ai-guide-for-students/" }, 
-        { id: 10, text: "European Commission & OECD. (2024). *AILit Framework: Empowering Learners for the AI Era*. World Economic Forum.", link: "https://www.weforum.org/impact/ai-literacy-for-all/" }, 
-        { id: 11, text: "Kasneci, E. et al. (2023). ChatGPT for good? On opportunities and challenges of large language models for education. *Learning and Individual Differences*.", link: "https://doi.org/10.1016/j.lindif.2023.102274" },
-        { id: 12, text: "Cotton, D.R.E. et al. (2023). Chatting and cheating: Ensuring academic integrity in the era of ChatGPT. *Innovations in Education and Teaching International*.", link: "https://doi.org/10.1080/14703297.2023.2190148" },
-        { id: 13, text: "Simplilearn. (2024). *Top 15 In-Demand Tech Skills for 2024*. Simplilearn.", link: "https://www.simplilearn.com/top-technology-trends-and-jobs-article" },
+        // --- References Population & Linking ---
+        const references = [ // Ensure this is defined and complete
+            { id: 1, text: "Jalil, S. et al. (2023). Opportunities and challenges of ChatGPT in higher education: A systematic literature review. *International Journal of Educational Technology in Higher Education*.", link: "[https://doi.org/10.1186/s41239-023-00423-8](https://doi.org/10.1186/s41239-023-00423-8)" },
+            { id: 2, text: "Mhlanga, D. (2023). The Value of ChatGPT in Higher Education: An Analysis of the Benefits and Potential. *Journal of Higher Education Policy and Leadership*.", link: "[https://fkip.ummetro.ac.id/journal/index.php/JHOPL/article/view/1076](https://fkip.ummetro.ac.id/journal/index.php/JHOPL/article/view/1076)" },
+            { id: 3, text: "Chan, C.K.Y. & Hu, W. (2023). Students’ voices on generative AI: perceptions, benefits, and challenges in higher education. *International Journal of Educational Technology in Higher Education*.", link: "[https://doi.org/10.1186/s41239-023-00411-y](https://doi.org/10.1186/s41239-023-00411-y)" },
+            { id: 4, text: "Rudolph, J. et al. (2023). ChatGPT: Bullshit spewer or the end of traditional assessments in higher education? *Journal of Applied Learning & Teaching*.", link: "[https://doi.org/10.37074/jalt.2023.6.1.9](https://doi.org/10.37074/jalt.2023.6.1.9)" },
+            { id: 5, text: "Avram, M. (2024). *The Impact of AI on Higher Education*. Techstrong.ai.", link: "[https://techstrong.ai/articles/the-impact-of-ai-on-higher-education/](https://techstrong.ai/articles/the-impact-of-ai-on-higher-education/)" },
+            { id: 6, text: "EDUCAUSE. (2025). *EDUCAUSE QuickPoll Results: Student Use of Generative AI*. EDUCAUSE.", link: "[https://www.educause.edu/research-and-publications/research/student-use-of-generative-ai](https://www.educause.edu/research-and-publications/research/student-use-of-generative-ai)" }, 
+            { id: 7, text: "Trust, T. et al. (2024). ‘It’s a Tool and You Need to Learn How to Use It’: A Survey of College Student Use of Generative AI. *Journal of Research on Technology in Education*.", link: "[https://doi.org/10.1080/15391523.2024.2305868](https://doi.org/10.1080/15391523.2024.2305868)" },
+            { id: 8, text: "Kung, T.H. et al. (2023). Performance of ChatGPT on USMLE: Potential for AI-assisted medical education using large language models. *PLOS Digital Health*.", link: "[https://doi.org/10.1371/journal.pdig.0000198](https://doi.org/10.1371/journal.pdig.0000198)" },
+            { id: 9, text: "Elon University. (n.d.). *New Student Guide to Artificial Intelligence*. Elon University.", link: "[https://www.elon.edu/u/](https://www.elon.edu/u/) diga/ai-guide-for-students/" }, 
+            { id: 10, text: "European Commission & OECD. (2024). *AILit Framework: Empowering Learners for the AI Era*. World Economic Forum.", link: "[https://www.weforum.org/impact/ai-literacy-for-all/](https://www.weforum.org/impact/ai-literacy-for-all/)" }, 
+            { id: 11, text: "Kasneci, E. et al. (2023). ChatGPT for good? On opportunities and challenges of large language models for education. *Learning and Individual Differences*.", link: "[https://doi.org/10.1016/j.lindif.2023.102274](https://doi.org/10.1016/j.lindif.2023.102274)" },
+            { id: 12, text: "Cotton, D.R.E. et al. (2023). Chatting and cheating: Ensuring academic integrity in the era of ChatGPT. *Innovations in Education and Teaching International*.", link: "[https://doi.org/10.1080/14703297.2023.2190148](https://doi.org/10.1080/14703297.2023.2190148)" },
+            { id: 13, text: "Simplilearn. (2024). *Top 15 In
         { id: 14, text: "Bender, E.M. et al. (2021). On the Dangers of Stochastic Parrots: Can Language Models Be Too Big? *FAccT '21*.", link: "https://doi.org/10.1145/3442188.3445922" },
         { id: 15, text: "Mindzak, M. & Fidalgo, P. (2023). The Case Against AI in Education: A Discursive Review of the Negative Impacts of Artificial Intelligence on Education. *Academia Letters*.", link: "https://doi.org/10.20935/AL5953" }, 
         { id: 16, text: "Zhai, X. (2022). ChatGPT user experience: Implications for education. *SSRN*.", link: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4312418" },
