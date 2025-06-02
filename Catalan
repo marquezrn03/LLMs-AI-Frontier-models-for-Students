@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM en Educació Superior: Guia Interactiva per a Estudiants (2024-2025)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script>
+        // Configure MathJax for LaTeX rendering (kept in case any formulas appear)
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Root Variables for Theming (AI/Education Focus) --- */
+        :root {
+            --primary-color: #3b82f6; /* Blue 500 */
+            --primary-light: #93c5fd; /* Blue 300 */
+            --primary-lighter: #dbeafe; /* Blue 100 */
+            --primary-lightest: #eff6ff; /* Blue 50 */
+            --primary-dark: #2563eb; /* Blue 600 */
+            --primary-darker: #1d4ed8; /* Blue 700 */
+
+            --secondary-color: #10b981; /* Emerald 500 */
+            --secondary-light: #6ee7b7; /* Emerald 300 */
+            --secondary-lighter: #d1fae5; /* Emerald 100 */
+            --secondary-lightest: #f0fdfa; /* Emerald 50 */
+
+            --text-color: #374151; /* Gray 700 */
+            --text-dark: #1f2937; /* Gray 800 */
+            --text-light: #6b7280; /* Gray 500 */
+
+            --bg-light: #f9fafb; /* Gray 50 */
+            --bg-white: #ffffff;
+
+            --border-color: #9ca3af; /* Gray 400 */
+            --border-light: #e5e7eb; /* Gray 200 */
+            --border-medium: #d1d5db; /* Gray 300 */
+
+            --accent-purple: #8b5cf6; /* Violet 500 */
+            --accent-purple-light: #ddd6fe; /* Violet 200 */
+            
+            --warning-color: #f59e0b; /* Amber 500 */
+            --warning-light: #fef3c7; /* Amber 100 */
+            --error-color: #ef4444; /* Red 500 */
+        }
+
+        /* --- General Body & Typography --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+            background-color: var(--bg-light);
+            color: var(--text-color);
+        }
+        h1 { /* For main page title in header */
+            color: var(--bg-white); /* White text on gradient */
+            font-size: 2.2rem; 
+            line-height: 2.8rem;
+            font-weight: 700;
+        }
+        h2 { /* For main section titles */
+            color: var(--primary-darker);
+            font-size: 1.95rem;
+            line-height: 2.4rem;
+            font-weight: 700;
+            border-bottom: 3px solid var(--primary-light);
+            padding-bottom: 0.7rem;
+            margin-top: 3.5rem;
+            margin-bottom: 2rem;
+        }
+        h3 { /* For sub-section titles */
+            color: var(--primary-dark);
+            font-size: 1.55rem;
+            line-height: 2.05rem;
+            font-weight: 600;
+            margin-top: 2.8rem;
+            margin-bottom: 1.4rem;
+            border-bottom: 1px solid var(--primary-lighter);
+            padding-bottom: 0.4rem;
+        }
+        h4 { /* For smaller headings, e.g., within interactive blocks */
+            color: var(--secondary-color);
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        p, li, td, th {
+            color: var(--text-color);
+            line-height: 1.85;
+            margin-bottom: 1.3rem;
+            font-size: 1.05rem;
+        }
+        li { margin-bottom: 0.5rem; }
+        strong {
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+        code { /* For inline code or technical terms */
+            background-color: var(--primary-lighter);
+            color: var(--primary-darker);
+            padding: 0.2em 0.5em;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+        }
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* --- Form Elements & Buttons --- */
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: var(--secondary-color); /* Changed accent */
+            height: 8px;
+            background-color: var(--primary-lighter);
+            border-radius: 9999px;
+            appearance: none;
+            -webkit-appearance: none;
+            margin-top: 0.25rem;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--secondary-color); /* Changed thumb color */
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            border: 1px solid var(--secondary-dark);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--secondary-color); /* Changed thumb color */
+            border-radius: 50%;
+            cursor: pointer;
+            border: 1px solid var(--secondary-dark);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        input[type="text"], input[type="number"], select, textarea {
+            padding: 0.6rem;
+            border: 1px solid var(--border-medium);
+            border-radius: 0.375rem;
+            width: 100%;
+            background-color: var(--bg-white);
+            font-size: 0.95rem;
+            color: var(--text-color);
+        }
+        textarea { min-height: 100px; }
+        button, .button { /* Added .button class for a-tags styled as buttons */
+            background-color: var(--primary-color);
+            color: var(--bg-white);
+            padding: 0.7rem 1.4rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            display: inline-block;
+            text-align: center;
+            border: 1px solid var(--primary-dark);
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+        button:hover, .button:hover {
+            background-color: var(--primary-dark);
+            color: var(--bg-white);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        }
+        button:disabled, .button:disabled {
+            background-color: var(--border-medium);
+            color: var(--text-light);
+            border-color: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* --- Layout & Containers --- */
+        .section-bg-accent { /* New class for highlighted sections */
+            background-color: var(--secondary-lightest);
+            padding: 2.5rem 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .section-bg-white {
+            background-color: var(--bg-white);
+            padding: 2.5rem 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 3px 7px rgba(0,0,0,0.06);
+        }
+        .interactive-block {
+            margin-top: 2.5rem;
+            margin-bottom: 2.5rem;
+            padding: 2.5rem;
+            border: 1px solid var(--border-light); /* Lighter border */
+            border-radius: 0.75rem;
+            background-color: var(--bg-white);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+        }
+        .output-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusted minmax */
+            gap: 1.5rem;
+            margin-top: 1.8rem;
+        }
+        .output-item {
+            background-color: var(--primary-lightest);
+            border: 1px solid var(--primary-lighter);
+            border-radius: 0.5rem;
+            padding: 1.2rem;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .output-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .output-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--primary-darker);
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        .output-value {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            word-wrap: break-word;
+        }
+        .output-unit {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            margin-left: 0.3rem;
+        }
+        .error-text {
+            color: var(--error-color); /* Using error color variable */
+            font-weight: bold;
+            margin-top: 1.2rem;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .math-block { /* Kept for potential use, but less likely for LLM guide */
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: var(--secondary-lightest);
+            border-left: 6px solid var(--secondary-light);
+            font-size: 1.15rem;
+            overflow-x: auto;
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        .footer-attribution {
+            margin-top: 2.5rem;
+            font-size: 0.9rem;
+            line-height: 1.3rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+        .slider-container div:not(.output-grid) { /* Simplified selector */
+             margin-bottom: 1.8rem;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+        }
+        .slider-label span:last-child {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+            min-width: 85px;
+            text-align: right;
+            background-color: var(--primary-lighter);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+        .critical-note { /* For important callouts */
+            background-color: var(--warning-light);
+            border-left: 5px solid var(--warning-color);
+            padding: 1.2rem;
+            margin: 2rem 0;
+            border-radius: 0.375rem;
+            color: #b45309; /* Dark amber for text */
+            font-size: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .critical-note strong { color: #92400e; } /* Even darker amber */
+        
+        .caveat-note { /* For disclaimers or less critical notes */
+            background-color: var(--primary-lightest); /* Using primary theme */
+            border-left: 5px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.375rem;
+            color: var(--primary-darker);
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .caveat-note strong { color: var(--primary-darker); font-weight: bold; }
+
+        /* --- Table Styles --- */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 0.95rem; /* Slightly smaller for dense tables */
+        }
+        th, td {
+            border: 1px solid var(--border-light);
+            padding: 0.8rem 1rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: var(--primary-lighter);
+            color: var(--primary-darker);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        td { background-color: var(--bg-white); }
+        tbody tr:nth-child(odd) td { background-color: var(--primary-lightest); } /* Alternating row color */
+        td ul { padding-left: 1.2rem; margin-bottom: 0; }
+        td li { font-size: 0.9rem; margin-bottom: 0.3rem; }
+
+        /* --- Specific Interactive Element Styles --- */
+        .interactive-card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .interactive-card {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-medium);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .interactive-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+        .interactive-card h5 {
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 1.15rem;
+            margin-bottom: 0.75rem;
+        }
+        .interactive-card-content {
+            display: none; /* Hidden by default */
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed var(--border-light);
+        }
+        .interactive-card-content p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 0.5rem;}
+        .interactive-card.active .interactive-card-content { display: block; }
+        .interactive-card.active { background-color: var(--primary-lightest); }
+
+        .prompt-guide-task-selector select { margin-bottom: 1rem; }
+        .prompt-output-area {
+            background-color: var(--secondary-lightest);
+            border: 1px solid var(--secondary-light);
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap; /* To respect line breaks in mock output */
+            color: var(--text-dark);
+        }
+        
+        .ethical-dilemma-scenario {
+            background-color: var(--accent-purple-light);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--accent-purple);
+        }
+        .ethical-dilemma-choices button {
+            background-color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            margin-right: 0.5rem; margin-bottom: 0.5rem;
+        }
+        .ethical-dilemma-choices button:hover { background-color: #7c3aed; } /* Darker purple */
+        .ethical-dilemma-feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 0.375rem;
+        }
+        .feedback-good { background-color: var(--secondary-lighter); color: var(--secondary-darker); border: 1px solid var(--secondary-color); }
+        .feedback-bad { background-color: var(--warning-light); color: #b45309; border: 1px solid var(--warning-color); }
+
+        .ai-literacy-skills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .ai-literacy-skill-item {
+            background-color: var(--bg-white);
+            border: 1px solid var(--border-medium);
+            border-radius: 0.375rem;
+            padding: 1rem;
+            flex-basis: calc(50% - 0.5rem); /* Two columns on larger screens */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: default;
+        }
+        .ai-literacy-skill-item h5 {
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .ai-literacy-skill-item p {
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            color: var(--text-light);
+        }
+        @media (max-width: 768px) {
+            .ai-literacy-skill-item {
+                flex-basis: 100%; /* Single column on smaller screens */
+            }
+        }
+        .reference-item {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .reference-item::before {
+            content: attr(data-ref-id);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+    </style>
+</head>
+<body class="text-gray-800 antialiased">
+    <header class="bg-gradient-to-r from-blue-600 via-blue-500 to-teal-500 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-6 md:px-8 py-5 md:py-6">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold">Navegant la Frontera de la IA en l'Educació Superior</h1>
+            <p class="text-lg md:text-xl font-semibold mt-1 md:mt-2">Guia Interactiva de Models Lingüístics Extensos (LLM) per a Estudiants (2024-2025)</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 md:px-8 py-10 md:py-12">
+        <section id="intro" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-xl section-bg-white">
+            <h2>1. Introducció: Navegant la Frontera de la IA en el Teu Viatge Acadèmic</h2>
+            <p>La ràpida evolució i proliferació de la Intel·ligència Artificial (IA), particularment els Models Lingüístics Extensos (LLM), estan remodelant el panorama de l'educació superior. Aquestes eines sofisticades han passat de l'àmbit de la recerca especialitzada a les mans d'estudiants i educadors, presentant tant oportunitats sense precedents com reptes nous. Per als estudiants de grau i postgrau el 2024-2025, entendre com utilitzar eficaçment i èticament els LLM s'està convertint en un component essencial de l'èxit acadèmic i la preparació per a la futura carrera professional.</p>
+            
+            <h3>L'Auge dels LLM en l'Educació Superior</h3>
+            <p>Els Models Lingüístics Extensos s'han convertit ràpidament en eines prominents dins de l'educació superior, impactant la manera com els estudiants aprenen, realitzen investigacions i creen treballs acadèmics.[1, 2, 3, 4] Això no és merament una moda tecnològica passatgera, sinó que representa un canvi significatiu en l'entorn educatiu.[3, 5] L'adopció d'aquestes eines per part dels estudiants ja és notable. Un informe d'EDUCAUSE del 2025 va indicar que, mentre que el 43% dels estudiants va informar no utilitzar IA generativa en absolut per als seus cursos, un percentatge similar (43%) la va utilitzar per a tasques com la pluja d'idees (33%), refinar idees (24%) i organitzar (24%).[6] Un altre estudi del 2024 va trobar que el 46,9% dels estudiants universitaris utilitzaven LLM en el seu treball acadèmic, encara que només una fracció més petita, l'11,6%, va informar utilitzar-los més d'un cop per setmana.[7]</p>
+            <p>Aquestes xifres suggereixen un panorama d'adopció complex i una mica desigual. La "bretxa d'adopció" no es refereix simplement a l'accés a aquestes eines, que són cada cop més disponibles. En canvi, sembla estar influenciada per una confluència de factors que inclouen la claredat (o la manca d'ella) de les directrius institucionals i dels instructors, les percepcions pròpies dels estudiants sobre la utilitat dels LLM enfront dels riscos potencials, i les ansietats relacionades amb la mala conducta acadèmica.[6] Molts estudiants poden dubtar a explorar o informar plenament del seu ús dels LLM per por de violar les polítiques d'integritat acadèmica, especialment quan l'acceptació de l'instructor no és clara.[6] Aquesta situació subratlla una necessitat urgent de marcs educatius integrals i polítiques institucionals clares que puguin guiar els estudiants cap a un compromís beneficiós i ètic amb aquestes poderoses tecnologies.</p>
+            
+            <h3>Per Què Aquesta Guia És Important per als Estudiants</h3>
+            <p>Aquesta guia està dissenyada per apoderar els estudiants per navegar pel terreny canviant dels LLM. L'objectiu és transformar els estudiants de consumidors passius de contingut generat per IA en usuaris crítics, eficaços i ètics.[8, 9, 10, 11, 12] Ofereix les millors pràctiques per aprofitar els LLM per millorar el rendiment acadèmic en diverses tasques —des de la investigació i l'escriptura fins a l'anàlisi de dades i la preparació professional— mantenint fermament la integritat acadèmica i fomentant el desenvolupament d'habilitats essencials per al futur.[5, 13]</p>
+            <p>En el món actual impulsat per la IA, una comprensió funcional dels LLM ja no és una habilitat de nínxol, sinó una competència fonamental per a la vida acadèmica i professional.[4, 13] Aquestes eines tenen una naturalesa dual: ofereixen un potencial immens per a l'enriquiment acadèmic, com el suport personalitzat a l'aprenentatge i l'assistència en la investigació [2], però també comporten riscos significatius si s'utilitzen malament o es malinterpreten. Aquests riscos inclouen la dependència excessiva, la propagació de desinformació i dilemes ètics complexos.[1, 14, 15, 16] Els estudiants sovint es troben atrapats entre el desig d'utilitzar aquestes poderoses eines i la por a repercussions negatives o la manca de coneixement sobre com utilitzar-les de manera eficaç i responsable.[5, 6] Aquesta guia pretén servir com un mapa crucial per a aquest nou territori, proporcionant el coneixement i les estratègies necessàries perquè els estudiants aprofitin els beneficis dels LLM mentre mitiguen reflexivament els riscos associats.</p>
+        </section>
+
+        <section id="understanding-llms" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-accent">
+            <h2>2. Comprendre els LLM: Capacitats, Limitacions i Tendències 2024-2025</h2>
+            <p>Els Models Lingüístics Extensos són sistemes complexos d'IA entrenats amb grans quantitats de text i codi, la qual cosa els permet entendre, generar i manipular el llenguatge humà de maneres sofisticades. Per als estudiants, poden actuar com a assistents versàtils, però és crucial copsar tant els seus punts forts com les seves debilitats inherents.</p>
+
+            <h3>Què Poden Fer els LLM per Tu: El Joc d'Eines d'un Estudiant</h3>
+            <ul class="list-disc list-inside pl-4 space-y-3">
+                <li><strong>Aprenentatge Personalitzat:</strong> Els LLM poden oferir experiències d'aprenentatge personalitzades, adaptant-se als ritmes i estils individuals, proporcionant orientació personalitzada, explicacions i exercicis de pràctica.[2, 3, 8, 17-22] Actuen com a tutors pacients, disponibles sota demanda.[8, 18] Plataformes com Google Gemini i ChatGPT Edu incorporen aquestes funcionalitats.[17, 19-23]</li>
+                <li><strong>Ajuda a la Recerca:</strong> Els LLM ajuden en la descoberta de literatura, la recuperació d'informació i el resum de textos acadèmics complexos.[2, 23-25] Alguns sistemes pretenen generar noves idees de recerca.[26-28]</li>
+                <li><strong>Company d'Escriptura:</strong> Per a l'escriptura, els LLM ajuden amb la pluja d'idees, l'esquematització, la redacció de seccions inicials i l'oferiment de suggeriments d'edició/correcció (gramàtica, concisió).[1, 2, 9, 16, 29, 30]</li>
+                <li><strong>Assistent d'Anàlisi de Dades:</strong> Els LLM donen suport a l'anàlisi de dades: codificació inicial de dades qualitatives, identificació de temes [31, 32], i generació de codi (Python, R) per a anàlisis quantitatives bàsiques i interpretació de resultats (amb supervisió).[6, 33-35]</li>
+                <li><strong>Desenvolupament d'Habilitats:</strong> La interacció reflexiva amb els LLM pot desenvolupar habilitats de resolució de problemes, comunicació i pensament crític.[2, 36]</li>
+            </ul>
+            <p>L'element crucial és entendre <em>com</em> interactuar eficaçment amb els LLM per a aquestes tasques variades, convertint la competència en LLM en una habilitat acadèmica clau.</p>
+
+            <div class="interactive-block mt-10">
+                <h4 class="text-center !mt-0 !border-b-0">Explorador Interactiu: Limitacions Clau dels LLM</h4>
+                <p class="text-center text-sm text-gray-600 mb-6">Fes clic a cada limitació per obtenir més informació i veure un exemple conceptual.</p>
+                <div class="interactive-card-container">
+                    <div class="interactive-card" id="limitation-accuracy">
+                        <h5>Precisió i Desinformació (Al·lucinacions)</h5>
+                        <div class="interactive-card-content">
+                            <p>Els LLM poden generar informació que sona plausible però incorrecta o fabricada.[2, 16, 24, 37, 38] "Fan ressò dels nostres pensaments, sovint prioritzant la fluïdesa i l'afirmació per sobre de la veritat".[25]</p>
+                            <p><strong>Exemple Conceptual:</strong> Preguntar a un LLM la capital d'un país poc conegut. Podria proporcionar amb confiança el nom d'una ciutat incorrecta o fins i tot inventar una capital que soni plausible però inexistent.</p>
+                            <p class="font-semibold mt-2">Mitigació: Verifica sempre rigorosament la informació generada per LLM amb fonts fiables.</p>
+                        </div>
+                    </div>
+                    <div class="interactive-card" id="limitation-bias">
+                        <h5>Biaix</h5>
+                        <div class="interactive-card-content">
+                            <p>Entrenats amb grans conjunts de dades, els LLM poden reflectir i amplificar biaixos socials relacionats amb la raça, el gènere, l'edat, etc.[11, 14, 37]</p>
+                            <p><strong>Exemple Conceptual:</strong> Demanar a un LLM que generi imatges de "metges" podria mostrar predominantment un gènere o ètnia, reflectint biaixos en les dades d'entrenament.</p>
+                            <p class="font-semibold mt-2">Mitigació: Estigues vigilant en la identificació i el qüestionament de possibles biaixos, especialment en temes sensibles.</p>
+                        </div>
+                    </div>
+                    <div class="interactive-card" id="limitation-understanding">
+                        <h5>Manca de Comprensió i Raonament Reals</h5>
+                        <div class="interactive-card-content">
+                            <p>Els LLM prediuen seqüències de paraules probables; no "entenen" realment conceptes ni "pensen" críticament com els humans.[1, 15, 16, 39, 40]</p>
+                            <p><strong>Exemple Conceptual:</strong> Un LLM podria resoldre correctament un problema de paraules matemàtic però fallar en explicar els principis matemàtics subjacents d'una manera veritablement conceptual si se l'interroga profundament, o podria tenir dificultats amb variacions noves del problema que requereixen una abstracció genuïna.</p>
+                             <p class="font-semibold mt-2">Mitigació: Recorda que els LLM són comparadors de patrons, no raonadors conscients. Utilitza els seus resultats com a punt de partida per a la teva pròpia anàlisi crítica.</p>
+                        </div>
+                    </div>
+                    <div class="interactive-card" id="limitation-literacy">
+                        <h5>Impacte en el Desenvolupament de l'Alfabetització</h5>
+                        <div class="interactive-card-content">
+                            <p>La dependència excessiva pot dificultar el desenvolupament del pensament crític, l'escriptura acadèmica i les habilitats de resolució de problemes.[1, 2, 15, 16]</p>
+                            <p><strong>Exemple Conceptual:</strong> Utilitzar constantment un LLM per redactar assaigs des de zero podria impedir que un estudiant desenvolupi les seves pròpies habilitats argumentatives i la seva veu d'escriptura única.</p>
+                            <p class="font-semibold mt-2">Mitigació: Utilitza els LLM per augmentar, no per reemplaçar, el teu propi esforç intel·lectual i desenvolupament d'habilitats.</p>
+                        </div>
+                    </div>
+                    <div class="interactive-card" id="limitation-ethical">
+                        <h5>Preocupacions Ètiques</h5>
+                        <div class="interactive-card-content">
+                            <p>Les preocupacions inclouen el plagi, la deshonestedat acadèmica i la privadesa de les dades (les interaccions poden ser registrades).[2, 14, 16, 38, 41]</p>
+                            <p><strong>Exemple Conceptual:</strong> Presentar un assaig generat per un LLM com a treball propi és plagi. Compartir dades de recerca sensibles amb un LLM públic podria violar la confidencialitat.</p>
+                            <p class="font-semibold mt-2">Mitigació: Adhereix-te a les polítiques d'integritat acadèmica, cita adequadament i sigues prudent amb les dades sensibles.</p>
+                        </div>
+                    </div>
+                    <div class="interactive-card" id="limitation-context">
+                        <h5>Limitacions de la Finestra de Context</h5>
+                        <div class="interactive-card-content">
+                            <p>Els LLM tenen una quantitat finita d'informació que poden "recordar" durant una interacció, la qual cosa limita l'eficàcia amb documents molt llargs o converses complexes i extenses.[31]</p>
+                            <p><strong>Exemple Conceptual:</strong> En resumir un article de recerca molt llarg (p. ex., més de 50 pàgines), un LLM podria "oblidar" detalls del principi de l'article quan processi el final, donant lloc a un resum incomplet o esbiaixat.</p>
+                            <p class="font-semibold mt-2">Mitigació: Per a tasques llargues, divideix-les en fragments més petits o utilitza eines dissenyades per a la gestió de contextos amplis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Novetats i Pròxims Passos (2024-2025): Tendències Clau dels LLM per a Estudiants</h3>
+            <ul class="list-disc list-inside pl-4 space-y-3 mt-6">
+                <li><strong>Models Més Petits i Eficients:</strong> Models compactes però potents (p. ex., TinyLlama, Mixtral 8x7B) estan augmentant l'accessibilitat.[37]</li>
+                <li><strong>Verificació de Fets en Temps Real i Accés a Dades Externes:</strong> Integració millorada de dades d'Internet en viu (p. ex., Microsoft Copilot) per reduir al·lucinacions i proporcionar informació actualitzada, amb millors referències.[37]</li>
+                <li><strong>LLM Específics de Domini:</strong> Canvi cap a models entrenats per a camps específics (p. ex., BloombergGPT per a finances, Med-PaLM per a medicina, ChatLAW per a dret), oferint una comprensió disciplinària més profunda.[37, 42]</li>
+                <li><strong>Capacitats Multimodals:</strong> Capacitat creixent per gestionar text, imatges, àudio i vídeo, obrint noves possibilitats pedagògiques.[37, 43, 44]</li>
+                <li><strong>Raonament Millorat i IA Agèntica:</strong> Refinament per a raonaments complexos de múltiples passos (matemàtiques, codificació) i aparició de sistemes d'"IA agèntica" amb més autonomia.[37, 39, 40, 42]</li>
+                <li><strong>Focus en Seguretat, Alineació i Mitigació de Biaixos:</strong> Major enfocament en la seguretat, l'alineació amb els valors humans i les tècniques de reducció de biaixos (p. ex., RLHF).[14, 37]</li>
+                <li><strong>Dades d'Entrenament Sintètiques:</strong> Alguns LLM poden generar les seves pròpies dades d'entrenament, millorant potencialment el rendiment en dominis de nínxol.[37]</li>
+                <li><strong>Ús Creixent com a Eines de Recerca Integrals:</strong> Adopció creixent per part dels investigadors durant tot el cicle de vida de la recerca.[25]</li>
+            </ul>
+            <p>Aquestes tendències suggereixen assistents d'IA més especialitzats, fiables i versàtils per als estudiants, la qual cosa exigeix una comprensió més profunda dels punts forts i febles específics de cada eina.</p>
+        </section>
+
+        <section id="strategic-use" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-white">
+            <h2>3. Ús Estratègic i Eficaç dels LLM en els Teus Estudis</h2>
+            <p>Simplement tenir accés als LLM no és suficient; els estudiants han d'aprendre a utilitzar-los de manera estratègica i eficaç. Això implica dominar l'enginyeria de prompts, entendre els seus rols òptims i mantenir una perspectiva crítica.</p>
+
+            <h3>Enginyeria de Prompts: L'Art de Fer les Preguntes Adequades</h3>
+            <p>La qualitat del resultat d'un LLM depèn en gran mesura del prompt d'entrada. L'enginyeria de prompts eficaç és crucial.[8, 18, 45-48]</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Marc Contextual:</strong> Incorpora contextos o escenaris educatius específics.[46]</li>
+                <li><strong>Segmentació de Tasques:</strong> Divideix les tasques complexes en prompts més petits i enfocats.[46]</li>
+                <li><strong>Refinament Iteratiu:</strong> Analitza els resultats i refina els prompts per obtenir millors respostes.[46, 49, 50]</li>
+                <li><strong>Especificació de Persona o Rol:</strong> Indica al LLM que adopti un rol particular.[46, 51]</li>
+                <li><strong>Prompting de Cadena de Pensament (CoT):</strong> Demana al LLM que "pensi pas a pas".[39, 46, 52]</li>
+                <li><strong>Prompting de Pocs Exemples (Few-Shot):</strong> Proporciona exemples del format d'entrada-sortida desitjat.[42, 46, 52]</li>
+            </ul>
+            <p>Dominar l'enginyeria de prompts transforma la interacció amb els LLM en un diàleg estratègic, produint una assistència acadèmica més personalitzada i potent.</p>
+            
+            <div class="interactive-block mt-10">
+                <h4 class="text-center !mt-0 !border-b-0">Guia Interactiva d'Enginyeria de Prompts</h4>
+                <p class="text-center text-sm text-gray-600 mb-6">Selecciona una tasca acadèmica per veure un exemple d'estructura de prompt i elements clau. Fes clic a "Mostra Resultat Conceptual" per veure una idea de resposta simulada d'un LLM.</p>
+                <div class="prompt-guide-task-selector mb-4">
+                    <label for="prompt-task-select">Selecciona Tasca Acadèmica:</label>
+                    <select id="prompt-task-select" class="w-full p-2 border border-gray-300 rounded-md">
+                        <option value="summarize">Resumir un Article</option>
+                        <option value="brainstorm_rq">Pluja d'Idees de Preguntes de Recerca</option>
+                        <option value="explain_concept">Explicar un Concepte Complex</option>
+                        <option value="coding_help">Ajuda amb la Codificació</option>
+                        <option value="interview_practice">Pràctica per a una Entrevista</option>
+                        <option value="literature_review">Assistència en la Revisió de Literatura</option>
+                        <option value="develop_argument">Desenvolupar un Argument</option>
+                        <option value="understand_methodology">Comprendre la Metodologia de Recerca</option>
+                    </select>
+                </div>
+                <div id="prompt-details-structure" class="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <h5 class="font-semibold text-blue-700">Estructura de Prompt d'Exemple:</h5>
+                    <p class="text-sm"></p>
+                </div>
+                <div id="prompt-details-elements" class="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                    <h5 class="font-semibold text-green-700">Elements Clau del Prompting:</h5>
+                    <p class="text-sm"></p>
+                </div>
+                <button id="show-conceptual-output-btn" class="button">Mostra Resultat Conceptual</button>
+                <div id="prompt-conceptual-output" class="prompt-output-area mt-4" style="display: none;">
+                    </div>
+                 <p class="text-xs text-gray-500 mt-4">Conceptes d'enginyeria de prompts extrets de: [8, 18, 46-48, 50-63]</p>
+            </div>
+
+            <h3>Els LLM com a Assistents de Recerca: Descobriment de Literatura, Generació d'Idees i Resum</h3>
+            <p>Els LLM poden accelerar les fases inicials de la recerca però requereixen una avaluació crítica.</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Descobriment de Literatura:</strong> Poden trobar articles rellevants però poden "al·lucinar" fonts; verifica sempre.[24, 26, 28-30, 64]</li>
+                <li><strong>Generació d'Idees:</strong> Competents per a la pluja d'idees de preguntes/hipòtesis de recerca; la novetat i la viabilitat necessiten l'avaluació de l'estudiant.[6, 25-28]</li>
+                <li><strong>Resum:</strong> Resumeixen textos ràpidament; verifica la precisió i el matís amb les fonts originals.[9, 23, 30]</li>
+                <li><strong>Generació Automatitzada de Revisions:</strong> Tecnologia emergent, però persisteixen reptes amb al·lucinacions i profunditat crítica. Comença amb fonts revisades per experts d'alta qualitat.[24]</li>
+            </ul>
+            <p>El principi és l'augmentació, no la substitució, de l'intel·lecte humà. Els estudiants haurien de demanar connexions més profundes, anant més enllà de simples sol·licituds de resum.</p>
+
+            <h3>Millorar el Teu Procés d'Escriptura amb LLM: Pluja d'Idees, Esquematització i Refinament (No Substitució)</h3>
+            <p>Els LLM poden ajudar en l'escriptura, però la veu original i l'anàlisi crítica de l'estudiant són primordials.</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Pluja d'Idees i Generació d'Idees:</strong> Excel·lents per generar idees de temes, refinar preguntes de recerca, explorar arguments.[6, 9, 29]</li>
+                <li><strong>Esquematització i Organització:</strong> Poden crear esquemes inicials o suggerir fluxos lògics d'arguments.[6, 9, 30]</li>
+                <li><strong>Refinament i Edició:</strong> Competents en la correcció gramatical/ortogràfica, millorant la claredat. Demana als LLM que expliquin les revisions per aprendre.[1, 16, 29, 30]</li>
+                <li><strong>Manteniment de l'Originalitat i la Veu:</strong> No copieu mai text d'IA com a treball original. Reformula amb les teves pròpies paraules i integra amb reflexió.[29, 41]</li>
+            </ul>
+            <p>Els LLM haurien d'ajudar, no externalitzar el treball intel·lectual. La dependència excessiva dificulta el desenvolupament d'habilitats.[1, 16, 29]</p>
+
+            <h3>Aprofitament dels LLM per a l'Anàlisi de Dades</h3>
+            <p>S'estan explorant els LLM per a l'assistència en l'anàlisi de dades qualitatives i quantitatives.</p>
+            <h4>Anàlisi de Dades Qualitatives:</h4>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Codificació i Anàlisi Temàtica:</strong> Poden realitzar una codificació inicial de dades textuals i suggerir temes.[31, 32, 65] JMIR proporciona un tutorial per a la Teoria Fonamentada utilitzant ChatGPT.[32]</li>
+                <li><strong>Mètodes d'Interacció:</strong> Xat web, bases de coneixement enfocades (ChatGPT, Claude), o integració API.[31]</li>
+                <li><strong>Limitacions i Supervisió Humana:</strong> Dificultat amb la profunditat i el matís, poden al·lucinar codis. La supervisió humana, la familiaritat amb les dades i la revisió crítica són essencials. Tendència cap a la "recerca qualitativa augmentada".[32, 66, 67]</li>
+            </ul>
+            <h4>Anàlisi de Dades Quantitatives:</h4>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Neteja i Organització de Dades:</strong> Poden ajudar a identificar inconsistències, valors perduts i suggerir mètodes d'estandardització.[56, 57, 68]</li>
+                <li><strong>Anàlisi Estadística Bàsica i Generació de Codi:</strong> Poden generar codi (Python, R) per a anàlisis comunes. Els estudiants han de revisar, provar i entendre el codi.[34, 35, 43]</li>
+                <li><strong>Interpretació de Resultats:</strong> Poden explicar resultats estadístics; verifica aquestes interpretacions.[63, 69, 70]</li>
+                <li><strong>Eines i Enfocaments Agèntics:</strong> Agents de dades impulsats per LLM poden interactuar amb bases de dades (SQL) i realitzar càlculs.[33, 71]</li>
+                <li><strong>Limitacions:</strong> No són programari estadístic especialitzat; poden cometre errors. Preocupacions de privadesa de dades amb conjunts de dades sensibles.[35, 68]</li>
+            </ul>
+            <p>Els LLM són assistents per a tasques inicials, no substituts de la comprensió metodològica o la interpretació humana.</p>
+
+            <h3>Aprendre Conceptes Complexos i Metodologies de Recerca amb Suport d'LLM</h3>
+            <p>Els LLM poden servir com a tutors personalitzats per a conceptes complexos, teories i metodologies de recerca (p. ex., estudis de cas, disseny d'enquestes, fenomenologia).[7, 8, 30, 55, 58, 59, 72-76]</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Explicacions Pas a Pas:</strong> Sol·licita desglossaments de teories o mètodes.[59, 62]</li>
+                <li><strong>Exemples:</strong> Demana exemples concrets d'aplicació de teories o implementació de metodologies.</li>
+                <li><strong>Pros i Contres:</strong> Demana debats equilibrats de diferents teories/metodologies.[59]</li>
+                <li><strong>Assistència en el Disseny de Recerca:</strong> Ajuda a formular hipòtesis, dissenyar experiments, seleccionar proves estadístiques.[63, 77, 78]</li>
+                <li><strong>Prompting Eficaç:</strong> Utilitza prompts clars i detallats. P. ex., per al disseny d'enquestes: "Explica els principis bàsics del disseny eficaç de qüestionaris d'enquesta. Quins són els tipus comuns de preguntes (Likert, opció múltiple, obertes), els seus pros/contres? Com minimitzar el biaix de resposta? Proporciona exemples." (Adaptat de [55, 61, 62, 75, 76]).</li>
+                <li><strong>Avaluació Crítica:</strong> No acceptis passivament les explicacions de la IA. Compara amb llibres de text i articles acadèmics.[55]</li>
+            </ul>
+            <p>L'aprenentatge veritable es produeix quan els LLM catalitzen la investigació crítica i la construcció de coneixement pròpies de l'estudiant.</p>
+        </section>
+
+        <section id="ethical-use" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-accent">
+            <h2>4. Ús Ètic i Integritat Acadèmica en l'Era de la IA</h2>
+            <p>La integració dels LLM en la vida acadèmica requereix vigilància, decisions informades i compromís amb pràctiques acadèmiques honestes.</p>
+
+            <h3>Navegar pel Plagi i Assegurar l'Originalitat</h3>
+            <p>Presentar treballs generats per IA com a propis és plagi.[29, 41, 79-82] Els estudis mostren un alt ús de la IA per a deures (89% en un estudi [41]), amb alguns utilitzant LLM per a assaigs sencers (7,2% [7]).</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Utilitza la IA com una Eina, No com un Escriptor Fantasma:</strong> Dona suport a l'aprenentatge, ajuda amb tasques preliminars, no produeixis els lliurables finals.[12, 41]</li>
+                <li><strong>Desenvolupa la Teva Pròpia Veu:</strong> El treball acadèmic és per expressar la teva anàlisi crítica i les teves idees.[1, 12, 16, 29]</li>
+                <li><strong>Sintetitza i Reformula:</strong> Reformula la informació proporcionada per la IA amb les teves pròpies paraules, integra-la en el teu argument i atribueix-la si no és coneixement comú.</li>
+            </ul>
+            
+            <div class="interactive-block mt-10">
+                <h4 class="text-center !mt-0 !border-b-0">Mini-Simulador de Dilemes Ètics</h4>
+                <div id="ethical-dilemma-scenario-container" class="ethical-dilemma-scenario">
+                    <p class="font-semibold">Escenari:</p>
+                    <p id="dilemma-text">Tens un article de recerca complex per lliurar en dos dies i estàs tenint dificultats per escriure la secció de revisió de la literatura. Un LLM podria generar un esborrany complet ràpidament. Què fas?</p>
+                </div>
+                <div id="ethical-dilemma-choices-container" class="ethical-dilemma-choices">
+                    </div>
+                <div id="ethical-dilemma-feedback-container" class="ethical-dilemma-feedback" style="display: none;">
+                    </div>
+            </div>
+
+            <h3>Citar i Reconèixer Correctament l'Ús d'LLM</h3>
+            <p>La transparència és clau. Si es permet, declara i reconeix l'ús d'eines d'IA, especificant l'eina, el propòsit i l'abast.[55, 79-82] Algunes institucions (p. ex., la Universitat de Stellenbosch) estan desenvolupant formularis de declaració.[79]</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Consulta els Programes dels Cursos i les Directrius de l'Instructor:</strong> La permissibilitat varia. Demana aclariments si no està clar.[55, 81]</li>
+                <li><strong>Segueix els Estils de Citació Prescrits:</strong> Adhereix-te a les guies d'estil de l'instructor/departament.</li>
+            </ul>
+
+            <h3>Privadesa i Seguretat de les Dades: Protegint la Teva Informació i les Dades Universitàries</h3>
+            <p>Tingues cura de la privadesa de les dades personals i institucionals.</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Precaució amb la Informació Sensible:</strong> Evita introduir PII, dades de recerca confidencials o altra informació sensible en LLM públics.[14, 38, 68, 82-84]</li>
+                <li><strong>Entén les Polítiques d'Ús de Dades:</strong> Revisa les polítiques de privadesa i els termes de servei.</li>
+                <li><strong>Utilitza Comptes Institucionals:</strong> Utilitza comptes d'LLM sancionats per la universitat (p. ex., ChatGPT Edu, Gemini for Education) per a una millor protecció de dades.[17, 19-23]</li>
+            </ul>
+
+            <h3>Comprendre i Mitigar el Biaix Algorítmic</h3>
+            <p>Els LLM poden perpetuar biaixos socials de les seves dades d'entrenament.[11, 14, 37, 80]</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Avalua Críticament els Resultats per Biaix:</strong> Especialment en temes que involucren poblacions diverses o qüestions socials.[11, 14]</li>
+                <li><strong>Busca Múltiples Perspectives:</strong> No depenguis únicament dels LLM per a temes sensibles.</li>
+                <li><strong>Reconeix l'Impacte del Biaix:</strong> Entén que pot portar a resultats injustos i reforçar estereotips.[14]</li>
+            </ul>
+
+            <h3>Polítiques Institucionals: Què Han de Saber els Estudiants</h3>
+            <p>Les polítiques estan evolucionant. Algunes institucions (p. ex., Lake Forest College, American Military University, Birkbeck University of London) han establert directrius.[3, 6, 80, 82, 84, 85]</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Prioritza l'Orientació Oficial:</strong> Consulta els programes dels cursos i les polítiques d'integritat acadèmica institucionals.[6, 79, 85]</li>
+                <li><strong>Comunica't amb els Instructors:</strong> Demana aclariments i permís si les polítiques no són clares.</li>
+            </ul>
+            <p>L'ús ètic dels LLM és una responsabilitat compartida. Navega amb precaució informada i integritat.</p>
+
+            <h4 class="mt-8">Taula 2: Què Fer i Què No Fer en Utilitzar LLM en l'Acadèmia</h4>
+            <div class="overflow-x-auto">
+                <table>
+                    <thead><tr><th>Què Fer</th><th>Què No Fer</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>FER</strong> servir LLM per a pluja d'idees, generar idees inicials i explorar diferents perspectives. [6, 9]</td><td><strong>NO</strong> presentar contingut generat per IA com a treball original propi; això és plagi. [29, 41]</td></tr>
+                        <tr><td><strong>FER</strong> servir LLM per ajudar a entendre conceptes complexos o obtenir explicacions en termes més senzills. [8, 30]</td><td><strong>NO</strong> confiar cegament en els resultats dels LLM; sempre verifica els fets i la informació amb fonts creïbles. [29, 37]</td></tr>
+                        <tr><td><strong>FER</strong> servir LLM com una eina per editar i corregir el teu propi treball (p. ex., gramàtica, claredat). [1, 29]</td><td><strong>NO</strong> permetre que els LLM substitueixin el teu propi pensament crític, anàlisi o desenvolupament d'habilitats. [1, 15]</td></tr>
+                        <tr><td><strong>FER</strong> una avaluació crítica dels resultats dels LLM per precisió, biaix i completesa. [11, 14]</td><td><strong>NO</strong> copiar i enganxar text directament d'un LLM en els teus treballs. [29, 79]</td></tr>
+                        <tr><td><strong>FER</strong> citacions i reconeixements de l'ús d'LLM si està permès i segons les directrius del teu instructor. [79, 81]</td><td><strong>NO</strong> compartir informació personal sensible (PII) o dades confidencials amb LLM públics. [38, 84]</td></tr>
+                        <tr><td><strong>FER</strong> experiments amb l'enginyeria de prompts per obtenir respostes més rellevants i útils. [8, 46]</td><td><strong>NO</strong> assumir que l'LLM entén perfectament el context o el matís; sigues específic en els teus prompts. [47]</td></tr>
+                        <tr><td><strong>FER</strong> servir LLM per ajudar a crear esquemes o estructures per als teus treballs. [6, 9]</td><td><strong>NO</strong> dependre dels LLM per generar citacions sense verificar meticulosament la seva precisió i existència. [24, 29]</td></tr>
+                        <tr><td><strong>FER</strong> èmfasi en aprendre de la interacció, p. ex., demanant a l'LLM que expliqui els seus suggeriments. [1]</td><td><strong>NO</strong> utilitzar LLM d'una manera que violi la política d'integritat acadèmica de la teva institució o les regles específiques del teu instructor. [6, 85]</td></tr>
+                        <tr><td><strong>FER</strong> servir comptes institucionals (p. ex., ChatGPT Edu, Gemini for Education) si estan disponibles per a una millor protecció de dades. [17, 23]</td><td><strong>NO</strong> descuidar el desenvolupament de la teva pròpia veu acadèmica i estil d'escriptura únics. [1, 12]</td></tr>
+                    </tbody>
+                </table>
+            </div>
+             <p class="text-xs text-gray-500 mt-2">Fonts de la taula: [1, 6, 8, 9, 11, 12, 14, 15, 17, 23, 24, 29, 30, 37, 38, 41, 46, 47, 79, 81, 84, 85]</p>
+        </section>
+
+        <section id="ai-literacy" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-white">
+            <h2>5. Desenvolupament de l'Alfabetització Crítica en IA i Habilitats Preparades per al Futur</h2>
+            <p>Cultivar l'alfabetització crítica en IA és primordial. Implica entendre els mecanismes dels LLM, reconèixer limitacions i interactuar amb la informació generada per IA de manera discernible i responsable.</p>
+
+            <h3>Més Enllà de les Respostes: Fomentant el Pensament Crític i Evitant la Dependència Excessiva</h3>
+            <p>Els LLM haurien d'augmentar, no reemplaçar, el pensament humà.[1, 8, 11, 16, 40, 42, 86, 87] La dependència excessiva pot perjudicar les habilitats cognitives.[1, 2, 15, 16] Les intervencions d'alfabetització en IA a curt termini mostren resultats complexos sobre la dependència.[15]</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Participa Activa ment:</strong> Tracta les interaccions amb LLM com un diàleg; pregunta, analitza, sintetitza.[8, 11, 18]</li>
+                <li><strong>Utilitza els LLM com a Punt de Partida:</strong> L'anàlisi i el refinament posteriors han de ser impulsats per l'estudiant.</li>
+                <li><strong>Centra't en el Procés:</strong> Entén els principis subjacents, no només el resultat.</li>
+            </ul>
+
+            <h3>Verificació de Fets, Verificació de Fonts i Avaluació dels Resultats dels LLM</h3>
+            <p>Avaluar críticament els resultats és una pedra angular de l'alfabetització en IA.</p>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Verificació Rigorosa de Fets:</strong> Verifica les afirmacions amb múltiples fonts acadèmiques creïbles.[11, 24, 29, 37]</li>
+                <li><strong>Verificació de Fonts:</strong> Localitza, verifica i avalua la credibilitat/rellevància de les citacions proporcionades per l'LLM.[7, 24, 29, 80]</li>
+                <li><strong>Comprensió de la Generació i Limitacions dels LLM:</strong> Coneix com funcionen els LLM (predint text) i les seves limitacions inherents.[1, 11, 16, 80]</li>
+            </ul>
+
+            <h4 class="mt-8">Taula 3: Llista de Verificació per Avaluar la Informació Generada per LLM</h4>
+            <div class="overflow-x-auto">
+                <table>
+                    <thead><tr><th>Criteri d'Avaluació</th><th>Preguntes a Fer-se</th><th>Per Què És Important</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Precisió</strong></td><td>La informació és factualment correcta? Puc verificar-la amb almenys dues fonts acadèmiques o primàries de confiança?</td><td>Els LLM poden "al·lucinar" o presentar desinformació amb confiança. [2, 37]</td></tr>
+                        <tr><td><strong>Font/Citació</strong></td><td>L'LLM proporciona fonts per a les seves afirmacions? Si és així, són aquestes fonts reals, rellevants i reputades? Les he comprovat?</td><td>Els LLM sovint fabriquen citacions o en proporcionen d'irrellevants. [24, 29]</td></tr>
+                        <tr><td><strong>Biaix</strong></td><td>La informació mostra algun biaix obvi? Presenta múltiples perspectives?</td><td>Els LLM poden reflectir i amplificar biaixos en les dades d'entrenament. [11, 14]</td></tr>
+                        <tr><td><strong>Completitud</strong></td><td>La informació és prou completa per a les meves necessitats? Omet aspectes crítics?</td><td>Els LLM poden proporcionar respostes superficials o incompletes.</td></tr>
+                        <tr><td><strong>Rellevància</strong></td><td>La informació és directament rellevant per a la meva consulta o tasca?</td><td>Els LLM podrien malinterpretar els prompts o proporcionar informació tangencial.</td></tr>
+                        <tr><td><strong>Claredat i Lògica</strong></td><td>Es presenta de manera clara, coherent i lògica? El raonament té sentit?</td><td>Una mala estructura pot indicar una generació defectuosa.</td></tr>
+                        <tr><td><strong>Actualitat</strong></td><td>La informació està actualitzada, especialment per a temes en evolució?</td><td>Molts LLM tenen dates de tall de coneixement. [37, 80]</td></tr>
+                        <tr><td><strong>Originalitat</strong></td><td>Si és per a la generació d'idees, és la idea genuïnament nova o una repetició?</td><td>Els LLM s'entrenen amb dades existents; la "novetat" necessita escrutini.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Fonts dels conceptes de la llista de verificació: [2, 11, 14, 24, 29, 37, 80]</p>
+
+            <h3>L'Alfabetització en IA com a Competència Bàsica</h3>
+            <p>L'alfabetització en IA s'està convertint en una competència bàsica per a tots els estudiants.[5, 6, 9-11, 85] El 92% dels instructors i el 83% dels estudiants estan d'acord en la seva importància en els cursos.[5] Iniciatives com el Marc AILit (Comissió Europea/OCDE) pretenen apoderar els aprenents.[10]</p>
+            
+            <div class="interactive-block mt-10">
+                <h4 class="text-center !mt-0 !border-b-0">Visió General Interactiva de les Habilitats d'Alfabetització en IA</h4>
+                <p class="text-center text-sm text-gray-600 mb-6">Explora les habilitats tècniques i humanes clau essencials en un món impulsat per la IA. (Basat en [10, 13])</p>
+                <div class="ai-literacy-skills-container">
+                    <div class="ai-literacy-skill-item">
+                        <h5>Habilitats Tècniques Essencials</h5>
+                        <p>Anàlisi i visualització de dades, principis bàsics d'aprenentatge automàtic/IA, familiaritat amb la computació al núvol, programació (Python), coneixements de ciberseguretat.</p>
+                    </div>
+                    <div class="ai-literacy-skill-item">
+                        <h5>Pensament Crític i Resolució de Problemes</h5>
+                        <p>Analitzar situacions complexes, avaluar informació (inclosos els resultats de la IA) críticament, idear solucions eficaces.</p>
+                    </div>
+                    <div class="ai-literacy-skill-item">
+                        <h5>Creativitat</h5>
+                        <p>Generar idees, enfocaments i solucions noves que vagin més enllà del reconeixement de patrons.</p>
+                    </div>
+                    <div class="ai-literacy-skill-item">
+                        <h5>Raonament Ètic i Judici</h5>
+                        <p>Prendre decisions ètiques sòlides, entendre l'impacte social de la IA, navegar per dilemes morals.</p>
+                    </div>
+                    <div class="ai-literacy-skill-item">
+                        <h5>Comunicació</h5>
+                        <p>Articular idees clarament, col·laborar eficaçment (humans i IA), entendre la comunicació matisada.</p>
+                    </div>
+                    <div class="ai-literacy-skill-item">
+                        <h5>Adaptabilitat i Aprenentatge Continu</h5>
+                        <p>Abraçar l'aprenentatge permanent i adaptar-se a noves eines i paradigmes d'IA en un camp en ràpida evolució.</p>
+                    </div>
+                     <div class="ai-literacy-skill-item">
+                        <h5>Empatia</h5>
+                        <p>Comprendre i respondre a les emocions i perspectives humanes, crucial per a la col·laboració i el disseny centrat en l'ésser humà.</p>
+                    </div>
+                </div>
+            </div>
+            <p>Cultivar l'alfabetització crítica en IA implica desenvolupar una consciència metacognitiva de la interacció amb la IA: saber quan, per què i com utilitzar-la amb les comprovacions crítiques necessàries.</p>
+        </section>
+
+        <section id="career-prep" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-accent">
+            <h2>6. Els LLM per a la Preparació i l'Avanç Professional</h2>
+            <p>Els LLM són valuosos per a la preparació professional, ajudant a identificar mancances d'habilitats, explorar camins i perfeccionar materials de sol·licitud de feina. La competència en habilitats d'IA és cada cop més important (84% dels estudiants hi estan d'acord [5]).</p>
+
+            <h3>Identificació de Mancances d'Habilitats i Exploració de Camins Professionals</h3>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Avaluació d'Habilitats Impulsada per IA:</strong> Sistemes com el xatbot "Steve" avaluen l'etapa professional i identifiquen mancances d'habilitats mitjançant l'anàlisi de currículums i entrevistes dirigides per IA, recomanant recursos.[88-90] Els estudiants poden utilitzar conceptualment LLM generals per a això.</li>
+                <li><strong>Exploració d'Opcions Professionals:</strong> Utilitza els LLM per investigar camins professionals, habilitats/qualificacions requerides i tendències del sector.[5, 6, 9, 23]</li>
+            </ul>
+
+            <h3>Optimització de Currículums i Cartes de Presentació amb LLM</h3>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Anàlisi de Descripcions de Feina:</strong> Els LLM extreuen paraules clau, identifiquen habilitats/competències clau i discerneixen l'experiència/argot requerit.[93-95]</li>
+                <li><strong>Adaptació i Optimització de Contingut:</strong> Ajuden a revisar currículums/cartes de presentació per destacar habilitats rellevants, incorporar paraules clau (per a ATS), utilitzar verbs d'acció, quantificar assoliments i articular habilitats transferibles.[93-97]</li>
+                <li><strong>Revisió i Verificació:</strong> Revisa crucialment els suggeriments de la IA per precisió i autenticitat.[93-95]</li>
+            </ul>
+
+            <h3>Pràctica d'Entrevistes Simulades i Retroalimentació</h3>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Entrevistes Simulades:</strong> Eines com ChatGPT poden simular entrevistes, fent preguntes comunes i específiques del rol.[23, 53, 54, 97-99]</li>
+                <li><strong>Retroalimentació sobre les Respostes:</strong> Sol·licita retroalimentació constructiva per refinar la comunicació i l'estructura de la resposta (p. ex., mètode STAR).[53, 54, 98]</li>
+                <li><strong>Generació de Preguntes per als Entrevistadors:</strong> Ajuda a preparar preguntes reflexives per fer.[53]</li>
+            </ul>
+
+            <h3>Desenvolupament d'Habilitats d'IA Demandades</h3>
+            <p>Utilitzar eficaçment els LLM per a tasques acadèmiques i de preparació professional desenvolupa l'alfabetització en IA. S'anima les institucions a integrar la IA en els programes per a la preparació professional.[5, 6]</p>
+            <p>Els LLM augmenten, no reemplacen, els esforços i les qualificacions d'un estudiant. L'autenticitat, les habilitats i la personalitat asseguren les ofertes de feina.[93, 95]</p>
+        </section>
+
+        <section id="llm-tools" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-white">
+            <h2>7. Focus en Eines LLM per a Estudiants (2024-2025)</h2>
+            <p>El panorama d'eines LLM s'està expandint, amb plataformes cada cop més adaptades per a l'ús educatiu. Entendre les seves característiques ajuda els estudiants a prendre decisions informades.</p>
+
+            <h3>Visió General de les Plataformes Clau</h3>
+            <ul class="list-disc list-inside pl-4 space-y-3">
+                <li><strong>ChatGPT Edu (OpenAI):</strong> Per a universitats, accés a GPT-4o (límits més alts), anàlisi de dades avançada, navegació web, integracions de fitxers (Dropbox, GitHub, SharePoint, OneDrive per a recerca profunda), resum de documents, GPT personalitzables. Les dades no s'utilitzen per a l'entrenament de models públics.[23, 100]</li>
+                <li><strong>Google Gemini for Education (Google):</strong> Integrat a Workspace (Docs, Classroom, Slides, etc.). Recerca, creació de contingut, resums de correus electrònics, imatges per a presentacions, notes de reunions. Privadesa de nivell empresarial; les dades no s'utilitzen per entrenar models públics des de comptes escolars.[17, 19-22, 101, 102] Novetats recents: qüestionaris de pràctica a partir de documents, resums d'àudio estil podcast, NotebookLM Plus.[102, 103]</li>
+                <li><strong>Anthropic Claude for Education:</strong> Plans universitaris, accés amb descompte per a estudiants, crèdits API per a recerca. El "Mode Aprenentatge" fomenta el pensament crític mitjançant preguntes socràtiques, centrant-se en els principis.[104, 105]</li>
+                <li><strong>Altres Eines Destacades:</strong> [30, 96, 97]
+                    <ul class="list-circle list-inside pl-6 mt-1">
+                        <li><em>Escriptura/Recerca:</em> Grammarly, QuillBot, Elicit.</li>
+                        <li><em>Aprenentatge/Estudi:</em> Wolfram Alpha, Socratic by Google, Caktus AI, Exam AI.</li>
+                        <li><em>Productivitat/Organització:</em> Notion AI, Otter.ai, Nifty.</li>
+                        <li><em>Contingut Especialitzat:</em> Writesonic, Jasper.</li>
+                        <li><em>Preparació Professional:</em> Explain Like I’m Five (ELI5).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Característiques Específiques per a l'Aprenentatge, la Recerca i la Productivitat</h3>
+            <ul class="list-disc list-inside pl-4 space-y-3">
+                <li><strong>Per a l'Aprenentatge:</strong> Tutoria personalitzada (ChatGPT, Gemini, Claude), generació de material d'estudi/qüestionaris (Claude, Gemini, Exam AI).[17, 19-23, 30, 102-104]</li>
+                <li><strong>Per a la Recerca:</strong> Descobriment/resum de literatura (ChatGPT, Elicit, Claude), anàlisi de dades (ChatGPT Edu, Gemini a Sheets), generació de citacions (QuillBot, Caktus AI).[17, 19-23, 30, 100, 101, 104]</li>
+                <li><strong>Per a la Productivitat i Creació de Contingut:</strong> Redacció (Gemini, ChatGPT, Writesonic, Jasper), millora de presentacions (Gemini a Slides, biblioteca d'imatges de ChatGPT), presa de notes/transcripció (Notion AI, Gemini a Meet, Otter.ai), assistència en codificació (ChatGPT, Caktus AI).[17, 19-22, 30, 96, 97, 100, 101]</li>
+            </ul>
+            <p>Tendència: Integració d'LLM en suites de productivitat i LMS existents. Les versions específiques per a educació assenyalen un enfocament en la pedagogia i les preocupacions institucionals (privadesa de dades, integritat acadèmica).</p>
+
+            <h4 class="mt-8">Taula 4: Eines LLM per a Estudiants (2024-2025) - Característiques i Casos d'Ús</h4>
+            <div class="overflow-x-auto">
+                <table>
+                    <thead><tr><th>Nom de l'Eina</th><th>Desenvolupador/Proveïdor</th><th>Característiques Educatives Clau</th><th>Casos d'Ús Específics per a Estudiants</th><th>Notes de Privadesa de Dades</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>ChatGPT Edu</strong></td><td>OpenAI</td><td>GPT-4o (límits més alts), GPT-4.1 (codificació), anàlisi de dades avançada, navegació web, integració de fitxers (Dropbox, GitHub, OneDrive, SharePoint per a recerca profunda), resum de documents, GPT personalitzables, integració amb Canvas, execució de Python. [23, 100]</td><td>Tutoria personalitzada, assistència en recerca, redacció de subvencions, revisions de literatura, anàlisi de dades, ajuda amb codificació, revisió de currículums, entrevistes simulades. [23]</td><td>Les dades/converses dels usuaris NO s'utilitzen per entrenar models d'OpenAI per a la versió Edu; SAML SSO, retenció de dades personalitzada, Soc 2 Tipus 2. [23]</td></tr>
+                        <tr><td><strong>Google Gemini for Education</strong></td><td>Google</td><td>Integració amb Workspace, aplicació Gemini (protecció de dades per a comptes escolars), NotebookLM Plus, recerca/pluja d'idees, creació de contingut, resum/redacció de correus electrònics, generació de qüestionaris, resums d'àudio. [17, 19-22, 69, 101-103]</td><td>Investigar temes, redactar treballs/correus electrònics, crear materials d'estudi, suport a l'aprenentatge personalitzat, presentacions, organitzar dades. [17, 19-22]</td><td>Les dades no s'utilitzen/revisen per humans per entrenar models d'IA amb comptes escolars; privadesa de nivell empresarial sota els termes de Workspace for Edu. [17, 19-22]</td></tr>
+                        <tr><td><strong>Anthropic Claude for Education</strong></td><td>Anthropic</td><td>"Mode Aprenentatge" (preguntes socràtiques, enfocament en principis, plantilles), llicències per a estudiants/professorat, crèdits API. [104, 105]</td><td>Pensament crític, comprensió de conceptes, resolució col·laborativa de problemes, co-creació de materials d'estudi, síntesi de recerca. [104, 105]</td><td>No utilitza dades d'estudiants per entrenar models per defecte; compromís de privadesa. [104]</td></tr>
+                        <tr><td><strong>Grammarly</strong></td><td>Grammarly</td><td>Millora de l'escriptura amb IA (gramàtica, estil, to), detecció de plagi, prompts d'IA generativa. [30, 97]</td><td>Millorar treballs acadèmics, correus electrònics; assegurar l'originalitat. [30]</td><td>Consulta la política de privadesa de la plataforma.</td></tr>
+                        <tr><td><strong>Elicit</strong></td><td>Ought</td><td>Assistent de recerca d'IA, resum d'articles, recomanacions de citacions, accés a articles acadèmics. [30]</td><td>Agilitzar revisions de literatura, trobar fonts, extreure dades. [30]</td><td>Consulta la política de privadesa de la plataforma.</td></tr>
+                        <tr><td><strong>Otter.ai</strong></td><td>Otter.ai</td><td>Transcripció amb IA (classes, reunions), notes cercables. [30]</td><td>Centrar-se en l'aprenentatge, recuperació ràpida d'informació de transcripcions. [30]</td><td>Consulta la política de privadesa de la plataforma.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-gray-500 mt-2">Fonts de la taula: [17, 19-23, 30, 96, 97, 100-105]</p>
+        </section>
+
+        <section id="conclusion" class="mb-12 md:mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-accent">
+            <h2>8. Conclusió: Esdevenir un Usuari d'IA Apoderat i Responsable</h2>
+            <p>La integració dels LLM en l'educació superior ofereix eines transformadores. Aprofitar aquest potencial requereix que els estudiants es converteixin en usuaris d'IA apoderats, crítics i ètics.</p>
+
+            <h3>Resum de Bones Pràctiques</h3>
+            <ul class="list-disc list-inside pl-4 space-y-2">
+                <li><strong>Cultiva el Pensament Crític:</strong> Qüestiona, analitza, verifica la informació dels LLM. Entén les limitacions.</li>
+                <li><strong>Prioritza l'Ús Ètic i la Integritat Acadèmica:</strong> Mantingues l'honestedat. Utilitza els LLM per donar suport, no per reemplaçar, el treball intel·lectual. Cita adequadament.</li>
+                <li><strong>Domina l'Enginyeria de Prompts:</strong> Crea prompts clars, específics i contextualitzats.</li>
+                <li><strong>Equilibra l'Assistència dels LLM amb el Desenvolupament d'Habilitats:</strong> Augmenta, no externalitzis, l'intel·lecte. Assegura't que l'ús d'LLM no dificulti el desenvolupament d'habilitats.</li>
+                <li><strong>Mantingues-te Informat i Adaptable:</strong> Compromet-te amb l'aprenentatge continu sobre capacitats d'IA, ètica i polítiques.</li>
+            </ul>
+
+            <h3>El Futur dels LLM en la Teva Vida Educativa i Professional</h3>
+            <p>Els LLM estan destinats a integrar-se cada cop més en els fluxos de treball acadèmics i professionals.[3-5] L'alfabetització en IA i la col·laboració eficaç amb la IA seran habilitats valuoses.[13]</p>
+            <p>L'objectiu és una relació simbiòtica on la IA augmenti la intel·ligència humana. Abraçant les bones pràctiques, els estudiants poden aprofitar els LLM per enriquir la seva educació i preparar-se per a un futur de col·laboració humà-IA, mantenint la investigació acadèmica i el creixement intel·lectual.</p>
+        </section>
+
+        <section id="references-section" class="mb-16 p-6 md:p-8 rounded-lg shadow-lg section-bg-white">
+            <h2>9. Referències</h2>
+            <div id="references-list" class="text-sm space-y-1">
+                </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 md:mt-16 pt-8 md:pt-10 pb-6 md:pb-8 border-t border-gray-300 text-sm text-gray-600">
+        <p class="footer-attribution">Guia Interactiva d'LLM en l'Educació Superior | Developed by ronald.marquez@udg.edu / Powered by Gemini 2.5 (2024-2025)</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Interactive LLM Limitations Explorer ---
+        const limitationCards = document.querySelectorAll('.interactive-card');
+        limitationCards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('active');
+                const content = card.querySelector('.interactive-card-content');
+                if (content) {
+                    content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                }
+            });
+        });
+
+        // --- Interactive Prompt Engineering Guide ---
+        const promptTaskSelect = document.getElementById('prompt-task-select');
+        const promptStructureEl = document.getElementById('prompt-details-structure').querySelector('p');
+        const promptElementsEl = document.getElementById('prompt-details-elements').querySelector('p');
+        const showConceptualOutputBtn = document.getElementById('show-conceptual-output-btn');
+        const promptConceptualOutputEl = document.getElementById('prompt-conceptual-output');
+
+        const promptData = {
+            summarize: {
+                structure: "Resumeix els arguments clau, la metodologia, les troballes i les conclusions del següent article acadèmic en aproximadament [X] paraules. Centra't en [aspecte específic si n'hi ha]: [enganxa text/enllaç a article d'accés obert]",
+                elements: "Segmentació de Tasques, Marc Contextual (article acadèmic), Restriccions (nombre de paraules, enfocament)",
+                conceptual_output: "Resultat Conceptual: L'article argumenta X, utilitzant la metodologia Y. Les troballes clau inclouen Z. Els autors conclouen A, B, C. [Aquest resum destaca l'aspecte especificat de...]"
+            },
+            brainstorm_rq: {
+                structure: "Estic investigant [àrea temàtica àmplia]. Genera 5 preguntes de recerca potencials adequades per a una tesi de grau que explorin la relació entre [variable 1] i [variable 2] des d'una [perspectiva teòrica específica/enfocament metodològic].",
+                elements: "Marc Contextual (tesi de grau, tema), Segmentació de Tasques (5 preguntes), Persona (investigador implícit)",
+                conceptual_output: "Resultat Conceptual:\n1. Com influeix [Variable 1] en [Variable 2] dins del marc de [Perspectiva] per a estudiants de grau?\n2. ... (4 preguntes més diferents)"
+            },
+            explain_concept: {
+                structure: "Explica el concepte de [concepte acadèmic complex, p. ex., 'hegemonia' en ciència política] en termes clars i senzills. Utilitza una analogia que sigui comprensible per a un estudiant universitari de primer any sense coneixements previs en aquest camp específic. Proporciona un exemple concret.",
+                elements: "Persona (professor a novell), Segmentació de Tasques (explicació, analogia, exemple), Marc Contextual",
+                conceptual_output: "Resultat Conceptual: L'hegemonia és com ser el 'capità dels equips esportius' d'una escola – no només guanyar partits, sinó també influir en la cultura escolar i en allò que es considera 'guai'. Per exemple, [exemple concret d'hegemonia cultural]."
+            },
+            coding_help: {
+                structure: "Necessito una funció de Python per a [tasca estadística específica, p. ex., 'calcular el coeficient de correlació de Pearson entre dues llistes de números']. Si us plau, utilitza la llibreria `numpy`. Explica cada pas del codi generat amb comentaris.",
+                elements: "Segmentació de Tasques (funció, explicació), Marc Contextual (Python, llibreria específica), Indicador de Resultat (codi amb comentaris)",
+                conceptual_output: "Resultat Conceptual:\n```python\nimport numpy as np\n\ndef pearson_correlation(list1, list2):\n    # Converteix les llistes a arrays de numpy per a un càlcul eficient\n    arr1 = np.array(list1)\n    arr2 = np.array(list2)\n    # Calcula el coeficient de correlació de Pearson\n    correlation_matrix = np.corrcoef(arr1, arr2)\n    return correlation_matrix[0, 1]\n```\nAquesta funció primer converteix les llistes d'entrada a arrays de NumPy..."
+            },
+            interview_practice: {
+                structure: "Actua com a entrevistador per a un lloc de [Rol Laboral, p. ex., 'Analista de Dades Júnior'] en una [Tipus d'Empresa, p. ex., 'startup fintech']. Fes-me tres preguntes conductuals comunes. Després de cadascuna de les meves respostes, proporciona'm retroalimentació constructiva sobre com puc millorar la meva resposta utilitzant el mètode STAR.",
+                elements: "Persona (entrevistador), Segmentació de Tasques (fer preguntes, proporcionar retroalimentació), Marc Contextual (rol laboral, tipus d'empresa), Instrucció Específica (mètode STAR)",
+                conceptual_output: "Resultat Conceptual:\nEntrevistador: 'Explica'm una situació en què hagis afrontat un repte significatiu en un projecte. Com ho vas gestionar?'\n(Tu respons)\nRetroalimentació: 'Bon començament. Per enfortir utilitzant STAR: Situació - descriu breument el projecte. Tasca - quina era la teva responsabilitat específica? Acció - quins passos vas fer *tu*? Resultat - quin va ser el resultat, idealment quantificat?'"
+            },
+             literature_review: {
+                structure: "Per al tema de recerca '[el teu tema, p. ex., 'l'impacte de les xarxes socials en la salut mental dels adolescents']', identifica 3-5 temes clau discutits en la literatura acadèmica recent (últims 5 anys). Per a cada tema, proporciona una breu explicació i suggereix un article revisat per experts altament citat que l'exemplifiqui. Proporciona DOI si és possible.",
+                elements: "Marc Contextual (tema de recerca, literatura recent), Segmentació de Tasques (temes, explicacions, suggeriments d'articles), Indicador de Resultat (DOI)",
+                conceptual_output: "Resultat Conceptual:\nTema 1: Augment de l'Ansietat i la Depressió. Explicació: Els estudis mostren una correlació entre l'alt ús de les xarxes socials i els símptomes d'ansietat/depressió en adolescents. Article d'Exemple: Smith et al. (2022), 'Social Media Use and Youth Well-being', DOI: [exemple_doi]\nTema 2: ..."
+            },
+            develop_argument: {
+                structure: "Estic escrivint un assaig argumentant que [el teu argument principal, p. ex., 'la renda bàsica universal pot reduir la pobresa']. Proporciona tres contraarguments a aquesta posició. Per a cada contraargument, suggereix una possible refutació que podria utilitzar.",
+                elements: "Marc Contextual (argument de l'assaig), Segmentació de Tasques (contraarguments, refutacions)",
+                conceptual_output: "Resultat Conceptual:\nContraargument 1: Cost. Refutació: Discutir possibles mecanismes de finançament o beneficis econòmics a llarg termini.\nContraargument 2: Desincentiu al treball. Refutació: Citar estudis sobre pilots d'RBU que mostren un impacte mínim en l'ocupació, o argumentar a favor de l'RBU com a suplement.\nContraargument 3: ..."
+            },
+            understand_methodology: {
+                structure: "Explica la [metodologia de recerca específica, p. ex., 'l'enfocament de la teoria fonamentada']. Descriu els seus principals passos, punts forts clau i limitacions comunes. Proporciona un exemple d'un estudi que hagi utilitzat eficaçment aquesta metodologia.",
+                elements: "Segmentació de Tasques (explicació, passos, punts forts, limitacions, exemple), Marc Contextual",
+                conceptual_output: "Resultat Conceptual: La teoria fonamentada és una metodologia inductiva destinada a desenvolupar teoria a partir de dades. Passos: Codificació oberta, codificació axial, codificació selectiva. Punts forts: La teoria emergeix de les dades, coneixements rics. Limitacions: Consumeix molt de temps, potencial de biaix de l'investigador. Exemple: Estudi de Charmaz (2006) sobre malalties cròniques..."
+            }
+        };
+
+        function updatePromptDetails() {
+            const selectedTask = promptTaskSelect.value;
+            const data = promptData[selectedTask];
+            promptStructureEl.textContent = data.structure;
+            promptElementsEl.textContent = data.elements;
+            promptConceptualOutputEl.textContent = data.conceptual_output;
+            promptConceptualOutputEl.style.display = 'none'; 
+        }
+
+        promptTaskSelect.addEventListener('change', updatePromptDetails);
+        showConceptualOutputBtn.addEventListener('click', () => {
+            promptConceptualOutputEl.style.display = promptConceptualOutputEl.style.display === 'none' ? 'block' : 'none';
+        });
+        updatePromptDetails(); 
+
+        // --- Ethical Dilemma Mini-Simulator ---
+        const dilemmaTextEl = document.getElementById('dilemma-text');
+        const choicesContainer = document.getElementById('ethical-dilemma-choices-container');
+        const feedbackContainer = document.getElementById('ethical-dilemma-feedback-container');
+
+        const dilemmas = [
+            {
+                scenario: "Tens un article de recerca complex per lliurar en dos dies i estàs tenint dificultats per escriure la secció de revisió de la literatura. Un LLM podria generar un esborrany complet ràpidament. Què fas?",
+                choices: [
+                    { text: "Utilitzar l'LLM per generar tota la revisió de la literatura i lliurar-la després d'edicions menors.", feedback: "Això és plagi i deshonestedat acadèmica. Els LLM no haurien de reemplaçar la teva pròpia anàlisi crítica i escriptura. (Gravetat: Risc Alt)", type: "bad" },
+                    { text: "Utilitzar l'LLM per identificar temes clau i fonts potencials, i després escriure la revisió completament amb les teves pròpies paraules, citant totes les fonts correctament.", feedback: "Aquest és un ús ètic i eficaç. L'LLM ajuda en la recerca, però tu realitzes l'escriptura crítica i la síntesi. (Gravetat: Bona Pràctica)", type: "good" },
+                    { text: "Demanar a l'LLM que resumeixi alguns articles clau que ja has trobat, i després integrar aquests resums (reformulats i citats) en la teva pròpia revisió escrita.", feedback: "Això pot ser acceptable si avaluares críticament, reformules significativament amb la teva pròpia veu i cites correctament. Assegura't que l'anàlisi principal sigui teva. (Gravetat: Cal Precaució)", type: "bad" }
+                ]
+            },
+        ];
+
+        let currentDilemmaIndex = 0;
+
+        function loadDilemma(index) {
+            const dilemma = dilemmas[index];
+            dilemmaTextEl.textContent = dilemma.scenario;
+            choicesContainer.innerHTML = '';
+            dilemma.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.textContent = choice.text;
+                button.classList.add('button', 'text-sm');
+                button.onclick = () => {
+                    feedbackContainer.textContent = choice.feedback;
+                    feedbackContainer.className = 'ethical-dilemma-feedback'; 
+                    feedbackContainer.classList.add(choice.type === 'good' ? 'feedback-good' : 'feedback-bad');
+                    feedbackContainer.style.display = 'block';
+                };
+                choicesContainer.appendChild(button);
+            });
+            feedbackContainer.style.display = 'none';
+        }
+        loadDilemma(currentDilemmaIndex);
+
+
+        // --- References Population ---
+        const references = [
+            "[1] Jalil, S. et al. (2023). Opportunities and challenges of ChatGPT in higher education: A systematic literature review. *International Journal of Educational Technology in Higher Education*.",
+            "[2] Mhlanga, D. (2023). The Value of ChatGPT in Higher Education: An Analysis of the Benefits and Potential. *Journal of Higher Education Policy and Leadership*.",
+            "[3] Chan, C.K.Y. & Hu, W. (2023). Students’ voices on generative AI: perceptions, benefits, and challenges in higher education. *International Journal of Educational Technology in Higher Education*.",
+            "[4] Rudolph, J. et al. (2023). ChatGPT: Bullshit spewer or the end of traditional assessments in higher education? *Journal of Applied Learning & Teaching*.",
+            "[5] Avram, M. (2024). *The Impact of AI on Higher Education*. Techstrong.ai.",
+            "[6] EDUCAUSE. (2025). *EDUCAUSE QuickPoll Results: Student Use of Generative AI*. EDUCAUSE.",
+            "[7] Trust, T. et al. (2024). ‘It’s a Tool and You Need to Learn How to Use It’: A Survey of College Student Use of Generative AI. *Journal of Research on Technology in Education*.",
+            "[8] Kung, T.H. et al. (2023). Performance of ChatGPT on USMLE: Potential for AI-assisted medical education using large language models. *PLOS Digital Health*.",
+            "[9] Elon University. (n.d.). *New Student Guide to Artificial Intelligence*. Elon University.",
+            "[10] European Commission & OECD. (2024). *AILit Framework: Empowering Learners for the AI Era*. World Economic Forum.",
+            "[11] Kasneci, E. et al. (2023). ChatGPT for good? On opportunities and challenges of large language models for education. *Learning and Individual Differences*.",
+            "[12] Cotton, D.R.E. et al. (2023). Chatting and cheating: Ensuring academic integrity in the era of ChatGPT. *Innovations in Education and Teaching International*.",
+            "[13] Simplilearn. (2024). *Top 15 In-Demand Tech Skills for 2024*. Simplilearn.",
+            "[14] Bender, E.M. et al. (2021). On the Dangers of Stochastic Parrots: Can Language Models Be Too Big? *FAccT '21*.",
+            "[15] Mindzak, M. & Fidalgo, P. (2023). The Case Against AI in Education: A Discursive Review of the Negative Impacts of Artificial Intelligence on Education. *Academia Letters*.",
+            "[16] Zhai, X. (2022). ChatGPT user experience: Implications for education. *SSRN*.",
+            "[17] Google for Education. (2024). *Gemini for Google Workspace for Education*. Google.",
+            "[18] Lo, C.K. (2023). What Is the Impact of ChatGPT on Education? A Rapid Review of the Literature. *Education Sciences*.",
+            "[19] Google Cloud. (2024). *Gemini for Google Workspace for Education*. Google Cloud.",
+            "[20] Google. (2024). *Gemini for Google Workspace for Education*. Google Blog.",
+            "[21] Google. (2024). *How Google Workspace protects your Gemini data*. Google Workspace Learning Center.",
+            "[22] Google. (2024). *Gemini for Education FAQs*. Google for Education.",
+            "[23] OpenAI. (2024). *Introducing ChatGPT Edu*. OpenAI Blog.",
+            "[24] Liu, Y. et al. (2023). Can LLM-Generated Reviews Replace Human Reviews? A Case Study on ChatGPT. *arXiv*.",
+            "[25] Nature. (2023). *How to use ChatGPT and other AI tools in your research*. Nature.",
+            "[26] Das, S. et al. (2024). GoAI: The Graph of AI Ideas. *arXiv*.",
+            "[27] Wang, B. et al. (2023). ResearchAgent: An LLM-based Agent for Complex Experimental Design. *arXiv*.",
+            "[28] Das, S. et al. (2024). *GoAI: The Graph of AI Ideas*. goai.id.",
+            "[29] University of Oxford. (2024). *Using generative AI in your studies*. University of Oxford.",
+            "[30] Research.com. (2024). *Best AI Tools for Students*. Research.com.",
+            "[31] Gu, R. et al. (2024). Qualitative data analysis with large language models: a practice-led tutorial. *PsyArXiv*.",
+            "[32] Xiao, Y. et al. (2024). Using ChatGPT for qualitative data analysis: A tutorial with practical steps and prompts for using grounded theory methodology. *JMIR Preprints*.",
+            "[33] Liang, W. et al. (2023). Can Large Language Models Write SQL? A Case Study. *arXiv*.",
+            "[34] OpenAI. (2023). *GPT-4 Can Generate Code for Statistical Analyses*. OpenAI.",
+            "[35] Surameery, N.M.S. & Shakor, M.Y. (2023). Use of ChatGPT to Solve Statistical Problems. *International Journal of Mathematics and Computer Science*.",
+            "[36] Baidoo-Anu, D. & Owusu Ansah, L. (2023). Education in the era of generative artificial intelligence (AI): Understanding the potential benefits of ChatGPT in promoting teaching and learning. *Journal of AI*.",
+            "[37] Marr, B. (2024). *The Top 10 AI And Technology Trends In 2024 Everyone Must Be Ready For*. Forbes.",
+            "[38] UNESCO. (2023). *ChatGPT and Artificial Intelligence in higher education: Quick start guide*. UNESCO.",
+            "[39] Wei, J. et al. (2022). Chain-of-Thought Prompting Elicits Reasoning in Large Language Models. *arXiv*.",
+            "[40] Huang, J. & Chang, K.C.C. (2022). Towards Reasoning in Large Language Models: A Survey. *arXiv*.",
+            "[41] Study.com. (2023). *89% of students admit to using ChatGPT for homework*. Study.com.",
+            "[42] Zhao, W.X. et al. (2023). A Survey of Large Language Models. *arXiv*.",
+            "[43] OpenAI. (2023). *GPT-4*. OpenAI.",
+            "[44] Google. (2023). *Gemini: Our largest and most capable AI model*. Google.",
+            "[45] Zamfirescu-Pereira, J. et al. (2023). Why Johnny Can't Prompt: How Non-AI Experts Try (and Fail) to Engineer Good Prompts. *CHI '23*.",
+            "[46] White, J. et al. (2023). A Prompt Pattern Catalog to Enhance Prompt Engineering with ChatGPT. *arXiv*.",
+            "[47] OpenAI. (n.d.). *Prompt engineering*. OpenAI API Documentation.",
+            "[48] Microsoft. (n.d.). *Introduction to prompt engineering*. Microsoft Learn.",
+            "[49] Brown, T.B. et al. (2020). Language Models are Few-Shot Learners. *arXiv*.",
+            "[50] Mollick, E. & Mollick, L. (2023). Using AI to Implement Effective Teaching Strategies in Classrooms: Five Strategies, Including Prompts. *SSRN*.",
+            "[51] Shen, Y. et al. (2023). Large Language Models Are Human-Level Prompt Engineers. *arXiv*.",
+            "[52] Kojima, T. et al. (2022). Large Language Models are Zero-Shot Reasoners. *arXiv*.",
+            "[53] University of Michigan Library. (n.d.). *Prompting Generative AI for Research*. University of Michigan Library.",
+            "[54] Vanderbilt University. (n.d.). *Prompting ChatGPT for Education*. Vanderbilt University.",
+            "[55] Montclair State University. (n.d.). *AI Tools in Teaching and Learning*. Montclair State University.",
+            "[56] DataCamp. (n.d.). *ChatGPT Cheat Sheet for Data Science*. DataCamp.",
+            "[57] GeeksforGeeks. (n.d.). *ChatGPT Prompt Engineering for Data Science*. GeeksforGeeks.",
+            "[58] ATLAS.ti. (n.d.). *Using ChatGPT for Qualitative Data Analysis*. ATLAS.ti.",
+            "[59] Scribbr. (n.d.). *How to Use ChatGPT for Research*. Scribbr.",
+            "[60] Coursera. (n.d.). *Prompt Engineering for ChatGPT*. Coursera.",
+            "[61] edX. (n.d.). *Prompt Engineering and Advanced ChatGPT*. edX.",
+            "[62] PromptPerfect. (n.d.). *Prompt Engineering Guide*. PromptPerfect.",
+            "[63] Medium. (n.d.). *ChatGPT Prompts for Data Analysis*. Medium.",
+            "[64] Semantic Scholar. (n.d.). *Semantic Scholar*. Semantic Scholar.",
+            "[65] Qualitative Data Analysis Services. (n.d.). *Using ChatGPT for Qualitative Data Analysis*. QDA Services.",
+            "[66] Hamilton, M. et al. (2023). Prompt Engineering for Meaningful Qualitative Data Analysis with LLMs. *Medium*.",
+            "[67] NVivo. (n.d.). *The Role of AI in Qualitative Data Analysis*. NVivo.",
+            "[68] University of California, Berkeley. (n.d.). *Privacy Considerations for AI*. UC Berkeley Privacy Office.",
+            "[69] Google. (2024). *Gemini for Education*. Google for Education.",
+            "[70] Statology. (n.d.). *Using ChatGPT for Statistics*. Statology.",
+            "[71] Chen, Z. et al. (2023). Text-to-SQL Empowered by Large Language Models: A Benchmark Evaluation. *arXiv*.",
+            "[72] Sobania, D. et al. (2023). An Analysis of the Automatic Generation of Programming Exercises by ChatGPT. *ITiCSE '23*.",
+            "[73] Yin, R.K. (2018). *Case Study Research and Applications: Design and Methods*. Sage Publications.",
+            "[74] Creswell, J.W. & Creswell, J.D. (2018). *Research Design: Qualitative, Quantitative, and Mixed Methods Approaches*. Sage Publications.",
+            "[75] University of Southern California Libraries. (n.d.). *Research Guides: Organizing Your Social Sciences Research Paper*. USC Libraries.",
+            "[76] QuestionPro. (n.d.). *Survey Design*. QuestionPro.",
+            "[77] Experiment Design Assistant. (n.d.). *Experiment Design Assistant*. EDA.",
+            "[78] GraphPad. (n.d.). *Designing Experiments*. GraphPad.",
+            "[79] Stellenbosch University. (2023). *Guidelines for the Use of Artificial Intelligence (AI) Tools in Teaching, Learning and Assessment*. Stellenbosch University.",
+            "[80] Birkbeck, University of London. (2024). *Guidance on the use of Generative AI in assessment*. Birkbeck, University of London.",
+            "[81] University of Waterloo. (n.d.). *AI Guidelines for Students*. University of Waterloo.",
+            "[82] Lake Forest College. (n.d.). *Artificial Intelligence (AI) Policy*. Lake Forest College.",
+            "[83] NIST. (2023). *AI Risk Management Framework*. National Institute of Standards and Technology.",
+            "[84] American Military University. (n.d.). *Acceptable Use of AI Policy*. AMU.",
+            "[85] Inside Higher Ed. (2023). *AI and Academic Integrity*. Inside Higher Ed.",
+            "[86] Dwivedi, Y.K. et al. (2023). “So what if ChatGPT wrote it?” Multidisciplinary perspectives on opportunities, challenges and implications of generative conversational AI for research, practice and policy. *International Journal of Information Management*.",
+            "[87] Floridi, L. (2023). AI as Agency: A Philosophical Perspective. *Philosophy & Technology*.",
+            "[88] Eightfold AI. (n.d.). *Steve - Your AI Career Coach*. Eightfold AI.",
+            "[89] Forbes. (2023). *AI-Powered Career Coaching*. Forbes.",
+            "[90] TechCrunch. (2023). *Eightfold AI launches Steve chatbot for career advice*. TechCrunch.",
+            "[91] 360Learning. (n.d.). *AI Skill Gap Analysis*. 360Learning.",
+            "[92] Valamis. (n.d.). *Skills Gap Analysis Software*. Valamis.",
+            "[93] Resume.io. (2024). *How to Use ChatGPT to Write Your Resume*. Resume.io.",
+            "[94] TealHQ. (n.d.). *AI Resume Writer*. TealHQ.",
+            "[95] The Muse. (2023). *Using ChatGPT to Write Your Resume*. The Muse.",
+            "[96] HubSpot. (2024). *The Best AI Tools for Students*. HubSpot.",
+            "[97] Coursera Blog. (2023). *How to Use ChatGPT: A Student’s Guide*. Coursera.",
+            "[98] Big Interview. (n.d.). *AI Mock Interview Practice*. Big Interview.",
+            "[99] Interview Warmup (Google). (n.d.). *Interview Warmup*. Google.",
+            "[100] OpenAI. (2025, May). *OpenAI May 2025 Updates*. OpenAI.",
+            "[101] Google Workspace. (2024). *Gemini in Google Workspace*. Google Workspace.",
+            "[102] Google. (2025, May). *New AI features for Education from Google I/O 2025*. Google for Education Blog.",
+            "[103] Google. (2025, May). *NotebookLM Plus and Gemini for Education Enhancements*. The Keyword (Google Blog).",
+            "[104] Anthropic. (2024). *Claude for Education*. Anthropic.",
+            "[105] Anthropic. (2024). *How Students Are Using Claude*. Anthropic Research."
+        ];
+
+        const referencesListEl = document.getElementById('references-list');
+        references.forEach((ref, index) => {
+            const item = document.createElement('div');
+            item.classList.add('reference-item');
+            item.setAttribute('id', `ref-${index + 1}`);
+            item.setAttribute('data-ref-id', `[${index + 1}]`);
+            item.innerHTML = ref.substring(ref.indexOf(']') + 2); 
+            referencesListEl.appendChild(item);
+        });
+
+        const mainContent = document.querySelector('main');
+        mainContent.innerHTML = mainContent.innerHTML.replace(/\[(\d+)\]/g, (match, num) => {
+            return `<a href="#ref-${num}" class="text-blue-600 hover:underline font-semibold">${match}</a>`;
+        }).replace(/\[(\d+-\d+)\]/g, (match, range) => { 
+            const [start, end] = range.split('-').map(Number);
+            let links = '';
+            for (let i = start; i <= end; i++) {
+                links += `<a href="#ref-${i}" class="text-blue-600 hover:underline font-semibold">[${i}]</a>`;
+                if (i < end) links += ', ';
+            }
+            return links;
+        }).replace(/\[(\d+,\s*\d+(,\s*\d+)*)\]/g, (match, numbers) => { 
+             const individualNumbers = numbers.split(',').map(s => s.trim());
+             let links = '';
+             individualNumbers.forEach((numOrRange, idx) => {
+                if (numOrRange.includes('-')) {
+                    const [start, end] = numOrRange.split('-').map(Number);
+                     for (let i = start; i <= end; i++) {
+                        links += `<a href="#ref-${i}" class="text-blue-600 hover:underline font-semibold">[${i}]</a>`;
+                        if (i < end) links += ', ';
+                    }
+                } else {
+                    links += `<a href="#ref-${numOrRange}" class="text-blue-600 hover:underline font-semibold">[${numOrRange}]</a>`;
+                }
+                if (idx < individualNumbers.length - 1) links += ', ';
+             });
+             return links;
+        });
+
+    });
+    </script>
+</body>
+</html>
