@@ -1,20 +1,12 @@
-<!DOCTYPE html>
+
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM en Educació Superior: Guia Interactiva per a Estudiants (2024-2025)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script> <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: {
-                fontCache: 'global'
-            }
-        };
+    <script>
+        MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] }, svg: { fontCache: 'global' } };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,42 +14,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3b82f6; /* Blue 500 */
-            --primary-light: #93c5fd; /* Blue 300 */
-            --primary-lighter: #dbeafe; /* Blue 100 */
-            --primary-lightest: #eff6ff; /* Blue 50 */
-            --primary-dark: #2563eb; /* Blue 600 */
-            --primary-darker: #1d4ed8; /* Blue 700 */
-
-            --secondary-color: #10b981; /* Emerald 500 */
-            --secondary-light: #6ee7b7; /* Emerald 300 */
-            --secondary-lighter: #d1fae5; /* Emerald 100 */
-            --secondary-lightest: #f0fdfa; /* Emerald 50 */
-
-            --text-color: #374151; /* Gray 700 */
-            --text-dark: #1f2937; /* Gray 800 */
-            --text-light: #6b7280; /* Gray 500 */
-
-            --bg-light: #f9fafb; /* Gray 50 */
+            --udg-red: #C8102E;
+            --udg-yellow: #FCB913;
+            --udg-black: #000000;
+            --udg-gray-dark: #4A4A4A;
+            --udg-gray-medium: #A0A0A0;
+            --udg-gray-light: #DCDCDC;
+            --udg-gray-lightest: #F5F5F5;
+            --primary-color: var(--udg-red);
+            --primary-light: #e46076;
+            --primary-lighter: #f5cdd4;
+            --primary-lightest: #fdeff2;
+            --primary-dark: #a00c25;
+            --primary-darker: #7c091d;
+            --secondary-color: var(--udg-yellow);
+            --secondary-light: #fdd874;
+            --secondary-lighter: #fef3d7;
+            --secondary-lightest: #fffcf0;
+            --text-color: var(--udg-gray-dark);
+            --text-dark: var(--udg-black);
+            --text-light: #6b7280;
+            --bg-light: var(--udg-gray-lightest);
             --bg-white: #ffffff;
-
-            --border-color: #9ca3af; /* Gray 400 */
-            --border-light: #e5e7eb; /* Gray 200 */
-            --border-medium: #d1d5db; /* Gray 300 */
-
-            --accent-purple: #8b5cf6; /* Violet 500 */
-            --accent-purple-light: #ddd6fe; /* Violet 200 */
-            
-            --warning-color: #f59e0b; /* Amber 500 */
-            --warning-light: #fef3c7; /* Amber 100 */
-            --error-color: #ef4444; /* Red 500 */
+            --border-color: var(--udg-gray-medium);
+            --border-light: var(--udg-gray-light);
+            --border-medium: #A9A9A9; 
+            --accent-color: var(--udg-gray-dark); 
+            --warning-color: #f59e0b;
+            --warning-light: #fef3c7;
+            --error-color: #ef4444;
         }
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; background-color: var(--bg-light); color: var(--text-color); }
         h1 { color: var(--bg-white); font-size: 2.2rem; line-height: 2.8rem; font-weight: 700; }
-        h2 { color: var(--primary-darker); font-size: 1.95rem; line-height: 2.4rem; font-weight: 700; border-bottom: 3px solid var(--primary-light); padding-bottom: 0.7rem; margin-top: 3.5rem; margin-bottom: 2rem; display: flex; align-items: center; }
+        h2 { color: var(--primary-darker); font-size: 1.95rem; line-height: 2.4rem; font-weight: 700; border-bottom: 3px solid var(--primary-color); padding-bottom: 0.7rem; margin-top: 3.5rem; margin-bottom: 2rem; display: flex; align-items: center; }
         h2 svg { width: 1.5em; height: 1.5em; margin-right: 0.5em; fill: var(--primary-darker); }
         h3 { color: var(--primary-dark); font-size: 1.55rem; line-height: 2.05rem; font-weight: 600; margin-top: 2.8rem; margin-bottom: 1.4rem; border-bottom: 1px solid var(--primary-lighter); padding-bottom: 0.4rem; }
-        h4 { color: var(--secondary-color); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
+        h4 { color: var(--udg-yellow); font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
         p, li, td, th { color: var(--text-color); line-height: 1.85; margin-bottom: 1.3rem; font-size: 1.05rem; }
         li { margin-bottom: 0.5rem; }
         strong { color: var(--text-dark); font-weight: 600; }
@@ -65,6 +57,9 @@
         a { color: var(--primary-color); text-decoration: none; transition: color 0.2s ease; }
         a:hover { color: var(--primary-dark); text-decoration: underline; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-color); font-size: 0.9rem; }
+        input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--secondary-color); height: 8px; background-color: var(--primary-lighter); border-radius: 9999px; appearance: none; -webkit-appearance: none; margin-top: 0.25rem; }
+        input[type="range"]::-webkit-slider-thumb { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary-color); border-radius: 50%; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 2px solid var(--bg-white); }
+        input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--primary-color); border-radius: 50%; cursor: pointer; border: 2px solid var(--bg-white); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         input[type="text"], input[type="number"], select, textarea { padding: 0.6rem; border: 1px solid var(--border-medium); border-radius: 0.375rem; width: 100%; background-color: var(--bg-white); font-size: 0.95rem; color: var(--text-color); }
         textarea { min-height: 80px; }
         button, .button { background-color: var(--primary-color); color: var(--bg-white); padding: 0.7rem 1.4rem; border-radius: 0.375rem; font-weight: 600; transition: all 0.2s ease-in-out; display: inline-block; text-align: center; border: 1px solid var(--primary-dark); cursor: pointer; font-size: 0.95rem; }
@@ -84,52 +79,29 @@
         tbody tr:nth-child(odd) td { background-color: var(--primary-lightest); }
         td ul { padding-left: 1.2rem; margin-bottom: 0; }
         td li { font-size: 0.9rem; margin-bottom: 0.3rem; }
-        .interactive-card-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
-        .interactive-card { background-color: var(--bg-white); border: 1px solid var(--border-medium); border-radius: 0.5rem; padding: 1.5rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .interactive-card:hover { border-color: var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); transform: translateY(-3px); }
-        .interactive-card h5 { color: var(--primary-dark); font-weight: 600; font-size: 1.15rem; margin-bottom: 0.75rem; }
-        .interactive-card-content { display: none; font-size: 0.95rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border-light); }
-        .interactive-card-content p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 0.5rem;}
-        .interactive-card.active .interactive-card-content { display: block; }
-        .interactive-card.active { background-color: var(--primary-lightest); }
-        .prompt-guide-task-selector select { margin-bottom: 1rem; }
-        .prompt-output-area, .prompt-critique-area { background-color: var(--secondary-lightest); border: 1px solid var(--secondary-light); border-radius: 0.375rem; padding: 1rem; margin-top: 1rem; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; white-space: pre-wrap; color: var(--text-dark); }
-        .ethical-dilemma-scenario { background-color: var(--accent-purple-light); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; border: 1px solid var(--accent-purple); }
-        .ethical-dilemma-choices button { background-color: var(--accent-purple); border-color: var(--accent-purple); margin-right: 0.5rem; margin-bottom: 0.5rem; }
-        .ethical-dilemma-choices button:hover { background-color: #7c3aed; }
-        .ethical-dilemma-feedback { margin-top: 1rem; padding: 1rem; border-radius: 0.375rem; }
+        .slider-content-display { min-height: 120px; background-color: var(--primary-lightest); border: 1px solid var(--primary-lighter); border-radius: 0.5rem; padding: 1.5rem; margin-top: 1rem; transition: background-color 0.3s ease; }
+        .slider-content-display h5 { color: var(--primary-dark); font-weight: 600; font-size: 1.15rem; margin-bottom: 0.75rem; }
+        .slider-content-display p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 0.5rem; color: var(--text-color);}
+        .slider-content-display strong { color: var(--primary-darker); }
+        .prompt-output-area, .prompt-critique-area, .llm-eval-output-area, .llm-eval-feedback-area { background-color: var(--secondary-lightest); border: 1px solid var(--secondary-light); border-radius: 0.375rem; padding: 1rem; margin-top: 1rem; font-family: 'Courier New', Courier, monospace; font-size: 0.9em; white-space: pre-wrap; color: var(--text-dark); min-height: 80px;}
+        .ethical-dilemma-scenario { background-color: var(--udg-gray-lightest); border-left: 5px solid var(--udg-red); padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+        .ethical-dilemma-choices-display { margin-top: 1rem; font-style: italic; color: var(--text-light); }
+        .ethical-dilemma-choices-display strong { color: var(--primary-dark); }
+        .ethical-dilemma-feedback { margin-top: 1rem; padding: 1rem; border-radius: 0.375rem; transition: opacity 0.3s ease-in-out; }
         .feedback-good { background-color: var(--secondary-lighter); color: var(--secondary-darker); border: 1px solid var(--secondary-color); }
         .feedback-bad { background-color: var(--warning-light); color: #b45309; border: 1px solid var(--warning-color); }
-        .ai-literacy-skills-container { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; }
-        .ai-literacy-skill-item { background-color: var(--bg-white); border: 1px solid var(--border-medium); border-radius: 0.375rem; padding: 1rem; flex-basis: calc(50% - 0.5rem); box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; transition: all 0.2s ease-in-out; }
-        .ai-literacy-skill-item:hover { border-color: var(--primary-color); transform: translateY(-2px); }
-        .ai-literacy-skill-item h5 { color: var(--primary-dark); font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .ai-literacy-skill-item p { font-size: 0.9rem; margin-bottom: 0; color: var(--text-light); }
-        .ai-literacy-skill-item .skill-details { display: none; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-light); font-size: 0.85rem; }
-        .ai-literacy-skill-item.active { background-color: var(--primary-lightest); }
-        .ai-literacy-skill-item.active .skill-details { display: block; }
-        @media (max-width: 768px) { .ai-literacy-skill-item { flex-basis: 100%; } }
         .reference-item { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
         .reference-item::before { content: attr(data-ref-id); position: absolute; left: 0; font-weight: bold; color: var(--primary-dark); }
         .footer-attribution { margin-top: 2.5rem; font-size: 0.9rem; line-height: 1.3rem; color: var(--text-light); text-align: center; }
-        /* Carousel Styles */
-        .capability-carousel-container { overflow: hidden; position: relative; background-color: var(--primary-lightest); border-radius: 0.5rem; padding: 1rem; margin-top: 1.5rem; }
-        .capability-carousel-track { display: flex; transition: transform 0.5s ease-in-out; }
-        .capability-slide { min-width: 100%; box-sizing: border-box; padding: 1.5rem; text-align: center; }
-        .capability-slide svg { width: 3rem; height: 3rem; margin: 0 auto 0.75rem auto; fill: var(--primary-color); }
-        .capability-slide h5 { color: var(--primary-dark); font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
-        .capability-slide p { font-size: 0.95rem; color: var(--text-color); margin-bottom: 0; }
-        .carousel-nav { text-align: center; margin-top: 0.5rem; }
-        .carousel-nav button { background-color: var(--secondary-color); color: white; border: none; padding: 0.5rem 1rem; margin: 0 0.25rem; border-radius: 0.25rem; cursor: pointer; }
-        .carousel-nav button:hover { background-color: var(--secondary-dark); }
-        /* Hallucination Buster Styles */
-        .hallucination-buster-option { margin-bottom: 0.5rem; padding: 0.75rem; border: 1px solid var(--border-medium); border-radius: 0.25rem; cursor: pointer; transition: background-color 0.2s; }
-        .hallucination-buster-option:hover { background-color: var(--primary-lighter); }
-        .hallucination-buster-feedback { margin-top: 1rem; padding: 0.75rem; border-radius: 0.25rem; }
+        .slider-label-container { display: flex; justify-content: space-between; margin-bottom: 0.25rem;}
+        .slider-value { font-weight: 500; color: var(--primary-dark); }
+        .hallucination-buster-option-display { margin-top: 1rem; font-style: italic; color: var(--text-light); }
+        .hallucination-buster-option-display strong { color: var(--primary-dark); }
+        .hallucination-buster-feedback { margin-top: 1rem; padding: 0.75rem; border-radius: 0.25rem; transition: opacity 0.3s ease-in-out;}
     </style>
 </head>
 <body class="text-gray-800 antialiased">
-    <header class="bg-gradient-to-r from-blue-600 via-blue-500 to-teal-500 text-white shadow-lg sticky top-0 z-50">
+    <header class="bg-gradient-to-r from-[var(--udg-red)] via-[#A50F27] to-[var(--udg-black)] text-white shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-6 md:px-8 py-5 md:py-6">
             <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold">Navegant la Frontera de la IA en l'Educació Superior</h1>
             <p class="text-lg md:text-xl font-semibold mt-1 md:mt-2">Guia Interactiva de Models Lingüístics Extensos (LLM) per a Estudiants (2024-2025)</p>
@@ -143,11 +115,9 @@
                 1. Introducció: Navegant la Frontera de la IA en el Teu Viatge Acadèmic
             </h2>
             <p>La ràpida evolució i proliferació de la Intel·ligència Artificial (IA), particularment els Models Lingüístics Extensos (LLM), estan remodelant el panorama de l'educació superior. Aquestes eines sofisticades han passat de l'àmbit de la recerca especialitzada a les mans d'estudiants i educadors, presentant tant oportunitats sense precedents com reptes nous. Per als estudiants de grau i postgrau el 2024-2025, entendre com utilitzar eficaçment i èticament els LLM s'està convertint en un component essencial de l'èxit acadèmic i la preparació per a la futura carrera professional.</p>
-            
             <h3>L'Auge dels LLM en l'Educació Superior</h3>
             <p>Els Models Lingüístics Extensos s'han convertit ràpidament en eines prominents dins de l'educació superior, impactant la manera com els estudiants aprenen, realitzen investigacions i creen treballs acadèmics.[1, 2, 3, 4] Això no és merament una moda tecnològica passatgera, sinó que representa un canvi significatiu en l'entorn educatiu.[3, 5] L'adopció d'aquestes eines per part dels estudiants ja és notable. Un informe d'EDUCAUSE del 2025 va indicar que, mentre que el 43% dels estudiants va informar no utilitzar IA generativa en absolut per als seus cursos, un percentatge similar (43%) la va utilitzar per a tasques com la pluja d'idees (33%), refinar idees (24%) i organitzar (24%).[6] Un altre estudi del 2024 va trobar que el 46,9% dels estudiants universitaris utilitzaven LLM en el seu treball acadèmic, encara que només una fracció més petita, l'11,6%, va informar utilitzar-los més d'un cop per setmana.[7]</p>
             <p>Aquestes xifres suggereixen un panorama d'adopció complex i una mica desigual. La "bretxa d'adopció" no es refereix simplement a l'accés a aquestes eines, que són cada cop més disponibles. En canvi, sembla estar influenciada per una confluència de factors que inclouen la claredat (o la manca d'ella) de les directrius institucionals i dels instructors, les percepcions pròpies dels estudiants sobre la utilitat dels LLM enfront dels riscos potencials, i les ansietats relacionades amb la mala conducta acadèmica.[6] Molts estudiants poden dubtar a explorar o informar plenament del seu ús dels LLM per por de violar les polítiques d'integritat acadèmica, especialment quan l'acceptació de l'instructor no és clara.[6] Aquesta situació subratlla una necessitat urgent de marcs educatius integrals i polítiques institucionals clares que puguin guiar els estudiants cap a un compromís beneficiós i ètic amb aquestes poderoses tecnologies.</p>
-            
             <h3>Per Què Aquesta Guia És Important per als Estudiants</h3>
             <p>Aquesta guia està dissenyada per apoderar els estudiants per navegar pel terreny canviant dels LLM. L'objectiu és transformar els estudiants de consumidors passius de contingut generat per IA en usuaris crítics, eficaços i ètics.[8, 9, 10, 11, 12] Ofereix les millors pràctiques per aprofitar els LLM per millorar el rendiment acadèmic en diverses tasques —des de la investigació i l'escriptura fins a l'anàlisi de dades i la preparació professional— mantenint fermament la integritat acadèmica i fomentant el desenvolupament d'habilitats essencials per al futur.[5, 13]</p>
             <p>En el món actual impulsat per la IA, una comprensió funcional dels LLM ja no és una habilitat de nínxol, sinó una competència fonamental per a la vida acadèmica i professional.[4, 13] Aquestes eines tenen una naturalesa dual: ofereixen un potencial immens per a l'enriquiment acadèmic, com el suport personalitzat a l'aprenentatge i l'assistència en la investigació [2], però també comporten riscos significatius si s'utilitzen malament o es malinterpreten. Aquests riscos inclouen la dependència excessiva, la propagació de desinformació i dilemes ètics complexos.[1, 14, 15, 16] Els estudiants sovint es troben atrapats entre el desig d'utilitzar aquestes poderoses eines i la por a repercussions negatives o la manca de coneixement sobre com utilitzar-les de manera eficaç i responsable.[5, 6] Aquesta guia pretén servir com un mapa crucial per a aquest nou territori, proporcionant el coneixement i les estratègies necessàries perquè els estudiants aprofitin els beneficis dels LLM mentre mitiguen reflexivament els riscos associats.</p>
@@ -161,79 +131,39 @@
             <p>Els Models Lingüístics Extensos són sistemes complexos d'IA entrenats amb grans quantitats de text i codi, la qual cosa els permet entendre, generar i manipular el llenguatge humà de maneres sofisticades. Per als estudiants, poden actuar com a assistents versàtils, però és crucial copsar tant els seus punts forts com les seves debilitats inherents.</p>
 
             <h3>Què Poden Fer els LLM per Tu: El Joc d'Eines d'un Estudiant</h3>
-            <div class="capability-carousel-container">
-                <div class="capability-carousel-track">
-                    </div>
-                <div class="carousel-nav">
-                    <button id="prev-capability-btn">&lt; Prev</button>
-                    <button id="next-capability-btn">Next &gt;</button>
-                </div>
+            <div class="slider-label-container mb-2">
+                <label for="capability-slider" class="text-lg font-semibold text-[var(--primary-darker)]">Explora les Capacitats dels LLM:</label>
+                <span id="capability-slider-value-name" class="slider-value text-lg">Aprenentatge Personalitzat</span>
+            </div>
+            <input type="range" id="capability-slider" min="0" value="0" step="1" class="w-full mb-4">
+            <div id="capability-display" class="slider-content-display">
             </div>
             <p class="mt-4">L'element crucial és entendre <em>com</em> interactuar eficaçment amb els LLM per a aquestes tasques variades, convertint la competència en LLM en una habilitat acadèmica clau.</p>
 
             <div class="interactive-block mt-10">
-                <h4 class="text-center !mt-0 !border-b-0">Explorador Interactiu: Limitacions Clau dels LLM</h4>
-                <p class="text-center text-sm text-gray-600 mb-6">Fes clic a cada limitació per obtenir més informació i veure un exemple conceptual.</p>
-                <div class="interactive-card-container">
-                    <div class="interactive-card" id="limitation-accuracy">
-                        <h5>Precisió i Desinformació (Al·lucinacions)</h5>
-                        <div class="interactive-card-content">
-                            <p>Els LLM poden generar informació que sona plausible però incorrecta o fabricada.[2, 16, 24, 37, 38] "Fan ressò dels nostres pensaments, sovint prioritzant la fluïdesa i l'afirmació per sobre de la veritat".[25]</p>
-                            <p><strong>Exemple Conceptual:</strong> Preguntar a un LLM la capital d'un país poc conegut. Podria proporcionar amb confiança el nom d'una ciutat incorrecta o fins i tot inventar una capital que soni plausible però inexistent.</p>
-                            <p class="font-semibold mt-2">Mitigació: Verifica sempre rigorosament la informació generada per LLM amb fonts fiables.</p>
-                        </div>
-                    </div>
-                    <div class="interactive-card" id="limitation-bias">
-                        <h5>Biaix</h5>
-                        <div class="interactive-card-content">
-                            <p>Entrenats amb grans conjunts de dades, els LLM poden reflectir i amplificar biaixos socials relacionats amb la raça, el gènere, l'edat, etc.[11, 14, 37]</p>
-                            <p><strong>Exemple Conceptual:</strong> Demanar a un LLM que generi imatges de "metges" podria mostrar predominantment un gènere o ètnia, reflectint biaixos en les dades d'entrenament.</p>
-                            <p class="font-semibold mt-2">Mitigació: Estigues vigilant en la identificació i el qüestionament de possibles biaixos, especialment en temes sensibles.</p>
-                        </div>
-                    </div>
-                    <div class="interactive-card" id="limitation-understanding">
-                        <h5>Manca de Comprensió i Raonament Reals</h5>
-                        <div class="interactive-card-content">
-                            <p>Els LLM prediuen seqüències de paraules probables; no "entenen" realment conceptes ni "pensen" críticament com els humans.[1, 15, 16, 39, 40]</p>
-                            <p><strong>Exemple Conceptual:</strong> Un LLM podria resoldre correctament un problema de paraules matemàtic però fallar en explicar els principis matemàtics subjacents d'una manera veritablement conceptual si se l'interroga profundament, o podria tenir dificultats amb variacions noves del problema que requereixen una abstracció genuïna.</p>
-                             <p class="font-semibold mt-2">Mitigació: Recorda que els LLM són comparadors de patrons, no raonadors conscients. Utilitza els seus resultats com a punt de partida per a la teva pròpia anàlisi crítica.</p>
-                        </div>
-                    </div>
-                    <div class="interactive-card" id="limitation-literacy">
-                        <h5>Impacte en el Desenvolupament de l'Alfabetització</h5>
-                        <div class="interactive-card-content">
-                            <p>La dependència excessiva pot dificultar el desenvolupament del pensament crític, l'escriptura acadèmica i les habilitats de resolució de problemes.[1, 2, 15, 16]</p>
-                            <p><strong>Exemple Conceptual:</strong> Utilitzar constantment un LLM per redactar assaigs des de zero podria impedir que un estudiant desenvolupi les seves pròpies habilitats argumentatives i la seva veu d'escriptura única.</p>
-                            <p class="font-semibold mt-2">Mitigació: Utilitza els LLM per augmentar, no per reemplaçar, el teu propi esforç intel·lectual i desenvolupament d'habilitats.</p>
-                        </div>
-                    </div>
-                    <div class="interactive-card" id="limitation-ethical">
-                        <h5>Preocupacions Ètiques</h5>
-                        <div class="interactive-card-content">
-                            <p>Les preocupacions inclouen el plagi, la deshonestedat acadèmica i la privadesa de les dades (les interaccions poden ser registrades).[2, 14, 16, 38, 41]</p>
-                            <p><strong>Exemple Conceptual:</strong> Presentar un assaig generat per un LLM com a treball propi és plagi. Compartir dades de recerca sensibles amb un LLM públic podria violar la confidencialitat.</p>
-                            <p class="font-semibold mt-2">Mitigació: Adhereix-te a les polítiques d'integritat acadèmica, cita adequadament i sigues prudent amb les dades sensibles.</p>
-                        </div>
-                    </div>
-                    <div class="interactive-card" id="limitation-context">
-                        <h5>Limitacions de la Finestra de Context</h5>
-                        <div class="interactive-card-content">
-                            <p>Els LLM tenen una quantitat finita d'informació que poden "recordar" durant una interacció, la qual cosa limita l'eficàcia amb documents molt llargs o converses complexes i extenses.[31]</p>
-                            <p><strong>Exemple Conceptual:</strong> En resumir un article de recerca molt llarg (p. ex., més de 50 pàgines), un LLM podria "oblidar" detalls del principi de l'article quan processi el final, donant lloc a un resum incomplet o esbiaixat.</p>
-                            <p class="font-semibold mt-2">Mitigació: Per a tasques llargues, divideix-les en fragments més petits o utilitza eines dissenyades per a la gestió de contextos amplis.</p>
-                        </div>
-                    </div>
+                <h4 class="text-center !mt-0 !border-b-0">Explorador Interactiu de Limitacions dels LLM</h4>
+                <p class="text-center text-sm text-gray-600 mb-4">Mou el control lliscant per explorar cada limitació, la seva descripció i un exemple conceptual.</p>
+                <div class="slider-label-container mb-2">
+                    <label for="limitation-slider" class="text-lg font-semibold text-[var(--primary-darker)]">Limitació Actual:</label>
+                    <span id="limitation-slider-value-name" class="slider-value text-lg">Precisió i Desinformació</span>
+                </div>
+                <input type="range" id="limitation-slider" min="0" value="0" step="1" class="w-full mb-4">
+                <div id="limitation-display" class="slider-content-display">
                 </div>
             </div>
             
             <div class="interactive-block mt-10">
                 <h4 class="text-center !mt-0 !border-b-0">Mini-Repte: Caçador d'Al·lucinacions</h4>
-                <p class="text-center text-sm text-gray-600 mb-4">Un LLM ha generat les següents afirmacions sobre la fotosíntesi. Una d'elles és una "al·lucinació" subtil. Pots identificar-la?</p>
-                <div id="hallucination-buster-options">
-                    </div>
+                <p class="text-center text-sm text-gray-600 mb-4">Un LLM ha generat les següents afirmacions sobre la fotosíntesi. Utilitza el control lliscant per seleccionar una afirmació i veure si és una "al·lucinació" subtil.</p>
+                <div class="slider-label-container mb-2">
+                     <label for="hallucination-slider" class="text-lg font-semibold text-[var(--primary-darker)]">Selecciona una Afirmació:</label>
+                </div>
+                <input type="range" id="hallucination-slider" min="0" value="0" step="1" class="w-full mb-4">
+                <div id="hallucination-option-display" class="hallucination-buster-option-display p-3 border border-dashed border-[var(--border-medium)] rounded">
+                    <p><strong>Afirmació Seleccionada:</strong> <span id="selected-hallucination-option-text">Carregant...</span></p>
+                </div>
                 <div id="hallucination-buster-feedback" class="hallucination-buster-feedback" style="display: none;"></div>
             </div>
-
 
             <h3>Novetats i Pròxims Passos (2024-2025): Tendències Clau dels LLM per a Estudiants</h3>
             <ul class="list-disc list-inside pl-4 space-y-3 mt-6">
@@ -270,7 +200,7 @@
             
             <div class="interactive-block mt-10">
                 <h4 class="text-center !mt-0 !border-b-0">"Sandbox" Conceptual d'Enginyeria de Prompts</h4>
-                <p class="text-center text-sm text-gray-600 mb-6">Selecciona una tasca, examina el prompt d'exemple, intenta escriure el teu i després compara amb la crítica/millora conceptual.</p>
+                <p class="text-center text-sm text-gray-600 mb-6">Selecciona una tasca, ajusta el nivell de detall del prompt amb el control lliscant, examina l'exemple, intenta escriure el teu i després compara amb la crítica/millora conceptual.</p>
                 <div class="prompt-guide-task-selector mb-4">
                     <label for="prompt-task-select-sandbox">Selecciona Tasca Acadèmica:</label>
                     <select id="prompt-task-select-sandbox" class="w-full p-2 border border-gray-300 rounded-md">
@@ -280,8 +210,15 @@
                         <option value="coding_help">Ajuda amb la Codificació</option>
                     </select>
                 </div>
+                <div class="mb-4">
+                    <div class="slider-label-container">
+                        <label for="prompt-detail-slider">Nivell de Detall del Prompt:</label>
+                        <span id="prompt-detail-slider-value" class="slider-value">2</span>
+                    </div>
+                    <input type="range" id="prompt-detail-slider" min="1" max="3" value="2" step="1" class="w-full">
+                </div>
                 <div id="prompt-example-structure" class="mb-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                    <h5 class="font-semibold text-blue-700">Estructura de Prompt d'Exemple:</h5>
+                    <h5 class="font-semibold text-blue-700">Estructura de Prompt d'Exemple (Nivell <span id="prompt-level-display">2</span>):</h5>
                     <p class="text-sm"></p>
                 </div>
                 <div class="mb-4">
@@ -366,11 +303,16 @@
                     <p class="font-semibold">Escenari:</p>
                     <p id="dilemma-text">Carregant dilema...</p>
                 </div>
-                <div id="ethical-dilemma-choices-container" class="ethical-dilemma-choices">
-                    </div>
+                 <div class="slider-label-container mb-2 mt-4">
+                    <label for="dilemma-choice-slider" class="text-lg font-semibold text-[var(--primary-darker)]">Tria la teva Acció:</label>
+                </div>
+                <input type="range" id="dilemma-choice-slider" min="0" value="0" step="1" class="w-full mb-2">
+                <div id="dilemma-choice-display" class="ethical-dilemma-choices-display p-3 border border-dashed border-[var(--border-medium)] rounded">
+                    <p><strong>Opció Seleccionada:</strong> <span id="selected-dilemma-choice-text">Mou el control lliscant per veure les opcions.</span></p>
+                </div>
                 <div id="ethical-dilemma-feedback-container" class="ethical-dilemma-feedback" style="display: none;">
-                    </div>
-                <div class="mt-4 text-center">
+                </div>
+                <div class="mt-6 text-center">
                     <button id="next-dilemma-btn" class="button text-sm">Següent Dilema</button>
                 </div>
             </div>
@@ -472,9 +414,14 @@
             
             <div class="interactive-block mt-10">
                 <h4 class="text-center !mt-0 !border-b-0">Visió General Interactiva de les Habilitats d'Alfabetització en IA</h4>
-                <p class="text-center text-sm text-gray-600 mb-6">Fes clic a cada habilitat per explorar detalls i exemples. (Basat en [10, 13])</p>
-                <div class="ai-literacy-skills-container">
-                    </div>
+                <p class="text-center text-sm text-gray-600 mb-4">Mou el control lliscant per explorar cada habilitat, la seva descripció i detalls d'aplicació. (Basat en [10, 13])</p>
+                 <div class="slider-label-container mb-2">
+                    <label for="literacy-skill-slider" class="text-lg font-semibold text-[var(--primary-darker)]">Habilitat d'Alfabetització en IA:</label>
+                    <span id="literacy-skill-slider-value-name" class="slider-value text-lg">Habilitats Tècniques</span>
+                </div>
+                <input type="range" id="literacy-skill-slider" min="0" value="0" step="1" class="w-full mb-4">
+                <div id="literacy-skill-display" class="slider-content-display">
+                </div>
             </div>
             <p>Cultivar l'alfabetització crítica en IA implica desenvolupar una consciència metacognitiva de la interacció amb la IA: saber quan, per què i com utilitzar-la amb les comprovacions crítiques necessàries.</p>
         </section>
@@ -599,108 +546,60 @@
     document.addEventListener('DOMContentLoaded', () => {
         const getEl = (id) => document.getElementById(id);
 
-        // --- Interactive LLM Limitations Explorer ---
-        const limitationCardContainer = document.querySelector('.interactive-card-container');
-        if (limitationCardContainer) {
-            const limitationCards = limitationCardContainer.querySelectorAll('.interactive-card');
-            limitationCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    // Close other active cards in THIS container
-                    limitationCardContainer.querySelectorAll('.interactive-card.active').forEach(activeCard => {
-                        if (activeCard !== card) {
-                            activeCard.classList.remove('active');
-                            const otherContent = activeCard.querySelector('.interactive-card-content');
-                            if (otherContent) otherContent.style.display = 'none';
-                        }
-                    });
-                    // Toggle current card
-                    card.classList.toggle('active');
-                    const content = card.querySelector('.interactive-card-content');
-                    if (content) {
-                        content.style.display = card.classList.contains('active') ? 'block' : 'none';
-                    }
-                });
-            });
+        const limitationData = [
+            { name: "Precisió i Desinformació (Al·lucinacions)", description: "Els LLM poden generar informació que sona plausible però incorrecta o fabricada.[2, 16, 24, 37, 38] \"Fan ressò dels nostres pensaments, sovint prioritzant la fluïdesa i l'afirmació per sobre de la veritat\".[25]", example: "Preguntar a un LLM la capital d'un país poc conegut. Podria proporcionar amb confiança el nom d'una ciutat incorrecta o fins i tot inventar una capital que soni plausible però inexistent.", mitigation: "Verifica sempre rigorosament la informació generada per LLM amb fonts fiables." },
+            { name: "Biaix", description: "Entrenats amb grans conjunts de dades, els LLM poden reflectir i amplificar biaixos socials relacionats amb la raça, el gènere, l'edat, etc.[11, 14, 37]", example: "Demanar a un LLM que generi imatges de \"metges\" podria mostrar predominantment un gènere o ètnia, reflectint biaixos en les dades d'entrenament.", mitigation: "Estigues vigilant en la identificació i el qüestionament de possibles biaixos, especialment en temes sensibles." },
+            { name: "Manca de Comprensió i Raonament Reals", description: "Els LLM prediuen seqüències de paraules probables; no \"entenen\" realment conceptes ni \"pensen\" críticament com els humans.[1, 15, 16, 39, 40]", example: "Un LLM podria resoldre correctament un problema de paraules matemàtic però fallar en explicar els principis matemàtics subjacents d'una manera veritablement conceptual si se l'interroga profundament.", mitigation: "Recorda que els LLM són comparadors de patrons, no raonadors conscients. Utilitza els seus resultats com a punt de partida per a la teva pròpia anàlisi crítica." },
+            { name: "Impacte en el Desenvolupament de l'Alfabetització", description: "La dependència excessiva pot dificultar el desenvolupament del pensament crític, l'escriptura acadèmica i les habilitats de resolució de problemes.[1, 2, 15, 16]", example: "Utilitzar constantment un LLM per redactar assaigs des de zero podria impedir que un estudiant desenvolupi les seves pròpies habilitats argumentatives i la seva veu d'escriptura única.", mitigation: "Utilitza els LLM per augmentar, no per reemplaçar, el teu propi esforç intel·lectual i desenvolupament d'habilitats." },
+            { name: "Preocupacions Ètiques", description: "Les preocupacions inclouen el plagi, la deshonestedat acadèmica i la privadesa de les dades (les interaccions poden ser registrades).[2, 14, 16, 38, 41]", example: "Presentar un assaig generat per un LLM com a treball propi és plagi. Compartir dades de recerca sensibles amb un LLM públic podria violar la confidencialitat.", mitigation: "Adhereix-te a les polítiques d'integritat acadèmica, cita adequadament i sigues prudent amb les dades sensibles." },
+            { name: "Limitacions de la Finestra de Context", description: "Els LLM tenen una quantitat finita d'informació que poden \"recordar\" durant una interacció, la qual cosa limita l'eficàcia amb documents molt llargs o converses complexes i extenses.[31]", example: "En resumir un article de recerca molt llarg (p. ex., més de 50 pàgines), un LLM podria \"oblidar\" detalls del principi de l'article quan processi el final, donant lloc a un resum incomplet o esbiaixat.", mitigation: "Per a tasques llargues, divideix-les en fragments més petits o utilitza eines dissenyades per a la gestió de contextos amplis." }
+        ];
+        const limitationSlider = getEl('limitation-slider');
+        const limitationSliderValueName = getEl('limitation-slider-value-name');
+        const limitationDisplay = getEl('limitation-display');
+        if (limitationSlider) limitationSlider.max = limitationData.length - 1;
+
+        function displayLimitation(index) {
+            if (!limitationDisplay || !limitationData[index]) return;
+            const item = limitationData[index];
+            if(limitationSliderValueName) limitationSliderValueName.textContent = item.name;
+            limitationDisplay.innerHTML = `<h5>${item.name}</h5><p>${item.description}</p><p><strong>Exemple Conceptual:</strong> ${item.example}</p><p class="font-semibold mt-2">Mitigació: ${item.mitigation}</p>`;
+        }
+        if (limitationSlider) {
+            limitationSlider.addEventListener('input', (e) => displayLimitation(parseInt(e.target.value)));
+            displayLimitation(0); // Initial display
+        }
+
+        // --- LLM Capabilities Carousel (Slider controlled) ---
+        const capabilitiesData = [
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" /><path fill-rule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.997.056 1.95.422 2.723.994l2.261 2.26c.572.573.939 1.291.994 2.087a49.52 49.52 0 010 5.312c-.056.997-.422 1.95-.994 2.723l-2.26 2.261c-.573.572-1.291.939-2.087.994a49.52 49.52 0 01-5.312 0c-.997-.056-1.95-.422-2.723-.994l-2.261-2.26c-.572-.573-.939-1.291-.994-2.087a49.52 49.52 0 010-5.312c.056-.997.422-1.95.994-2.723l2.26-2.261c.573-.572 1.291-.939 2.087-.994zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5z" clip-rule="evenodd" /></svg>`, title: "Aprenentatge Personalitzat", description: "Ofereixen experiències adaptades al ritme i estil individual, proporcionant guiatge i exercicis personalitzats. [2, 3, 8, 17-22]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 1.875a1.125 1.125 0 012.25 0v2.383c.43.163.838.393 1.212.672l1.69-1.69a.75.75 0 011.06 1.06l-1.689 1.69c.28.374.51.782.672 1.212h2.383a1.125 1.125 0 010 2.25h-2.383a5.443 5.443 0 01-.672 1.212l1.69 1.69a.75.75 0 01-1.06 1.06l-1.69-1.689a5.443 5.443 0 01-1.212.672v2.383a1.125 1.125 0 01-2.25 0v-2.383a5.443 5.443 0 01-1.212-.672l-1.69 1.69a.75.75 0 01-1.06-1.06l1.689-1.69a5.443 5.443 0 01-.672-1.212H4.125a1.125 1.125 0 010-2.25h2.383c.163-.43.393-.838.672-1.212l-1.69-1.69a.75.75 0 011.06-1.06l1.69 1.689c.374-.28.782-.51 1.212-.672V1.875zM12 6a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>`, title: "Ajuda a la Recerca", description: "Assisteixen en la descoberta de literatura, recuperació d'informació i resum de textos acadèmics complexos. [2, 23-25]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.721 12.752a9.711 9.711 0 00-.945-2.701 9.754 9.754 0 00-1.676-2.32.75.75 0 00-1.112.02L16.46 9.375A8.25 8.25 0 0012 7.5h-1.5a.75.75 0 000 1.5H12a6.75 6.75 0 015.231 10.625l-2.261 3.015a.75.75 0 00.921 1.185l2.261-3.015c.55-.734.9-1.597.994-2.513z" /><path d="M11.252 21.721a9.711 9.711 0 002.701-.945 9.754 9.754 0 002.32-1.676.75.75 0 00-.02-1.112l-1.625-1.528a8.25 8.25 0 00-1.625-5.231H12a.75.75 0 00-1.5 0H9.75A6.75 6.75 0 013.375 9.731l-3.015-2.261a.75.75 0 00-1.185.921l3.015 2.261c.734.55 1.597.9 2.513.994z" /></svg>`, title: "Company d'Escriptura", description: "Ajuden amb pluja d'idees, esquemes, redacció inicial i suggeriments d'edició/correcció. [1, 2, 9, 16, 29, 30]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-2.173 3.259a.75.75 0 001.06 1.061l2.757-4.136A4.5 4.5 0 0110.5 18H15v.75a.75.75 0 001.5 0V18h1.5v.75a.75.75 0 001.5 0V18h1.5a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zM6 15h9V6H6v9z" clip-rule="evenodd" /></svg>`, title: "Assistent d'Anàlisi de Dades", description: "Suport en codificació qualitativa, identificació de temes i generació de codi per anàlisis quantitatives bàsiques. [6, 31-35]" },
+            { icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436A6.75 6.75 0 019.75 22.5a.75.75 0 01-.75-.75v-4.131A15.838 15.838 0 016.382 15H2.25a.75.75 0 01-.75-.75 6.75 6.75 0 017.815-6.666zM15 6.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" clip-rule="evenodd" /><path d="M5.26 17.242a.75.75 0 10-.897-1.203 5.243 5.243 0 00-2.05 5.022.75.75 0 00.625.627 5.243 5.243 0 005.022-2.051.75.75 0 10-1.202-.897 3.744 3.744 0 01-3.008 1.51c0-1.23.592-2.323 1.51-3.008z" /></svg>`, title: "Desenvolupament d'Habilitats", description: "La interacció reflexiva pot desenvolupar habilitats de resolució de problemes, comunicació i pensament crític. [2, 36]" }
+        ];
+        const capabilitySlider = getEl('capability-slider');
+        const capabilitySliderValueName = getEl('capability-slider-value-name');
+        const capabilityDisplay = getEl('capability-display');
+        if (capabilitySlider) capabilitySlider.max = capabilitiesData.length - 1;
+
+        function displayCapability(index) {
+            if (!capabilityDisplay || !capabilitiesData[index]) return;
+            const item = capabilitiesData[index];
+            if(capabilitySliderValueName) capabilitySliderValueName.textContent = item.title;
+            capabilityDisplay.innerHTML = `<div class="text-center">${item.icon}<h5>${item.title}</h5><p>${item.description}</p></div>`;
+        }
+        if (capabilitySlider) {
+            capabilitySlider.addEventListener('input', (e) => displayCapability(parseInt(e.target.value)));
+            displayCapability(0); 
         }
         
-        // --- LLM Capabilities Carousel ---
-        const capabilitiesData = [
-            {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9a3.75 3.75 0 100 7.5A3.75 3.75 0 0012 9z" /><path fill-rule="evenodd" d="M9.344 3.071a49.52 49.52 0 015.312 0c.997.056 1.95.422 2.723.994l2.261 2.26c.572.573.939 1.291.994 2.087a49.52 49.52 0 010 5.312c-.056.997-.422 1.95-.994 2.723l-2.26 2.261c-.573.572-1.291.939-2.087.994a49.52 49.52 0 01-5.312 0c-.997-.056-1.95-.422-2.723-.994l-2.261-2.26c-.572-.573-.939-1.291-.994-2.087a49.52 49.52 0 010-5.312c.056-.997.422-1.95.994-2.723l2.26-2.261c.573-.572 1.291-.939 2.087-.994zM12 5.25a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5z" clip-rule="evenodd" /></svg>`,
-                title: "Aprenentatge Personalitzat",
-                description: "Ofereixen experiències adaptades al ritme i estil individual, proporcionant guiatge i exercicis personalitzats. [2, 3, 8, 17-22]"
-            },
-            {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 1.875a1.125 1.125 0 012.25 0v2.383c.43.163.838.393 1.212.672l1.69-1.69a.75.75 0 011.06 1.06l-1.689 1.69c.28.374.51.782.672 1.212h2.383a1.125 1.125 0 010 2.25h-2.383a5.443 5.443 0 01-.672 1.212l1.69 1.69a.75.75 0 01-1.06 1.06l-1.69-1.689a5.443 5.443 0 01-1.212.672v2.383a1.125 1.125 0 01-2.25 0v-2.383a5.443 5.443 0 01-1.212-.672l-1.69 1.69a.75.75 0 01-1.06-1.06l1.689-1.69a5.443 5.443 0 01-.672-1.212H4.125a1.125 1.125 0 010-2.25h2.383c.163-.43.393-.838.672-1.212l-1.69-1.69a.75.75 0 011.06-1.06l1.69 1.689c.374-.28.782-.51 1.212-.672V1.875zM12 6a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" /></svg>`,
-                title: "Ajuda a la Recerca",
-                description: "Assisteixen en la descoberta de literatura, recuperació d'informació i resum de textos acadèmics complexos. [2, 23-25]"
-            },
-            {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M21.721 12.752a9.711 9.711 0 00-.945-2.701 9.754 9.754 0 00-1.676-2.32.75.75 0 00-1.112.02L16.46 9.375A8.25 8.25 0 0012 7.5h-1.5a.75.75 0 000 1.5H12a6.75 6.75 0 015.231 10.625l-2.261 3.015a.75.75 0 00.921 1.185l2.261-3.015c.55-.734.9-1.597.994-2.513z" /><path d="M11.252 21.721a9.711 9.711 0 002.701-.945 9.754 9.754 0 002.32-1.676.75.75 0 00-.02-1.112l-1.625-1.528a8.25 8.25 0 00-1.625-5.231H12a.75.75 0 00-1.5 0H9.75A6.75 6.75 0 013.375 9.731l-3.015-2.261a.75.75 0 00-1.185.921l3.015 2.261c.734.55 1.597.9 2.513.994z" /></svg>`,
-                title: "Company d'Escriptura",
-                description: "Ajuden amb pluja d'idees, esquemes, redacció inicial i suggeriments d'edició/correcció. [1, 2, 9, 16, 29, 30]"
-            },
-             {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M2.25 2.25a.75.75 0 000 1.5H3v10.5a3 3 0 003 3h1.21l-2.173 3.259a.75.75 0 001.06 1.061l2.757-4.136A4.5 4.5 0 0110.5 18H15v.75a.75.75 0 001.5 0V18h1.5v.75a.75.75 0 001.5 0V18h1.5a3 3 0 003-3V3.75h.75a.75.75 0 000-1.5H2.25zM6 15h9V6H6v9z" clip-rule="evenodd" /></svg>`,
-                title: "Assistent d'Anàlisi de Dades",
-                description: "Suport en codificació qualitativa, identificació de temes i generació de codi per anàlisis quantitatives bàsiques. [6, 31-35]"
-            },
-            {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M9.315 7.584C12.195 3.883 16.695 1.5 21.75 1.5a.75.75 0 01.75.75c0 5.056-2.383 9.555-6.084 12.436A6.75 6.75 0 019.75 22.5a.75.75 0 01-.75-.75v-4.131A15.838 15.838 0 016.382 15H2.25a.75.75 0 01-.75-.75 6.75 6.75 0 017.815-6.666zM15 6.75a2.25 2.25 0 100 4.5 2.25 2.25 0 000-4.5z" clip-rule="evenodd" /><path d="M5.26 17.242a.75.75 0 10-.897-1.203 5.243 5.243 0 00-2.05 5.022.75.75 0 00.625.627 5.243 5.243 0 005.022-2.051.75.75 0 10-1.202-.897 3.744 3.744 0 01-3.008 1.51c0-1.23.592-2.323 1.51-3.008z" /></svg>`,
-                title: "Desenvolupament d'Habilitats",
-                description: "La interacció reflexiva pot desenvolupar habilitats de resolució de problemes, comunicació i pensament crític. [2, 36]"
-            }
-        ];
-
-        const carouselTrack = document.querySelector('.capability-carousel-track');
-        const prevBtn = getEl('prev-capability-btn');
-        const nextBtn = getEl('next-capability-btn');
-        let currentCapabilityIndex = 0;
-
-        function populateCarousel() {
-            if (!carouselTrack) return;
-            carouselTrack.innerHTML = ''; // Clear existing
-            capabilitiesData.forEach(cap => {
-                const slide = document.createElement('div');
-                slide.classList.add('capability-slide');
-                slide.innerHTML = `
-                    ${cap.icon}
-                    <h5>${cap.title}</h5>
-                    <p>${cap.description}</p>
-                `;
-                carouselTrack.appendChild(slide);
-            });
-            updateCarousel();
-        }
-
-        function updateCarousel() {
-            if (!carouselTrack || !carouselTrack.children.length) return;
-            const slideWidth = carouselTrack.querySelector('.capability-slide').offsetWidth;
-            carouselTrack.style.transform = `translateX(-${currentCapabilityIndex * slideWidth}px)`;
-        }
-
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                currentCapabilityIndex = (currentCapabilityIndex + 1) % capabilitiesData.length;
-                updateCarousel();
-            });
-        }
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => {
-                currentCapabilityIndex = (currentCapabilityIndex - 1 + capabilitiesData.length) % capabilitiesData.length;
-                updateCarousel();
-            });
-        }
-        populateCarousel(); 
-        window.addEventListener('resize', updateCarousel);
-
-
-        // --- Hallucination Buster Mini-Puzzle ---
-        const hallucinationOptionsContainer = getEl('hallucination-buster-options');
+        // --- Hallucination Buster Mini-Puzzle (Slider controlled) ---
+        const hallucinationSlider = getEl('hallucination-slider');
+        const selectedHallucinationOptionText = getEl('selected-hallucination-option-text');
         const hallucinationFeedbackEl = getEl('hallucination-buster-feedback');
         const hallucinationQuestions = [
             {
-                question: "Un LLM afirma el següent sobre la fotosíntesi. Quina és una 'al·lucinació' subtil?",
                 options: [
                     { text: "La fotosíntesi converteix l'energia lumínica en energia química en forma de glucosa.", correct: false, feedback:"Correcte. Aquesta és una afirmació fonamentalment precisa sobre la fotosíntesi."},
                     { text: "Totes les plantes alliberen oxigen durant la fotosíntesi, incloses les que viuen en condicions anaeròbiques.", correct: true, feedback: "Correcte! Això és una al·lucinació. Mentre que la majoria de les plantes alliberen oxigen, algunes bacteris fotosintètics realitzen fotosíntesi anoxigènica i no produeixen oxigen. Els LLM poden generalitzar en excés." },
@@ -708,30 +607,28 @@
                 ]
             }
         ];
-        let currentHallucinationQuestion = 0;
-
-        function loadHallucinationQuestion(index) {
-            if (!hallucinationOptionsContainer || !hallucinationFeedbackEl || !hallucinationQuestions[index]) return;
-            const q = hallucinationQuestions[index];
-            hallucinationOptionsContainer.innerHTML = '';
-            q.options.forEach(opt => {
-                const optEl = document.createElement('div');
-                optEl.classList.add('hallucination-buster-option');
-                optEl.textContent = opt.text;
-                optEl.addEventListener('click', () => {
-                    hallucinationFeedbackEl.textContent = opt.feedback;
-                    hallucinationFeedbackEl.className = 'hallucination-buster-feedback p-3 rounded'; 
-                    hallucinationFeedbackEl.classList.add(opt.correct ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-red-100 text-red-700 border border-red-300');
-                    hallucinationFeedbackEl.style.display = 'block';
-                });
-                hallucinationOptionsContainer.appendChild(optEl);
-            });
-            hallucinationFeedbackEl.style.display = 'none';
-        }
-        if(hallucinationQuestions.length > 0 && hallucinationOptionsContainer) {
-             loadHallucinationQuestion(currentHallucinationQuestion);
+        let currentHallucinationQuestion = 0; 
+        if (hallucinationSlider && hallucinationQuestions[currentHallucinationQuestion]) {
+            hallucinationSlider.max = hallucinationQuestions[currentHallucinationQuestion].options.length - 1;
         }
 
+        function displayHallucinationFeedback(qIndex, optIndex) {
+            if (!hallucinationFeedbackEl || !selectedHallucinationOptionText || !hallucinationQuestions[qIndex] || !hallucinationQuestions[qIndex].options[optIndex]) return;
+            const opt = hallucinationQuestions[qIndex].options[optIndex];
+            selectedHallucinationOptionText.textContent = opt.text;
+            hallucinationFeedbackEl.textContent = opt.feedback;
+            hallucinationFeedbackEl.className = 'hallucination-buster-feedback p-3 rounded'; 
+            hallucinationFeedbackEl.classList.add(opt.correct ? 'bg-green-100 text-green-700 border border-green-300' : 'bg-red-100 text-red-700 border border-red-300');
+            hallucinationFeedbackEl.style.display = 'block';
+            hallucinationFeedbackEl.style.opacity = '1';
+        }
+        if (hallucinationSlider) {
+            hallucinationSlider.addEventListener('input', (e) => displayHallucinationFeedback(currentHallucinationQuestion, parseInt(e.target.value)));
+            if (hallucinationQuestions.length > 0 && hallucinationQuestions[currentHallucinationQuestion].options.length > 0) {
+                 displayHallucinationFeedback(currentHallucinationQuestion, 0); // Initial display
+                 if(selectedHallucinationOptionText) selectedHallucinationOptionText.textContent = hallucinationQuestions[currentHallucinationQuestion].options[0].text;
+            }
+        }
 
         // --- Enhanced Interactive Prompt Engineering Guide ("Sandbox") ---
         const promptTaskSelectSandbox = getEl('prompt-task-select-sandbox');
@@ -742,43 +639,55 @@
             promptExampleStructureEl.className = 'text-sm';
             promptExampleStructureContainer.appendChild(promptExampleStructureEl);
         }
-
+        const promptDetailSlider = getEl('prompt-detail-slider');
+        const promptDetailSliderValue = getEl('prompt-detail-slider-value');
+        const promptLevelDisplay = getEl('prompt-level-display');
         const userPromptInputEl = getEl('user-prompt-input');
         const showPromptCritiqueBtn = getEl('show-prompt-critique-btn');
         const promptCritiqueAreaEl = getEl('prompt-critique-area');
 
         const promptSandboxData = {
              summarize: {
-                example_structure: "Resumeix els arguments clau, la metodologia, les troballes i les conclusions del següent article acadèmic en aproximadament 250 paraules. Centra't en les implicacions per a polítiques públiques: [TEXT DE L'ARTICLE AQUÍ]",
-                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Claredat de la Tasca:** El teu prompt ${userInput.toLowerCase().includes("resumeix") ? "indica clarament la tasca de resumir." : "podria ser més explícit sobre la tasca de resumir."}\n- **Especificitat del Context:** ${userInput.toLowerCase().includes("article acadèmic") || userInput.toLowerCase().includes("article") ? "Menciona el context acadèmic." : "Considera especificar que és un 'article acadèmic'."}\n- **Restriccions:** ${userInput.match(/(\d+)\s*paraules/) ? "Has inclòs una restricció de longitud." : "Pots afegir una restricció de longitud (ex: 'en 200 paraules')."}\n- **Enfocament Específic:** ${userInput.toLowerCase().includes("implicacions") || userInput.toLowerCase().includes("polítiques") ? "Has demanat un enfocament específic." : "Si és necessari, demana un enfocament (ex: 'centra't en la metodologia')."}\n- **Proporcionar el Text:** Assegura't d'incloure o indicar clarament on anirà el text a resumir.`
+                levels: [ "Resumeix aquest text: [TEXT]", "Fes un resum concís (150 paraules) dels punts principals d'aquest article sobre [TEMA]: [TEXT]", "Actua com un expert en [CAMP]. Resumeix els arguments clau, la metodologia, les troballes i les conclusions del següent article acadèmic en aproximadament 250 paraules, destacant les implicacions per a [AUDIÈNCIA/PROPÒSIT ESPECÍFIC]: [TEXT DE L'ARTICLE AQUÍ]" ],
+                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Claredat de la Tasca:** ${userInput.toLowerCase().includes("resumeix") ? "Bé." : "Consell: Indica 'resumeix'."}\n- **Context:** ${userInput.toLowerCase().includes("article") ? "Bé." : "Consell: Especifica el tipus de text."}\n- **Restriccions:** ${userInput.match(/(\d+)\s*paraules/) || userInput.toLowerCase().includes("concís") ? "Bé." : "Consell: Afegeix longitud."}\n- **Enfocament:** ${userInput.toLowerCase().includes("centra't en") || userInput.toLowerCase().includes("destacant") ? "Excel·lent." : "Consell: Demana enfocament específic."}`
             },
             brainstorm_rq: {
-                example_structure: "Sóc un estudiant de doctorat investigant 'l'impacte de la intel·ligència artificial en el mercat laboral del sector creatiu a Catalunya'. Genera 5 preguntes de recerca originals i factibles per a una tesi doctoral, considerant perspectives econòmiques i sociològiques. Les preguntes han de ser prou específiques per guiar una investigació empírica.",
-                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Context Personal/Rol:** ${userInput.toLowerCase().includes("doctorat") || userInput.toLowerCase().includes("tesi") ? "Has especificat el teu rol/context." : "Considera especificar el teu nivell (ex: 'per a una tesi doctoral')."}\n- **Àrea Temàtica Clara:** ${userInput.toLowerCase().includes("intel·ligència artificial") && (userInput.toLowerCase().includes("mercat laboral") || userInput.toLowerCase().includes("sector creatiu")) ? "L'àrea temàtica és clara." : "Defineix millor l'àrea temàtica."}\n- **Nombre de Resultats:** ${userInput.match(/(\d+)\s*preguntes/) ? "Has especificat el nombre de preguntes." : "Indica quantes preguntes vols (ex: 'genera 3 preguntes')."}\n- **Criteris de Qualitat:** ${userInput.toLowerCase().includes("originals") || userInput.toLowerCase().includes("factibles") || userInput.toLowerCase().includes("específiques") ? "Has inclòs criteris de qualitat." : "Afegeix criteris (ex: 'originals', 'factibles', 'específiques per a investigació empírica')."}\n- **Perspectives/Enfocaments:** ${userInput.toLowerCase().includes("econòmiques") || userInput.toLowerCase().includes("sociològiques") ? "Has suggerit perspectives." : "Pots suggerir perspectives (ex: 'des d'una perspectiva ètica')."}`
+                levels: [ "Idees de recerca sobre [TEMA AMPLI].", "Genera 3 preguntes de recerca per a un treball de grau sobre l'impacte de [VARIABLE 1] en [VARIABLE 2].", "Sóc un estudiant de doctorat investigant '[TEMA ESPECÍFIC AMB CONTEXT]'. Proposa 5 preguntes de recerca innovadores i factibles per a una tesi doctoral, considerant [PERSPECTIVA 1] i [PERSPECTIVA 2]. Les preguntes han de ser adequades per a una investigació [QUALITATIVA/QUANTITATIVA/MIXTA]." ],
+                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Context/Rol:** ${userInput.toLowerCase().includes("doctorat") || userInput.toLowerCase().includes("grau") ? "Bé." : "Consell: Especifica el teu nivell."}\n- **Tema Central:** ${userInput.split(" ").length > 5 ? "Bé." : "Consell: Sigues més específic."}\n- **Nombre de Preguntes:** ${userInput.match(/(\d+)\s*preguntes/) ? "Correcte." : "Consell: Especifica quantes."}\n- **Criteris de Qualitat:** ${userInput.toLowerCase().includes("innovadores") || userInput.toLowerCase().includes("factibles") ? "Bé." : "Consell: Afegeix criteris."}`
             },
             explain_concept: {
-                example_structure: "Explica el concepte de 'computació quàntica' com si ho fessis a un estudiant de batxillerat amb bons coneixements de física clàssica però cap de quàntica. Utilitza una analogia senzilla per il·lustrar la superposició i l'entrellaçament. Evita la jerga tècnica excessiva.",
-                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Concepte a Explicar:** ${userInput.toLowerCase().includes("concepte de") || userInput.toLowerCase().includes("explica") ? "El concepte a explicar està present." : "Indica clarament el concepte (ex: 'Explica el concepte de X')."}\n- **Públic Objectiu (Persona):** ${userInput.toLowerCase().includes("batxillerat") || userInput.toLowerCase().includes("principiant") ? "Has definit el públic objectiu." : "Especifica el públic (ex: 'per a algú sense coneixements previs')."}\n- **Ús d'Analogies:** ${userInput.toLowerCase().includes("analogia") ? "Has demanat una analogia." : "Les analogies ajuden; considera demanar-ne una."}\n- **Nivell de Llenguatge:** ${userInput.toLowerCase().includes("senzills") || userInput.toLowerCase().includes("evita jerga") ? "Has indicat el nivell de llenguatge." : "Demana un llenguatge clar i senzill."}`
+                levels: [ "Explica [CONCEPTE].", "Què és [CONCEPTE]? Explica-ho de manera senzilla.", "Explica el concepte de '[CONCEPTE COMPLEX]' com si ho fessis a [PÚBLIC OBJECTIU ESPECÍFIC, ex: 'un estudiant de secundària']. Utilitza una analogia i proporciona un exemple concret per il·lustrar-ho. Evita la terminologia excessivament tècnica." ],
+                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Concepte Clar:** ${userInput.toLowerCase().includes("explica") || userInput.toLowerCase().includes("concepte de") ? "Bé." : "Consell: Comença amb 'Explica el concepte de...'."}\n- **Públic Objectiu:** ${userInput.toLowerCase().includes("com si") || userInput.toLowerCase().includes("per a un") ? "Excel·lent." : "Consell: Especifica el públic."}\n- **Estratègies d'Explicació:** ${userInput.toLowerCase().includes("analogia") || userInput.toLowerCase().includes("exemple") ? "Molt bé." : "Consell: Demana analogies/exemples."}`
             },
             coding_help: {
-                example_structure: "Estic treballant en Python i necessito ajuda per escriure una funció que agafi una llista de números i retorni una nova llista només amb els números parells, ordenats de forma ascendent. Proporciona el codi de la funció i una breu explicació de com funciona.",
-                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Llenguatge de Programació:** ${userInput.toLowerCase().includes("python") || userInput.toLowerCase().includes("javascript") ? "Has especificat el llenguatge." : "Indica el llenguatge de programació (ex: 'en Python')."}\n- **Descripció Clara de la Tasca:** ${userInput.toLowerCase().includes("funció") && (userInput.toLowerCase().includes("llista") || userInput.toLowerCase().includes("números parells")) ? "La tasca està ben descrita." : "Descriu clarament què ha de fer la funció/codi."}\n- **Input/Output Esperat:** ${userInput.toLowerCase().includes("retorni") ? "Has indicat l'output." : "Especifica l'input i l'output esperats."}\n- **Demanda d'Explicació:** ${userInput.toLowerCase().includes("explicació") ? "Has demanat una explicació del codi." : "És útil demanar una explicació del codi generat."}`
+                levels: [ "Codi Python per [TASCA SIMPLE].", "Necessito una funció de Python per [TASCA ESPECÍFICA, ex: 'llegir un CSV i calcular la mitjana d'una columna'].", "Estic treballant en Python amb la llibreria Pandas. Escriu una funció que agafi un DataFrame, agrupi les dades per la columna '[NOM_COLUMNA_AGRUPACIÓ]', calculi [ESTADÍSTIC, ex: 'la suma'] de la columna '[NOM_COLUMNA_VALOR]' per a cada grup, i retorni el resultat. Afegeix comentaris explicant cada pas del codi." ],
+                critique: (userInput) => `Crítica Conceptual del Teu Prompt:\nInput rebut: "${userInput}"\n- **Llenguatge/Llibreria:** ${userInput.toLowerCase().includes("python") || userInput.toLowerCase().includes("pandas") ? "Bé." : "Consell: Indica llenguatge/llibreria."}\n- **Tasca Clara:** ${userInput.toLowerCase().includes("funció") || userInput.toLowerCase().includes("codi per") ? "Bé." : "Consell: Sigues explícit."}\n- **Input/Output:** ${userInput.toLowerCase().includes("agafi") && userInput.toLowerCase().includes("retorni") ? "Correcte." : "Consell: Detalla input/output."}\n- **Explicació:** ${userInput.toLowerCase().includes("explicació") || userInput.toLowerCase().includes("comentaris") ? "Molt bé." : "Consell: Demana explicacions."}`
             }
         };
 
         function updatePromptSandboxDetails() {
-            if (!promptTaskSelectSandbox || !promptSandboxData || !promptExampleStructureEl) return;
+            if (!promptTaskSelectSandbox || !promptSandboxData || !promptExampleStructureEl || !promptDetailSlider || !promptLevelDisplay) return;
             const selectedTask = promptTaskSelectSandbox.value;
+            const detailLevel = parseInt(promptDetailSlider.value) -1; 
             const data = promptSandboxData[selectedTask];
-            if (!data) return;
-            promptExampleStructureEl.textContent = data.example_structure;
+            if (!data || !data.levels || !data.levels[detailLevel]) return;
+            promptExampleStructureEl.textContent = data.levels[detailLevel];
+            promptLevelDisplay.textContent = detailLevel + 1;
+            if (promptDetailSliderValue) promptDetailSliderValue.textContent = detailLevel + 1;
             if (userPromptInputEl) userPromptInputEl.value = ''; 
-            if (promptCritiqueAreaEl) promptCritiqueAreaEl.style.display = 'none'; 
+            if (promptCritiqueAreaEl) {
+                 promptCritiqueAreaEl.style.display = 'none';
+                 promptCritiqueAreaEl.textContent = '';
+            }
         }
-
-        if (promptTaskSelectSandbox) {
-            promptTaskSelectSandbox.addEventListener('change', updatePromptSandboxDetails);
+        
+        if (promptDetailSlider && promptDetailSliderValue) {
+             promptDetailSlider.addEventListener('input', () => {
+                promptDetailSliderValue.textContent = promptDetailSlider.value;
+                updatePromptSandboxDetails();
+            });
         }
+        if (promptTaskSelectSandbox) promptTaskSelectSandbox.addEventListener('change', updatePromptSandboxDetails);
         if (showPromptCritiqueBtn) {
             showPromptCritiqueBtn.addEventListener('click', () => {
                 if (!promptTaskSelectSandbox || !userPromptInputEl || !promptCritiqueAreaEl || !promptSandboxData) return;
@@ -792,124 +701,79 @@
         }
         updatePromptSandboxDetails(); 
 
-        // --- Ethical Dilemma Mini-Simulator (Expanded) ---
+        // --- Ethical Dilemma Mini-Simulator (Slider controlled) ---
         const ethicalDilemmaTextEl = getEl('dilemma-text');
-        const ethicalChoicesContainer = getEl('ethical-dilemma-choices-container');
+        const dilemmaChoiceSlider = getEl('dilemma-choice-slider');
+        const selectedDilemmaChoiceTextEl = getEl('selected-dilemma-choice-text');
         const ethicalFeedbackContainer = getEl('ethical-dilemma-feedback-container');
         const nextDilemmaBtn = getEl('next-dilemma-btn');
 
         const ethicalDilemmas = [
-            {
-                scenario: "Tens un article de recerca complex per lliurar en dos dies i estàs tenint dificultats per escriure la secció de revisió de la literatura. Un LLM podria generar un esborrany complet ràpidament. Què fas?",
-                choices: [
-                    { text: "Utilitzar l'LLM per generar tota la revisió de la literatura i lliurar-la després d'edicions menors.", feedback: "Això és plagi i deshonestedat acadèmica. Els LLM no haurien de reemplaçar la teva pròpia anàlisi crítica i escriptura. (Gravetat: Risc Alt)", type: "bad" },
-                    { text: "Utilitzar l'LLM per identificar temes clau i potencial fonts, i després escriure la revisió completament amb les teves pròpies paraules, citant totes les fonts correctament.", feedback: "Aquest és un ús ètic i eficaç. L'LLM ajuda en la recerca, però tu realitzes l'escriptura crítica i la síntesi. (Gravetat: Bona Pràctica)", type: "good" },
-                    { text: "Demanar a l'LLM que resumeixi alguns articles clau que ja has trobat, i després integrar aquests resums (reformulats i citats) en la teva pròpia revisió escrita.", feedback: "Això pot ser acceptable si avaluares críticament, reformules significativament amb la teva pròpia veu i cites correctament. Assegura't que l'anàlisi principal sigui teva. (Gravetat: Cal Precaució)", type: "bad" }
-                ]
-            },
-            {
-                scenario: "Un company et demana que utilitzis un LLM per generar respostes per a un examen online que feu junts. El company diu que 'tothom ho fa'. Què fas?",
-                choices: [
-                    { text: "Acceptes i utilitzeu l'LLM per a l'examen, dividint-vos les preguntes.", feedback: "Participar en això és una violació greu de la integritat acadèmica i podria tenir conseqüències severes per a tots dos. (Gravetat: Risc Molt Alt)", type: "bad"},
-                    { text: "Et negues educadament i expliques al company els riscos ètics i acadèmics, suggerint estudiar junts de manera legítima.", feedback: "Aquesta és la decisió correcta i ètica. Mantenir la integritat és crucial, fins i tot sota pressió dels companys. (Gravetat: Bona Pràctica)", type: "good"},
-                    { text: "No hi participes directament, però no dius res al company sobre la seva intenció d'utilitzar l'LLM.", feedback: "Encara que no participis activament, no abordar la qüestió pot ser vist com una tolerància de la deshonestedat. És millor expressar les teves preocupacions. (Gravetat: Risc Moderat)", type: "bad"}
-                ]
-            }
+            { scenario: "Tens un article de recerca complex per lliurar en dos dies i estàs tenint dificultats per escriure la secció de revisió de la literatura. Un LLM podria generar un esborrany complet ràpidament. Què fas?", choices: [ { text: "Utilitzar l'LLM per generar tota la revisió de la literatura i lliurar-la després d'edicions menors.", feedback: "Això és plagi i deshonestedat acadèmica. Els LLM no haurien de reemplaçar la teva pròpia anàlisi crítica i escriptura. (Gravetat: Risc Alt)", type: "bad" }, { text: "Utilitzar l'LLM per identificar temes clau i potencial fonts, i després escriure la revisió completament amb les teves pròpies paraules, citant totes les fonts correctament.", feedback: "Aquest és un ús ètic i eficaç. L'LLM ajuda en la recerca, però tu realitzes l'escriptura crítica i la síntesi. (Gravetat: Bona Pràctica)", type: "good" }, { text: "Demanar a l'LLM que resumeixi alguns articles clau que ja has trobat, i després integrar aquests resums (reformulats i citats) en la teva pròpia revisió escrita.", feedback: "Això pot ser acceptable si avaluares críticament, reformules significativament amb la teva pròpia veu i cites correctament. Assegura't que l'anàlisi principal sigui teva. (Gravetat: Cal Precaució)", type: "bad" } ] },
+            { scenario: "Un company et demana que utilitzis un LLM per generar respostes per a un examen online que feu junts. El company diu que 'tothom ho fa'. Què fas?", choices: [ { text: "Acceptes i utilitzeu l'LLM per a l'examen, dividint-vos les preguntes.", feedback: "Participar en això és una violació greu de la integritat acadèmica i podria tenir conseqüències severes per a tots dos. (Gravetat: Risc Molt Alt)", type: "bad"}, { text: "Et negues educadament i expliques al company els riscos ètics i acadèmics, suggerint estudiar junts de manera legítima.", feedback: "Aquesta és la decisió correcta i ètica. Mantenir la integritat és crucial, fins i tot sota pressió dels companys. (Gravetat: Bona Pràctica)", type: "good"}, { text: "No hi participes directament, però no dius res al company sobre la seva intenció d'utilitzar l'LLM.", feedback: "Encara que no participis activament, no abordar la qüestió pot ser vist com una tolerància de la deshonestedat. És millor expressar les teves preocupacions. (Gravetat: Risc Moderat)", type: "bad"} ] }
         ];
-
         let currentEthicalDilemmaIndex = 0;
 
         function loadEthicalDilemma(index) {
-            if (!ethicalDilemmaTextEl || !ethicalChoicesContainer || !ethicalFeedbackContainer || !ethicalDilemmas[index]) return;
+            if (!ethicalDilemmaTextEl || !dilemmaChoiceSlider || !selectedDilemmaChoiceTextEl || !ethicalFeedbackContainer || !ethicalDilemmas[index]) return;
             const dilemma = ethicalDilemmas[index];
             ethicalDilemmaTextEl.textContent = dilemma.scenario;
-            ethicalChoicesContainer.innerHTML = ''; 
-            dilemma.choices.forEach(choice => {
-                const button = document.createElement('button');
-                button.textContent = choice.text;
-                button.classList.add('button', 'text-sm', 'mb-2', 'mr-2', 'w-full', 'md:w-auto'); 
-                button.onclick = () => {
-                    ethicalFeedbackContainer.textContent = choice.feedback;
-                    ethicalFeedbackContainer.className = 'ethical-dilemma-feedback'; 
-                    ethicalFeedbackContainer.classList.add(choice.type === 'good' ? 'feedback-good' : 'feedback-bad');
-                    ethicalFeedbackContainer.style.display = 'block';
-                };
-                ethicalChoicesContainer.appendChild(button);
-            });
-            ethicalFeedbackContainer.style.display = 'none';
+            dilemmaChoiceSlider.max = dilemma.choices.length - 1;
+            dilemmaChoiceSlider.value = "0"; 
+            displayDilemmaChoiceAndFeedback(index, 0);
+            ethicalFeedbackContainer.style.display = 'none'; 
+            ethicalFeedbackContainer.style.opacity = '0';
         }
-        
+
+        function displayDilemmaChoiceAndFeedback(dilemmaIdx, choiceIdx) {
+            if (!selectedDilemmaChoiceTextEl || !ethicalFeedbackContainer || !ethicalDilemmas[dilemmaIdx] || !ethicalDilemmas[dilemmaIdx].choices[choiceIdx]) return;
+            const choice = ethicalDilemmas[dilemmaIdx].choices[choiceIdx];
+            selectedDilemmaChoiceTextEl.textContent = choice.text;
+            ethicalFeedbackContainer.textContent = choice.feedback;
+            ethicalFeedbackContainer.className = 'ethical-dilemma-feedback'; 
+            ethicalFeedbackContainer.classList.add(choice.type === 'good' ? 'feedback-good' : 'feedback-bad');
+            ethicalFeedbackContainer.style.display = 'block';
+            ethicalFeedbackContainer.style.opacity = '1';
+        }
+
+        if (dilemmaChoiceSlider) {
+            dilemmaChoiceSlider.addEventListener('input', (e) => {
+                displayDilemmaChoiceAndFeedback(currentEthicalDilemmaIndex, parseInt(e.target.value));
+            });
+        }
         if (nextDilemmaBtn) {
             nextDilemmaBtn.addEventListener('click', () => {
                 currentEthicalDilemmaIndex = (currentEthicalDilemmaIndex + 1) % ethicalDilemmas.length;
                 loadEthicalDilemma(currentEthicalDilemmaIndex);
             });
         }
-        if (ethicalDilemmas.length > 0 && ethicalDilemmaTextEl) { // Ensure element exists
-             loadEthicalDilemma(currentEthicalDilemmaIndex);
-        }
+        if (ethicalDilemmas.length > 0 && ethicalDilemmaTextEl) loadEthicalDilemma(currentEthicalDilemmaIndex);
+        
 
-        // --- AI Literacy Skills Interactive Diagram (Enhanced) ---
-        const skillsContainer = document.querySelector('.ai-literacy-skills-container');
+        // --- AI Literacy Skills Interactive Diagram (Slider controlled) ---
+        const literacySkillSlider = getEl('literacy-skill-slider');
+        const literacySkillSliderValueName = getEl('literacy-skill-slider-value-name');
+        const literacySkillDisplay = getEl('literacy-skill-display');
         const skillsData = [
-            { 
-                title: "Habilitats Tècniques Essencials", 
-                description: "Anàlisi i visualització de dades, principis bàsics d'aprenentatge automàtic/IA, familiaritat amb la computació al núvol, programació (Python), coneixements de ciberseguretat.",
-                details: "Per exemple, entendre com es generen les dades d'entrenament d'un LLM o com interpretar mètriques bàsiques de rendiment pot ajudar a avaluar la seva fiabilitat. Saber programar en Python pot permetre interactuar amb APIs d'LLM per a projectes personalitzats."
-            },
-            { 
-                title: "Pensament Crític i Resolució de Problemes", 
-                description: "Analitzar situacions complexes, avaluar informació (inclosos els resultats de la IA) críticament, idear solucions eficaces.",
-                details: "Davant d'un resultat d'un LLM, el pensament crític implica preguntar: És aquesta informació completa? Hi ha biaixos? Quines són les fonts subjacents? Com s'alinea amb el que ja sé? La resolució de problemes implica utilitzar l'LLM com una eina per explorar solucions, no com una font única de veritat."
-            },
-            { 
-                title: "Creativitat", 
-                description: "Generar idees, enfocaments i solucions noves que vagin més enllà del reconeixement de patrons.",
-                details: "Els LLM poden ajudar a la pluja d'idees, però la veritable creativitat sovint rau en combinar idees de maneres noves o aplicar conceptes a contextos inusuals, una tasca on la intuïció i l'experiència humanes són clau."
-            },
-            { 
-                title: "Raonament Ètic i Judici", 
-                description: "Prendre decisions ètiques sòlides, entendre l'impacte social de la IA, navegar per dilemes morals.",
-                details: "Això inclou considerar les implicacions de l'ús d'LLM en termes de plagi, biaix, privadesa de dades i l'impacte potencial en l'ocupació o la presa de decisions automatitzada."
-            },
-            { 
-                title: "Comunicació", 
-                description: "Articular idees clarament, col·laborar eficaçment (humans i IA), entendre la comunicació matisada.",
-                details: "L'enginyeria de prompts eficaç és una forma de comunicació amb la IA. També és crucial poder comunicar clarament les troballes o idees derivades de l'ús d'LLM a altres persones, explicant el paper de l'IA en el procés."
-            },
-            { 
-                title: "Adaptabilitat i Aprenentatge Continu", 
-                description: "Abraçar l'aprenentatge permanent i adaptar-se a noves eines i paradigmes d'IA en un camp en ràpida evolució.",
-                details: "Les capacitats i les eines d'IA canvien constantment. Ser capaç d'aprendre noves tècniques de prompting, entendre les noves funcionalitats dels models i adaptar-se a les millors pràctiques emergents és essencial."
-            },
-            { 
-                title: "Empatia", 
-                description: "Comprendre i respondre a les emocions i perspectives humanes, crucial per a la col·laboració i el disseny centrat en l'ésser humà.",
-                details: "Quan s'utilitzen LLM per a tasques que afecten persones (p. ex., redacció de comunicacions, anàlisi de feedback), l'empatia ajuda a assegurar que els resultats siguin sensibles i adequats al context humà."
-            }
+            { title: "Habilitats Tècniques Essencials", description: "Anàlisi i visualització de dades, principis bàsics d'aprenentatge automàtic/IA, familiaritat amb la computació al núvol, programació (Python), coneixements de ciberseguretat.", details: "Per exemple, entendre com es generen les dades d'entrenament d'un LLM o com interpretar mètriques bàsiques de rendiment pot ajudar a avaluar la seva fiabilitat. Saber programar en Python pot permetre interactuar amb APIs d'LLM per a projectes personalitzats." },
+            { title: "Pensament Crític i Resolució de Problemes", description: "Analitzar situacions complexes, avaluar informació (inclosos els resultats de la IA) críticament, idear solucions eficaces.", details: "Davant d'un resultat d'un LLM, el pensament crític implica preguntar: És aquesta informació completa? Hi ha biaixos? Quines són les fonts subjacents? Com s'alinea amb el que ja sé? La resolució de problemes implica utilitzar l'LLM com una eina per explorar solucions, no com una font única de veritat." },
+            { title: "Creativitat", description: "Generar idees, enfocaments i solucions noves que vagin més enllà del reconeixement de patrons.", details: "Els LLM poden ajudar a la pluja d'idees, però la veritable creativitat sovint rau en combinar idees de maneres noves o aplicar conceptes a contextos inusuals, una tasca on la intuïció i l'experiència humanes són clau." },
+            { title: "Raonament Ètic i Judici", description: "Prendre decisions ètiques sòlides, entendre l'impacte social de la IA, navegar per dilemes morals.", details: "Això inclou considerar les implicacions de l'ús d'LLM en termes de plagi, biaix, privadesa de dades i l'impacte potencial en l'ocupació o la presa de decisions automatitzada." },
+            { title: "Comunicació", description: "Articular idees clarament, col·laborar eficaçment (humans i IA), entendre la comunicació matisada.", details: "L'enginyeria de prompts eficaç és una forma de comunicació amb la IA. També és crucial poder comunicar clarament les troballes o idees derivades de l'ús d'LLM a altres persones, explicant el paper de l'IA en el procés." },
+            { title: "Adaptabilitat i Aprenentatge Continu", description: "Abraçar l'aprenentatge permanent i adaptar-se a noves eines i paradigmes d'IA en un camp en ràpida evolució.", details: "Les capacitats i les eines d'IA canvien constantment. Ser capaç d'aprendre noves tècniques de prompting, entendre les noves funcionalitats dels models i adaptar-se a les millors pràctiques emergents és essencial." },
+            { title: "Empatia", description: "Comprendre i respondre a les emocions i perspectives humanes, crucial per a la col·laboració i el disseny centrat en l'ésser humà.", details: "Quan s'utilitzen LLM per a tasques que afecten persones (p. ex., redacció de comunicacions, anàlisi de feedback), l'empatia ajuda a assegurar que els resultats siguin sensibles i adequats al context humà." }
         ];
+        if (literacySkillSlider) literacySkillSlider.max = skillsData.length - 1;
 
-        if (skillsContainer) {
-            skillsData.forEach(skill => {
-                const item = document.createElement('div');
-                item.classList.add('ai-literacy-skill-item');
-                item.innerHTML = `
-                    <h5>${skill.title}</h5>
-                    <p>${skill.description}</p>
-                    <div class="skill-details"><p><strong>Detalls i Aplicació:</strong> ${skill.details}</p></div>
-                `;
-                item.addEventListener('click', () => {
-                    // Close other active skill items
-                    skillsContainer.querySelectorAll('.ai-literacy-skill-item.active').forEach(activeItem => {
-                        if (activeItem !== item) {
-                            activeItem.classList.remove('active');
-                        }
-                    });
-                    // Toggle current item
-                    item.classList.toggle('active');
-                });
-                skillsContainer.appendChild(item);
-            });
+        function displayLiteracySkill(index) {
+            if (!literacySkillDisplay || !skillsData[index]) return;
+            const item = skillsData[index];
+            if(literacySkillSliderValueName) literacySkillSliderValueName.textContent = item.title;
+            literacySkillDisplay.innerHTML = `<h5>${item.title}</h5><p>${item.description}</p><p class="mt-2"><strong>Detalls i Aplicació:</strong> ${item.details}</p>`;
+        }
+        if (literacySkillSlider) {
+            literacySkillSlider.addEventListener('input', (e) => displayLiteracySkill(parseInt(e.target.value)));
+            displayLiteracySkill(0); // Initial display
         }
 
         // --- References Population & Linking ---
@@ -1041,7 +905,6 @@
                     } else if (quoteMatch && quoteMatch[1]) {
                          refHtml = refTextWithoutId.replace(/"(.*?)"/, `<a href="${refData.link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-semibold">"${quoteMatch[1]}"</a>`);
                     } else {
-                        // Fallback: make the whole reference text (without the ID) clickable
                         refHtml = `<a href="${refData.link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">${refTextWithoutId}</a>`;
                     }
                 }
@@ -1052,7 +915,6 @@
 
         const mainContent = document.querySelector('main');
         if (mainContent) {
-            // Regex for complex lists with ranges AND/OR single numbers: e.g., [1, 2-5, 7, 9-10]
             mainContent.innerHTML = mainContent.innerHTML.replace(/\[(\d+(?:-\d+)?(?:,\s*\d+(?:-\d+)?)*)\]/g, (match, numbers) => {
                 const parts = numbers.split(',').map(s => s.trim());
                 let links = '';
@@ -1061,8 +923,7 @@
                         const [start, end] = part.split('-').map(Number);
                         for (let i = start; i <= end; i++) {
                             links += `<a href="#ref-${i}" class="text-blue-600 hover:underline font-semibold">[${i}]</a>`;
-                            // Add hyphen visually if it's part of a range and not the last number in that sub-range
-                            if (i < end) links += '<span class="text-blue-600 font-semibold">-</span>';
+                            if (i < end) links += '<span class="text-blue-600 font-semibold">-</span>'; 
                         }
                     } else {
                         links += `<a href="#ref-${part}" class="text-blue-600 hover:underline font-semibold">[${part}]</a>`;
@@ -1072,7 +933,72 @@
                 return links;
             });
         }
+         // LLM Output Evaluator App
+        const llmOutputTypeSelect = getEl('llm-output-type-select');
+        const llmEvalOutputDisplay = getEl('llm-eval-output-display');
+        const evalAccuracySlider = getEl('eval-accuracy-slider');
+        const evalClaritySlider = getEl('eval-clarity-slider');
+        const evalBiasSlider = getEl('eval-bias-slider');
+        const evalCompletenessSlider = getEl('eval-completeness-slider');
+        const llmEvalFeedback = getEl('llm-eval-feedback');
+        const evalAccuracyValue = getEl('eval-accuracy-value');
+        const evalClarityValue = getEl('eval-clarity-value');
+        const evalBiasValue = getEl('eval-bias-value');
+        const evalCompletenessValue = getEl('eval-completeness-value');
+
+        const llmOutputExamples = {
+            summary: "L'article analitza l'impacte de la desinformació generada per IA en els processos democràtics. Utilitzant una metodologia d'anàlisi de contingut de xarxes socials durant el període electoral de 2024, es van identificar patrons de narratives falses. Els resultats indiquen una correlació significativa entre l'exposició a aquesta desinformació i la polarització de l'opinió pública. Es conclou que són necessàries estratègies d'alfabetització mediàtica més robustes.",
+            concept_explanation: "La 'singularitat tecnològica' és un punt hipotètic futur en què el creixement tecnològic esdevé incontrolable i irreversible, resultant en conseqüències imprevisibles per a la civilització humana. Sovint s'associa amb l'adveniment d'una intel·ligència artificial general (AGI) o superintel·ligència que superaria la capacitat intel·lectual humana.",
+            code_snippet: "```python\ndef calculate_average(numbers):\n  if not numbers:\n    return 0\n  return sum(numbers) / len(numbers)\n\n# Example usage:\nmy_list = [10, 20, 30, 40, 50]\n_average = calculate_average(my_list)\nprint(f\"The average is: {_average}\")\n```"
+        };
+
+        function updateLlmEvalApp() {
+            if (!llmOutputTypeSelect || !llmEvalOutputDisplay || !evalAccuracySlider || !evalClaritySlider || !evalBiasSlider || !evalCompletenessSlider || !llmEvalFeedback) return;
+
+            const selectedType = llmOutputTypeSelect.value;
+            llmEvalOutputDisplay.textContent = llmOutputExamples[selectedType];
+
+            const accuracy = parseInt(evalAccuracySlider.value);
+            const clarity = parseInt(evalClaritySlider.value);
+            const bias = parseInt(evalBiasSlider.value);
+            const completeness = parseInt(evalCompletenessSlider.value);
+
+            if(evalAccuracyValue) evalAccuracyValue.textContent = accuracy;
+            if(evalClarityValue) evalClarityValue.textContent = clarity;
+            if(evalBiasValue) evalBiasValue.textContent = bias;
+            if(evalCompletenessValue) evalCompletenessValue.textContent = completeness;
+
+            let feedbackText = "Retroalimentació Conceptual Basada en la Teva Avaluació:\n";
+            feedbackText += `- Precisió (${accuracy}/5): ${accuracy < 3 ? "Cal verificar exhaustivament. " : accuracy === 3 ? "Moderadament precisa, però requereix verificació addicional. " : "Sembla bastant precisa, però sempre és bona pràctica contrastar. "}\n`;
+            feedbackText += `- Claredat (${clarity}/5): ${clarity < 3 ? "L'explicació podria ser més senzilla o estructurada. " : clarity === 3 ? "Raonablement clara, amb algunes àrees de millora. " : "Molt clara i fàcil d'entendre. "}\n`;
+            feedbackText += `- Absència de Biaix (${bias}/5): ${bias < 3 ? "S'ha detectat un biaix potencial; cal una anàlisi més profunda i buscar perspectives alternatives. " : bias === 3 ? "Relativament neutral, però estigues atent a biaixos subtils. " : "Sembla imparcial i objectiva. "}\n`;
+            feedbackText += `- Completitud (${completeness}/5): ${completeness < 3 ? "Probablement omet aspectes importants per a la tasca. " : completeness === 3 ? "Cobreix els punts principals, però podria ser més exhaustiva. " : "Proporciona una cobertura completa i detallada. "}\n\n`;
+
+            const overallScore = (accuracy + clarity + bias + completeness) / 4;
+            if (overallScore >= 4) {
+                feedbackText += "Impressió General: La resposta sembla de bona qualitat i fiable per a la tasca.";
+            } else if (overallScore >= 2.5) {
+                feedbackText += "Impressió General: La resposta té potencial, però requereix una revisió crítica i possiblement edició o verificació addicional abans de ser utilitzada.";
+            } else {
+                feedbackText += "Impressió General: La resposta presenta deficiències significatives. Caldria ser molt cautelós/a en utilitzar-la i probablement buscar alternatives o refinar molt el prompt.";
+            }
+            llmEvalFeedback.textContent = feedbackText;
+        }
+
+        if (llmOutputTypeSelect) llmOutputTypeSelect.addEventListener('change', updateLlmEvalApp);
+        if (evalAccuracySlider) evalAccuracySlider.addEventListener('input', updateLlmEvalApp);
+        if (evalClaritySlider) evalClaritySlider.addEventListener('input', updateLlmEvalApp);
+        if (evalBiasSlider) evalBiasSlider.addEventListener('input', updateLlmEvalApp);
+        if (evalCompletenessSlider) evalCompletenessSlider.addEventListener('input', updateLlmEvalApp);
+        
+        // Initial call to populate the LLM evaluator app
+        if (typeof updateLlmEvalApp === "function") updateLlmEvalApp();
+
+
     });
     </script>
+</body>
+</html>
+
 </body>
 </html>
