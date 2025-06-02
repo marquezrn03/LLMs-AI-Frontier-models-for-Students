@@ -930,25 +930,45 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Helper function to get element by ID
+        const getEl = (id) => document.getElementById(id);
+
         // --- Interactive LLM Limitations Explorer ---
         const limitationCards = document.querySelectorAll('.interactive-card');
-        limitationCards.forEach(card => {
-            card.addEventListener('click', () => {
-                card.classList.toggle('active');
-                const content = card.querySelector('.interactive-card-content');
-                if (content) {
-                    content.style.display = content.style.display === 'block' ? 'none' : 'block';
-                }
+        if (limitationCards) {
+            limitationCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('active');
+                    const content = card.querySelector('.interactive-card-content');
+                    if (content) {
+                        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+                    }
+                });
             });
-        });
+        }
 
         // --- Interactive Prompt Engineering Guide ---
-        const promptTaskSelect = document.getElementById('prompt-task-select');
-        const promptStructureEl = document.getElementById('prompt-details-structure').querySelector('p');
-        const promptElementsEl = document.getElementById('prompt-details-elements').querySelector('p');
-        const showConceptualOutputBtn = document.getElementById('show-conceptual-output-btn');
-        const promptConceptualOutputEl = document.getElementById('prompt-conceptual-output');
+        const promptTaskSelect = getEl('prompt-task-select');
+        const promptStructureContainer = getEl('prompt-details-structure');
+        const promptElementsContainer = getEl('prompt-details-elements');
+        const showConceptualOutputBtn = getEl('show-conceptual-output-btn');
+        const promptConceptualOutputEl = getEl('prompt-conceptual-output');
 
+        // Ensure the <p> tags exist or create them if necessary
+        let promptStructureEl = promptStructureContainer ? promptStructureContainer.querySelector('p') : null;
+        if (promptStructureContainer && !promptStructureEl) {
+            promptStructureEl = document.createElement('p');
+            promptStructureEl.className = 'text-sm';
+            promptStructureContainer.appendChild(promptStructureEl);
+        }
+
+        let promptElementsEl = promptElementsContainer ? promptElementsContainer.querySelector('p') : null;
+        if (promptElementsContainer && !promptElementsEl) {
+            promptElementsEl = document.createElement('p');
+            promptElementsEl.className = 'text-sm';
+            promptElementsContainer.appendChild(promptElementsEl);
+        }
+        
         const promptData = {
             summarize: {
                 structure: "Resumeix els arguments clau, la metodologia, les troballes i les conclusions del següent article acadèmic en aproximadament [X] paraules. Centra't en [aspecte específic si n'hi ha]: [enganxa text/enllaç a article d'accés obert]",
@@ -993,24 +1013,32 @@
         };
 
         function updatePromptDetails() {
+            if (!promptTaskSelect || !promptData || !promptStructureEl || !promptElementsEl || !promptConceptualOutputEl) return;
             const selectedTask = promptTaskSelect.value;
             const data = promptData[selectedTask];
+            if (!data) return; 
             promptStructureEl.textContent = data.structure;
             promptElementsEl.textContent = data.elements;
             promptConceptualOutputEl.textContent = data.conceptual_output;
             promptConceptualOutputEl.style.display = 'none'; 
         }
 
-        promptTaskSelect.addEventListener('change', updatePromptDetails);
-        showConceptualOutputBtn.addEventListener('click', () => {
-            promptConceptualOutputEl.style.display = promptConceptualOutputEl.style.display === 'none' ? 'block' : 'none';
-        });
-        updatePromptDetails(); 
+        if (promptTaskSelect) {
+            promptTaskSelect.addEventListener('change', updatePromptDetails);
+        }
+        if (showConceptualOutputBtn) {
+            showConceptualOutputBtn.addEventListener('click', () => {
+                if (promptConceptualOutputEl) {
+                    promptConceptualOutputEl.style.display = promptConceptualOutputEl.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+        }
+        updatePromptDetails(); // Initial call
 
         // --- Ethical Dilemma Mini-Simulator ---
-        const dilemmaTextEl = document.getElementById('dilemma-text');
-        const choicesContainer = document.getElementById('ethical-dilemma-choices-container');
-        const feedbackContainer = document.getElementById('ethical-dilemma-feedback-container');
+        const dilemmaTextEl = getEl('dilemma-text');
+        const choicesContainer = getEl('ethical-dilemma-choices-container');
+        const feedbackContainer = getEl('ethical-dilemma-feedback-container');
 
         const dilemmas = [
             {
@@ -1026,13 +1054,14 @@
         let currentDilemmaIndex = 0;
 
         function loadDilemma(index) {
+            if (!dilemmaTextEl || !choicesContainer || !feedbackContainer || !dilemmas[index]) return;
             const dilemma = dilemmas[index];
             dilemmaTextEl.textContent = dilemma.scenario;
-            choicesContainer.innerHTML = '';
+            choicesContainer.innerHTML = ''; // Clear previous choices
             dilemma.choices.forEach(choice => {
                 const button = document.createElement('button');
                 button.textContent = choice.text;
-                button.classList.add('button', 'text-sm');
+                button.classList.add('button', 'text-sm', 'mb-2', 'mr-2'); // Added margins
                 button.onclick = () => {
                     feedbackContainer.textContent = choice.feedback;
                     feedbackContainer.className = 'ethical-dilemma-feedback'; 
@@ -1043,10 +1072,12 @@
             });
             feedbackContainer.style.display = 'none';
         }
-        loadDilemma(currentDilemmaIndex);
+        if (dilemmas.length > 0) {
+            loadDilemma(currentDilemmaIndex);
+        }
 
 
-        // --- References Population ---
+        // --- References Population & Linking ---
         const references = [
             "[1] Jalil, S. et al. (2023). Opportunities and challenges of ChatGPT in higher education: A systematic literature review. *International Journal of Educational Technology in Higher Education*.",
             "[2] Mhlanga, D. (2023). The Value of ChatGPT in Higher Education: An Analysis of the Benefits and Potential. *Journal of Higher Education Policy and Leadership*.",
@@ -1147,54 +1178,59 @@
             "[97] Coursera Blog. (2023). *How to Use ChatGPT: A Student’s Guide*. Coursera.",
             "[98] Big Interview. (n.d.). *AI Mock Interview Practice*. Big Interview.",
             "[99] Interview Warmup (Google). (n.d.). *Interview Warmup*. Google.",
-            "[100] OpenAI. (2025, May). *OpenAI May 2025 Updates*. OpenAI.",
+            "[100] OpenAI. (2025, May). *OpenAI May 2025 Updates*. OpenAI.", // Fictional future date for example
             "[101] Google Workspace. (2024). *Gemini in Google Workspace*. Google Workspace.",
-            "[102] Google. (2025, May). *New AI features for Education from Google I/O 2025*. Google for Education Blog.",
-            "[103] Google. (2025, May). *NotebookLM Plus and Gemini for Education Enhancements*. The Keyword (Google Blog).",
+            "[102] Google. (2025, May). *New AI features for Education from Google I/O 2025*. Google for Education Blog.", // Fictional future date
+            "[103] Google. (2025, May). *NotebookLM Plus and Gemini for Education Enhancements*. The Keyword (Google Blog).", // Fictional future date
             "[104] Anthropic. (2024). *Claude for Education*. Anthropic.",
             "[105] Anthropic. (2024). *How Students Are Using Claude*. Anthropic Research."
         ];
 
-        const referencesListEl = document.getElementById('references-list');
-        references.forEach((ref, index) => {
-            const item = document.createElement('div');
-            item.classList.add('reference-item');
-            item.setAttribute('id', `ref-${index + 1}`);
-            item.setAttribute('data-ref-id', `[${index + 1}]`);
-            item.innerHTML = ref.substring(ref.indexOf(']') + 2); 
-            referencesListEl.appendChild(item);
-        });
+        const referencesListEl = getEl('references-list');
+        if (referencesListEl) {
+            references.forEach((ref, index) => {
+                const item = document.createElement('div');
+                item.classList.add('reference-item');
+                item.setAttribute('id', `ref-${index + 1}`);
+                item.setAttribute('data-ref-id', `[${index + 1}]`);
+                item.innerHTML = ref.substring(ref.indexOf(']') + 2); 
+                referencesListEl.appendChild(item);
+            });
+        }
 
         const mainContent = document.querySelector('main');
-        mainContent.innerHTML = mainContent.innerHTML.replace(/\[(\d+)\]/g, (match, num) => {
-            return `<a href="#ref-${num}" class="text-blue-600 hover:underline font-semibold">${match}</a>`;
-        }).replace(/\[(\d+-\d+)\]/g, (match, range) => { 
-            const [start, end] = range.split('-').map(Number);
-            let links = '';
-            for (let i = start; i <= end; i++) {
-                links += `<a href="#ref-${i}" class="text-blue-600 hover:underline font-semibold">[${i}]</a>`;
-                if (i < end) links += ', ';
-            }
-            return links;
-        }).replace(/\[(\d+,\s*\d+(,\s*\d+)*)\]/g, (match, numbers) => { 
-             const individualNumbers = numbers.split(',').map(s => s.trim());
-             let links = '';
-             individualNumbers.forEach((numOrRange, idx) => {
-                if (numOrRange.includes('-')) {
-                    const [start, end] = numOrRange.split('-').map(Number);
-                     for (let i = start; i <= end; i++) {
-                        links += `<a href="#ref-${i}" class="text-blue-600 hover:underline font-semibold">[${i}]</a>`;
-                        if (i < end) links += ', ';
-                    }
-                } else {
-                    links += `<a href="#ref-${numOrRange}" class="text-blue-600 hover:underline font-semibold">[${numOrRange}]</a>`;
-                }
-                if (idx < individualNumbers.length - 1) links += ', ';
-             });
-             return links;
-        });
+        if (mainContent) {
+            // Process lists first, then ranges, then singles to avoid conflicts.
+            // Regex for lists: e.g., [1, 2, 3] or [1,2, 3]
+            mainContent.innerHTML = mainContent.innerHTML.replace(/\[(\d+(?:,\s*\d+)+)\]/g, (match, numbers) => {
+                const individualNumbers = numbers.split(',').map(s => s.trim());
+                let links = '';
+                individualNumbers.forEach((num, idx) => {
+                    links += `<a href="#ref-${num}" class="text-blue-600 hover:underline font-semibold">[${num}]</a>`;
+                    if (idx < individualNumbers.length - 1) links += ', ';
+                });
+                return links;
+            });
 
+            // Regex for ranges: e.g., [1-5]
+            mainContent.innerHTML = mainContent.innerHTML.replace(/\[(\d+-\d+)\]/g, (match, range) => {
+                const [start, end] = range.split('-').map(Number);
+                let links = '';
+                for (let i = start; i <= end; i++) {
+                    links += `<a href="#ref-${i}" class="text-blue-600 hover:underline font-semibold">[${i}]</a>`;
+                    if (i < end) links += '<span>-</span>'; // Keep the dash visually, but link numbers individually
+                }
+                return links;
+            });
+            
+            // Regex for single numbers: e.g., [1]
+            mainContent.innerHTML = mainContent.innerHTML.replace(/\[(\d+)\]/g, (match, num) => {
+                return `<a href="#ref-${num}" class="text-blue-600 hover:underline font-semibold">${match}</a>`;
+            });
+        }
     });
     </script>
 </body>
+</html>
+```
 </html>
