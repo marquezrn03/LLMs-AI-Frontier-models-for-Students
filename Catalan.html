@@ -147,11 +147,35 @@
         .hallucination-buster-feedback { margin-top: 1rem; padding: 1rem; border-radius: 0.375rem; transition: opacity 0.3s ease-in-out; font-weight: 500; }
         .slider-label-container { display: flex; justify-content: space-between; margin-bottom: 0.25rem;}
         .slider-value { font-weight: 500; color: var(--primary-dark); }
-        #llm-mind-map-container { width: 100%; min-height: 450px; background-color: var(--bg-white); border-radius: 0.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-top: 2rem; padding: 1rem; border: 1px solid var(--border-light); }
+        #llm-mind-map-container {
+    width: 100%;
+    height: 75vh; /* O una alçada fixa com 650px */
+    min-height: 500px;
+    /* ... altres estils que ja teníeu ... */
+}
         .mind-map-node circle { stroke-width: 1.5px; transition: fill 0.2s ease; }
         .mind-map-node text { fill: var(--text-dark); pointer-events: none; text-anchor: middle; dominant-baseline: central; font-weight: 500;}
         .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
         .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+/* Afegir al <style> principal del vostre HTML */
+.hover-label-map {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    /* Altres estils que desitgeu */
+}
+#llm-mind-map-container {
+    width: 100%;
+    height: 70vh; /* o una alçada fixa com 600px */
+    min-height: 450px; /* Assegura una alçada mínima */
+    border: 1px solid var(--border-light); /* Per veure'n els límits */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    margin-top: 2rem;
+    padding: 1rem; /* El padding intern ja el gestiona l'SVG */
+    background-color: var(--bg-white); /* O el fons que desitgeu per al contenidor */
+    position: relative; /* Pot ser útil si es volen afegir controls absolutament posicionats */
+}
     </style>
 </head>
 <body class="text-gray-800 antialiased">
@@ -517,161 +541,269 @@
         populateCarousel(); 
         window.addEventListener('resize', updateCarouselVisual);
 
-// --- D3.js Mind Map for LLM Concepts ---
+// --- D3.js Mind Map for LLM Concepts (CORRECTED AND ENHANCED) ---
         const mindMapContainer = getEl('llm-mind-map-container');
         if (mindMapContainer && typeof d3 !== 'undefined') {
-            
-            // Helper function to get computed CSS variable values
-            function getCssVariableValue(variableName) {
-                return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
-            }
+            try {
+                function getCssVariableValue(variableName, fallbackColor = "#777777") { // Added a more visible fallback
+                    const value = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+                    return value || fallbackColor;
+                }
 
-            // Helper function to determine contrasting text color
-            function getTextColorForBackground(hexColor) {
-                try {
-                    const rgb = d3.rgb(hexColor);
-                    // Standard YIQ formula for perceived brightness
-                    const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
-                    return brightness > 135 ? getCssVariableValue('--text-dark') : getCssVariableValue('--bg-white'); // 128 is a common threshold, 135 for a bit more safety
-                } catch (e) {
-                    // Fallback if color parsing fails (e.g., invalid CSS var value initially)
-                    return getCssVariableValue('--text-dark'); 
+                function getTextColorForBackground(hexColor) {
+                    try {
+                        if (!hexColor || hexColor === "none") return getCssVariableValue('--text-dark', '#1f2937');
+                        const rgb = d3.rgb(hexColor);
+                        const brightness = (rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000;
+                        return brightness > 135 ? getCssVariableValue('--text-dark', '#1f2937') : getCssVariableValue('--bg-white', '#ffffff');
+                    } catch (e) {
+                        // console.warn("Failed to parse color for text contrast:", hexColor, e);
+                        return getCssVariableValue('--text-dark', '#1f2937'); 
+                    }
+                }
+
+                let width = mindMapContainer.clientWidth;
+                let height = mindMapContainer.clientHeight > 300 ? mindMapContainer.clientHeight : 650; // Ensure decent height
+
+                if (width < 300) width = 300; 
+                // console.log("Mind map using dimensions WxH:", width, "x", height);
+                
+                mindMapContainer.innerHTML = ''; 
+
+                const svg = d3.select(mindMapContainer).append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("viewBox", [-width / 2, -height / 2, width, height])
+                    .style("display", "block")
+                    .style("margin", "0 auto")
+                    .style("background", getCssVariableValue('--bg-light', '#f9fafb'))
+                    .style("font-family", "'Inter', sans-serif");
+
+                const udgBlue = getCssVariableValue('--Universitat-blue'); // Corrected CSS variable name
+                const udgMediumBlue = getCssVariableValue('--primary-light'); 
+                const udgLightBlue = getCssVariableValue('--primary-lighter'); 
+                const udgYellowHighlight = getCssVariableValue('--Universitat-yellow'); // Corrected
+
+                const mindMapData = { /* Your mindMapData structure */
+                    name: "Ecosistema LLM (UdG)",
+                    children: [ // Depth 1
+                        { name: "Fonaments Tècnics", children: [ // Depth 2
+                            { name: "Corpus Massius Multilingües (incl. Català)", size: 6000 }, // Depth 3 (Leaf)
+                            { name: "Arquitectures Neuronals (Transformers Avançats)", size: 5000, children:[ // Depth 3 (Parent)
+                                {name: "Mecanismes d'Atenció Sofisticats", size: 3000}, // Depth 4 (Leaf)
+                                {name: "Codificació Posicional Dinàmica", size:2500}  // Depth 4 (Leaf)
+                            ]},
+                            { name: "Paradigmes d'Aprenentatge Profund (Pre-entrenament i Ajust Fi)", size: 4500 } // Depth 3 (Leaf)
+                        ]},
+                        { name: "Capacitats Acadèmiques Augmentades", children: [ // Depth 2
+                            { name: "Generació de Text Acadèmic Nuancat", size: 5500 }, { name: "Traducció Científica Especialitzada", size: 4000 },
+                            { name: "Síntesi Crítica de Literatura", size: 4800 }, { name: "Raonament Assistit per a Resolució de Problemes", size: 5200 },
+                            { name: "Generació i Depuració de Codi Científic", size: 4500}
+                        ]},
+                        { name: "Interacció Humà-IA Avançada (Prompting UdG)", children: [ // Depth 2
+                            { name: "Contextualització Profunda i Delimitació de Domini", size: 4000 }, { name: "Iteració Dialògica Constructivista", size: 3500 },
+                            { name: "Prompting Zero/Few-Shot per a Tasques Noves", size: 3800 }, {name: "CoT i Raonament Explícit", size: 3900}, {name: "Meta-Prompting Reflexiu", size: 3700}
+                        ]},
+                        { name: "Limitacions i Desafiaments Crítics", children: [ // Depth 2
+                            { name: "Al·lucinacions i Fiabilitat Epistèmica", size: 5000 }, { name: "Biaixos Algorítmics i Equitat", size: 4800 },
+                            { name: "Comprensió Semàntica vs. Reconeixement de Patrons", size: 4500 }, { name: "Finestra de Context i Coherència a Llarg Termini", size: 3800 }, {name: "Opacitat i Manca d'Explicabilitat (XAI)", size: 4200}
+                        ]},
+                        { name: "Marc Ètic i de Governança (UdG)", children: [ // Depth 2
+                            { name: "Integritat Acadèmica i Autoria Original", size: 4200 }, { name: "Privadesa de Dades de Recerca i Personals", size: 3900 },
+                            { name: "Prevenció de Desinformació Científica", size: 4500 }, { name: "Impacte en la Diversitat Lingüística (Promoció del Català)", size: 4300 }, {name: "Responsabilitat en l'Ús Investigador i Docent", size: 4000}
+                        ]}
+                    ]
+                };
+
+                const rootNode = d3.hierarchy(mindMapData);
+                const treeRadius = Math.min(width, height) / 2 - 100; // More margin for labels
+                const treeLayout = d3.tree().size([2 * Math.PI, treeRadius])
+                    .separation((a, b) => (a.parent == b.parent ? 1 : 1.2) / Math.max(1, a.depth)); // Avoid division by zero for root
+
+                treeLayout(rootNode);
+
+                const g = svg.append("g").style("cursor", "default");
+
+                const linkGenerator = d3.linkRadial()
+                    .angle(d => d.x)
+                    .radius(d => d.y);
+
+                g.append("g")
+                    .attr("fill", "none")
+                    .attr("stroke", getCssVariableValue('--border-color', '#ccc'))
+                    .attr("stroke-opacity", 0.4) // Lighter links
+                    .attr("stroke-width", 1.5)
+                  .selectAll("path")
+                  .data(rootNode.links())
+                  .join("path")
+                    .attr("d", linkGenerator)
+                    .attr("class", "mind-map-link");
+
+                const node = g.append("g")
+                  .selectAll("g")
+                  .data(rootNode.descendants())
+                  .join("g")
+                    .attr("transform", d => `
+                      rotate(${d.x * 180 / Math.PI - 90})
+                      translate(${d.y},0)
+                    `)
+                    .attr("class", "mind-map-node-item")
+                    .style("cursor", "pointer");
+
+                node.append("circle")
+                    .attr("fill", function(d) { // Use regular function for `this` if needed later, or stick to `d`
+                        if (d.depth === 0) return udgBlue;
+                        if (d.depth === 1) return udgBlue;
+                        if (d.depth === 2) return udgMediumBlue;
+                        return udgLightBlue;
+                    })
+                    .attr("r", d => d.depth === 0 ? 10 : (d.children ? 8 : 7)) // Adjusted sizes
+                    .style("stroke", function(d) {
+                        let fillColor;
+                        if (d.depth === 0) fillColor = udgBlue;
+                        else if (d.depth === 1) fillColor = udgBlue;
+                        else if (d.depth === 2) fillColor = udgMediumBlue;
+                        else fillColor = udgLightBlue;
+                        return d3.rgb(fillColor).darker(0.5);
+                    })
+                    .style("stroke-width", 1.5);
+
+                // Permanent text for LEAF nodes (outermost)
+                node.filter(d => !d.children && d.depth > 0) 
+                    .append("text")
+                    .attr("dy", "0.31em")
+                    .attr("x", d => d.x < Math.PI === !d.children ? 10 : -10) // Consistent with hover logic, but further out
+                    .attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
+                    .attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
+                    .style("font-size", "10px") 
+                    .style("font-weight", "normal") // Lighter weight for permanent leaf text
+                    .style("fill", function(d) { return getTextColorForBackground(udgLightBlue); })
+                    .text(d => {
+                        const name = d.data.name;
+                        // More aggressive truncation for permanent leaf labels if they are long
+                        return name.length > 25 ? name.substring(0, 22) + "..." : name;
+                    });
+                
+                node.append("title") // Basic HTML tooltip for all nodes
+                    .text(d => d.ancestors().map(da => da.data.name).reverse().join(" -> "));
+
+                // Group for hover elements (text and potential background)
+                const hoverGroup = svg.append("g") // Appended to SVG so it's on top and not affected by node transforms
+                    .attr("class", "mindmap-hover-elements")
+                    .style("pointer-events", "none"); // So it doesn't block mouse events on nodes
+
+                node.on("mouseover", function(event, d_node) {
+                    const thisNodeElement = d3.select(this);
+                    thisNodeElement.select("circle")
+                        .transition().duration(100)
+                        .attr("r", parseFloat(thisNodeElement.select("circle").attr("r")) * 1.4)
+                        .style("stroke", udgYellowHighlight)
+                        .style("stroke-width", 3);
+
+                    // Highlight path to root
+                    const pathLinks = [];
+                    let current = d_node;
+                    while (current.parent) {
+                        pathLinks.push(current.parent.links().find(l => l.target === current));
+                        current = current.parent;
+                    }
+                    g.selectAll(".mind-map-link")
+                        .filter(l => pathLinks.includes(l))
+                        .classed("active-link-path", true)
+                        .transition().duration(100)
+                        .style("stroke", udgYellowHighlight)
+                        .style("stroke-width", 2.5)
+                        .style("stroke-opacity", 1);
+                    
+                    // Position of the node in SVG coordinates for the label
+                    const nodeMatrix = this.getScreenCTM(); // Gets transform matrix of the <g> element
+                    const nodeGlobalX = nodeMatrix.e;
+                    const nodeGlobalY = nodeMatrix.f;
+
+                    const svgMatrix = svg.node().getScreenCTM().inverse();
+                    const svgPoint = svg.node().createSVGPoint();
+                    svgPoint.x = nodeGlobalX;
+                    svgPoint.y = nodeGlobalY;
+                    const transformedPoint = svgPoint.matrixTransform(svgMatrix);
+
+                    hoverGroup.selectAll("*").remove(); // Clear previous
+
+                    // Add a semi-transparent background rectangle for the text
+                    const tempText = hoverGroup.append("text").text(d_node.data.name).style("font-size", "13px").style("font-weight", "bold");
+                    const bbox = tempText.node().getBBox();
+                    tempText.remove(); // Remove temporary text
+
+                    hoverGroup.append("rect")
+                        .attr("x", transformedPoint.x + (d_node.x < Math.PI ? 15 : -bbox.width - 15))
+                        .attr("y", transformedPoint.y - bbox.height / 2 - 5)
+                        .attr("width", bbox.width + 10)
+                        .attr("height", bbox.height + 10)
+                        .style("fill", "rgba(255, 255, 255, 0.9)")
+                        .style("rx", 3)
+                        .style("ry", 3);
+                    
+                    hoverGroup.append("text")
+                        .attr("x", transformedPoint.x + (d_node.x < Math.PI ? 20 : -bbox.width - 10)) // Adjust based on rect padding
+                        .attr("y", transformedPoint.y)
+                        .attr("dy", "0.35em")
+                        .style("font-size", "13px")
+                        .style("font-weight", "bold")
+                        .style("fill", getCssVariableValue('--text-dark'))
+                        .text(d_node.data.name);
+
+                })
+                .on("mouseout", function(event, d_node) {
+                    thisNodeElement = d3.select(this);
+                    thisNodeElement.select("circle")
+                        .transition().duration(100)
+                        .attr("r", d_node.depth === 0 ? 12 : (d_node.children ? 8 : 7))
+                        .style("stroke", function() {
+                            let fillColor;
+                            if (d_node.depth === 0) fillColor = udgBlue;
+                            else if (d_node.depth === 1) fillColor = udgBlue;
+                            else if (d_node.depth === 2) fillColor = udgMediumBlue;
+                            else fillColor = udgLightBlue;
+                            return d3.rgb(fillColor).darker(0.5);
+                        })
+                        .style("stroke-width", 1.5);
+                    
+                    g.selectAll(".mind-map-link.active-link-path")
+                        .classed("active-link-path", false)
+                        .transition().duration(100)
+                        .style("stroke", getCssVariableValue('--border-color', '#ccc'))
+                        .style("stroke-width", 1.5)
+                        .style("stroke-opacity", 0.4);
+                    
+                    hoverGroup.selectAll("*").remove();
+                });
+                
+                const zoom = d3.zoom()
+                    .scaleExtent([0.1, 4]) // Wider zoom range
+                    .on("zoom", (event) => {
+                        g.attr("transform", event.transform);
+                    });
+                svg.call(zoom);
+                
+                // Center the view on the root node initially
+                // If rootNode x/y are angle/radius, its projected cartesian is (0,0) for tree root
+                // The viewBox already centers on (0,0) effectively, so we might just need scale
+                const initialScale = 0.7; // Adjust this for suitable initial zoom
+                svg.call(zoom.transform, d3.zoomIdentity.scale(initialScale));
+
+            } catch (error) {
+                console.error("Error en renderitzar el Mapa Conceptual D3:", error);
+                if (mindMapContainer) {
+                    mindMapContainer.innerHTML = "<p style='color:var(--error-color); text-align:center; padding: 20px;'>S'ha produït un error en carregar el mapa conceptual interactiu. Si us plau, reviseu la consola del navegador per a més detalls tècnics.</p>";
                 }
             }
-
-            const width = mindMapContainer.clientWidth;
-            const height = 450; 
-
-            // Fetch actual color values from CSS variables
-            const colorPalette = [
-                getCssVariableValue('--Universitat-blue'),       // For depth 0 (Root, if drawn, or first level if root is hidden)
-                getCssVariableValue('--Universitat-yellow'),     // For depth 1
-                getCssVariableValue('--accent-purple'),  // For depth 2
-                getCssVariableValue('--primary-light'),  // For depth 3 (lighter Universitat blue shade)
-                getCssVariableValue('--secondary-light') // For depth 4 (lighter Universitat yellow shade)
-            ];
-            const colorScale = d3.scaleOrdinal(colorPalette);
-
-            const mindMapData = {
-                name: "Ecosistema LLM (Universitat)",
-                children: [
-                    { name: "Fonaments Tècnics", children: [
-                        { name: "Corpus Massius Multilingües (incl. Català)", size: 6000 },
-                        { name: "Arquitectures Neuronals (Transformers Avançats)", children:[
-                            {name: "Mecanismes d'Atenció Sofisticats", size: 3000}, {name: "Codificació Posicional Dinàmica", size:2500}
-                        ], size: 5000 },
-                        { name: "Paradigmes d'Aprenentatge Profund (Pre-entrenament i Ajust Fi)", size: 4500 }
-                    ]},
-                    { name: "Capacitats Acadèmiques Augmentades", children: [
-                        { name: "Generació de Text Acadèmic Nuancat", size: 5500 }, { name: "Traducció Científica Especialitzada", size: 4000 },
-                        { name: "Síntesi Crítica de Literatura", size: 4800 }, { name: "Raonament Assistit per a Resolució de Problemes", size: 5200 },
-                        { name: "Generació i Depuració de Codi Científic", size: 4500}
-                    ]},
-                    { name: "Interacció Humà-IA Avançada (Prompting Universitat)", children: [
-                        { name: "Contextualització Profunda i Delimitació de Domini", size: 4000 }, { name: "Iteració Dialògica Constructivista", size: 3500 },
-                        { name: "Prompting Zero/Few-Shot per a Tasques Noves", size: 3800 }, {name: "CoT i Raonament Explícit", size: 3900}, {name: "Meta-Prompting Reflexiu", size: 3700}
-                    ]},
-                    { name: "Limitacions i Desafiaments Crítics", children: [
-                        { name: "Al·lucinacions i Fiabilitat Epistèmica", size: 5000 }, { name: "Biaixos Algorítmics i Equitat", size: 4800 },
-                        { name: "Comprensió Semàntica vs. Reconeixement de Patrons", size: 4500 }, { name: "Finestra de Context i Coherència a Llarg Termini", size: 3800 }, {name: "Opacitat i Manca d'Explicabilitat (XAI)", size: 4200}
-                    ]},
-                    { name: "Marc Ètic i de Governança (Universitat)", children: [
-                        { name: "Integritat Acadèmica i Autoria Original", size: 4200 }, { name: "Privadesa de Dades de Recerca i Personals", size: 3900 },
-                        { name: "Prevenció de Desinformació Científica", size: 4500 }, { name: "Impacte en la Diversitat Lingüística (Promoció del Català)", size: 4300 }, {name: "Responsabilitat en l'Ús Investigador i Docent", size: 4000}
-                    ]}
-                ]
-            };
-            const rootNode = d3.hierarchy(mindMapData).sum(d => d.size || 1).sort((a, b) => b.value - a.value);
-            const packLayout = d3.pack().size([width - 4, height - 4]).padding(8); 
-            const packedRootNode = packLayout(rootNode);
-            
-            const svg = d3.select(mindMapContainer).append("svg")
-                .attr("width", width)
-                .attr("height", height)
-                .attr("viewBox", `0 0 ${width} ${height}`)
-                .style("display", "block").style("margin", "0 auto").style("background", getCssVariableValue('--primary-lightest')).style("cursor", "default"); // Changed cursor
-
-            const gNodes = svg.selectAll("g.mind-map-node")
-                .data(packedRootNode.descendants()) // Process all descendants
-                .join("g")
-                  .attr("class", "mind-map-node")
-                  .attr("transform", d => `translate(${d.x},${d.y})`);
-
-            gNodes.append("circle")
-                .attr("r", d => d.r)
-                .style("fill", d => {
-                    if (!d.depth) return "none"; // Hide root circle or make it transparent
-                    return d.children ? colorScale(d.depth) : d3.rgb(colorScale(d.parent.depth)).brighter(0.6);
-                })
-                .style("stroke", d => d.depth ? d3.rgb(colorScale(d.depth)).darker(0.7) : 'none')
-                .style("stroke-width", d => d.depth ? 1.5 : 0)
-                .on("mouseover", function(event, d) {
-                    if (!d.depth) return;
-                    const currentFill = d3.select(this).style("fill");
-                    d3.select(this).transition().duration(150)
-                        .attr("r", d.r * 1.05)
-                        .style("fill", d3.rgb(currentFill).brighter(0.3))
-                        .style("stroke", d3.rgb(colorScale(d.depth)).darker(1));
-                })
-                .on("mouseout", function(event, d) {
-                    if (!d.depth) return;
-                    d3.select(this).transition().duration(150)
-                        .attr("r", d.r)
-                        .style("fill", d.children ? colorScale(d.depth) : d3.rgb(colorScale(d.parent.depth)).brighter(0.6))
-                        .style("stroke", d3.rgb(colorScale(d.depth)).darker(0.7));
-                });
-
-            gNodes.filter(d => d.r > 10 && d.depth > 0) // Add text to nodes with sufficient radius, excluding root
-                .append("text")
-                .attr("clip-path", d => `url(#clip-${d.id || d.data.name.replace(/\s+/g, '-')})`) // Unique clip path ID
-                .selectAll("tspan")
-                .data(d_node => { // d_node is the datum for the current <g> element (node)
-                    const words = d_node.data.name.split(/(?=[A-Z][a-z])|\s+/g);
-                    let line = "";
-                    const lines = [];
-                    const maxCharsPerLine = Math.floor(d_node.r * 2 * 0.8 / 7); // Heuristic: 7px avg char width
-                    
-                    words.forEach(word => {
-                        // Abbreviate long words in small circles
-                        const processedWord = (word.length > 10 && d_node.r < 35) ? word.substring(0,7)+"..." : word;
-                        if ((line + processedWord).length > maxCharsPerLine && line.length > 0) {
-                            lines.push(line.trim());
-                            line = processedWord + " ";
-                        } else {
-                            line += processedWord + " ";
-                        }
-                    });
-                    lines.push(line.trim());
-                    return lines.filter(l => l.length > 0);
-                })
-                .join("tspan")
-                    .attr("x", 0)
-                    .attr("y", (d_line, i, tspans) => `${i - (tspans.length -1) / 2 + 0.1}em`) // Center vertically better
-                    .style("font-size", function(d_line_text) {
-                        const parentNodeData = d3.select(this.parentNode).datum(); // datum of the 'text' element's parent 'g'
-                        const numLines = d3.select(this.parentNode).selectAll("tspan").size();
-                        const baseSize = parentNodeData.r / (Math.max(numLines,1) * 1.5); // Adjust based on number of lines
-                        return Math.max(7, Math.min(baseSize, parentNodeData.r / (d_line_text.length * 0.45 + 1 ))) + "px";
-                    })
-                    .style("fill", function() {
-                        const parentNodeData = d3.select(this.parentNode).datum(); // datum of <text> el
-                        const circleFillColor = parentNodeData.children ? colorScale(parentNodeData.depth) : d3.rgb(colorScale(parentNodeData.parent.depth)).brighter(0.6);
-                        return getTextColorForBackground(circleFillColor);
-                    })
-                    .text(d_line => d_line);
-            
-            // Define clipPaths for text elements (important for text not overflowing circles)
-            gNodes.filter(d => d.r > 10 && d.depth > 0)
-                  .append("defs")
-                  .append("clipPath")
-                  .attr("id", d => `clip-${d.id || d.data.name.replace(/\s+/g, '-')}`)
-                  .append("circle")
-                  .attr("r", d => d.r * 0.9); // Clip slightly inside the circle
-
-            gNodes.append("title")
-                .text(d => `${d.ancestors().map(da => da.data.name).reverse().slice(d.depth === 0 ? 0:1).join(" > ")}\n(Valor conceptual: ${d.value || 'N/A'})`);
+        } else {
+            if (!mindMapContainer) {
+                // console.error("El contenidor del mapa conceptual ('llm-mind-map-container') no s'ha trobat al DOM.");
+            }
+            if (typeof d3 === 'undefined') {
+                // console.error("La llibreria D3.js no s'ha carregat correctament.");
+            }
         }
-
         const hallucinationOptionsContainer = getEl('hallucination-buster-options');
         const hallucinationFeedbackEl = getEl('hallucination-buster-feedback');
         const hallucinationPuzzles = [ 
